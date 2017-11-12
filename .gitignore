@@ -1,0 +1,5 @@
+*.o
+renderer
+renderer-debug
+renderer-profile
+renderer-valgrind
