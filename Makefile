@@ -1,7 +1,7 @@
 CC = gcc
 LDFLAGS = -lGL -lGLU -lepoxy -lglfw -lm -ldl
 CFLAGS = -Wall -Ofast -fstrict-aliasing -fprofile-use -march=native -g
-OBJECTS = renderer.o matrixlib.o mathlib.o glfwmanager.o vbomanager.o hashtables.o modelmanager.o shadermanager.o filesys.o cvarmanager.o stringlib.o glmanager.o
+OBJECTS = renderer.o matrixlib.o mathlib.o glfwmanager.o vbomanager.o hashtables.o modelmanager.o shadermanager.o filesys.o cvarmanager.o stringlib.o glmanager.o tracegrid.o
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<

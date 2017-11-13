@@ -21,6 +21,8 @@
 //extern int viewport_init(void);
 //extern int viewport_shutdown(void);
 
+#include "tracegrid.h" // for tracegrid duh
+
 
 //todo move into glinit and then just keep track of the lowest?
 int msaa_maxSamples=0, msaa_maxIntSamples=0, msaa_maxColorSamples=0, msaa_maxDepthSamples=0;
@@ -33,6 +35,7 @@ int gl_shutdown(void){
 	model_shutdown();
 	vbo_shutdown();
 //	viewport_shutdown();
+	tracegrid_shutdown();
 	return TRUE; //successful shutdown
 }
 
@@ -88,6 +91,7 @@ int gl_init(void){
 	vbo_init();
 	model_init();
 	shader_init();
+	tracegrid_init();
 //	viewport_init();
 //	int mid = model_register("test.iqm");
 //	printf("registered model id %i\n", mid);
