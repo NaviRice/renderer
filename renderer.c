@@ -47,8 +47,12 @@ int main(int argc, char *argv[]){
 
 
 	while(TRUE){		//temp
+		glfw_context1();
 		gl_renderFrame();
 		glfw_swapBuffers();
+		glfw_context2();
+		gl_renderDebug();
+		glfw_swapBuffers2();
 	}
 	shutitdown();
 	return FALSE;
