@@ -143,6 +143,7 @@ int loadModelIQM(model_t *m){
 
 int model_load(model_t *m){
 	//TODO
+//	printf("MODEL/model_load, %s type %i\n", m->name, m->type);
 	switch(m->type){
 		case 1:
 			if(!loadModelIQM(m)) return FALSE;

@@ -1,0 +1,3 @@
+#define mvp uniform0
+#define posattrib attrib0
+#define colattrib attrib3

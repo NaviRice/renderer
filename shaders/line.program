@@ -1,0 +1,4 @@
+vertexsource: ./shaders/line.names
+fragmentsource: ./shaders/line.names
+VertexSource: ./shaders/line.vert
+FragmentSource: ./shaders/line.frag

@@ -1,0 +1,5 @@
+#define mvp uniform0
+#define texturescale uniform1
+#define posattrib attrib0
+#define tcattrib attrib2
+#define normattrib attrib1

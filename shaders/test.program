@@ -1,0 +1,15 @@
+varname1:vardata1
+varname2
+varname3:
+  	varname4 	 
+  	varname5 	 : 	vardata5 	
+
+:vardata6
+varname7:vardata7
+vertexsource: ./shaders/test.names
+fragmentsource: ./shaders/test.names
+VertexSource: ./shaders/test.vert
+FragmentSource: ./shaders/test.frag
+//GeometrySource: ./shaders/test.geom
+
+cvar: testshader_color, cvarcol, TODOTYPE, vec3(0.5,0.1,1.0)

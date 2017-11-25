@@ -16,16 +16,22 @@
 
 #include "matrixlib.h"			//temp
 	//TEMP
-//#include "viewportmanager.h"		//uh... do i need this here?
+#include "viewportmanager.h"		//uh... do i need this here?
 #include "mathlib.h"
 //extern int viewport_init(void);
 //extern int viewport_shutdown(void);
 
 #include "tracegrid.h" // for tracegrid duh
 
+#include "planebox.h"
+
 
 //todo move into glinit and then just keep track of the lowest?
 int msaa_maxSamples=0, msaa_maxIntSamples=0, msaa_maxColorSamples=0, msaa_maxDepthSamples=0;
+
+
+
+vbo_t planetris;
 
 
 int gl_shutdown(void){
@@ -34,8 +40,9 @@ int gl_shutdown(void){
 	shader_shutdown();
 	model_shutdown();
 	vbo_shutdown();
-//	viewport_shutdown();
+	viewport_shutdown();
 	tracegrid_shutdown();
+//	planebox_shutdown();
 	return TRUE; //successful shutdown
 }
 
@@ -78,6 +85,8 @@ void gl_printError(int errornumber, const char *filename, int linenumber){
 	}
 }
 
+planebox_t tmp = {0};
+
 //true is everything initialized correctly
 int gl_init(void){
 
@@ -92,7 +101,8 @@ int gl_init(void){
 	model_init();
 	shader_init();
 	tracegrid_init();
-//	viewport_init();
+	viewport_init();
+//	planebox_init();
 //	int mid = model_register("test.iqm");
 //	printf("registered model id %i\n", mid);
 //	model_load(model_returnById(mid));
@@ -148,9 +158,56 @@ int gl_renderFrame(void){ //temp
 	return 1;
 }
 
-
-
+int fuck = 0;
 int gl_renderDebug(void){
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	if(!fuck){
+		planebox_init();
+		fuck = 1;
+	tmp.type = 1;
+	tmp.name = strdup("tmp.planebox");
+	planebox_load(&tmp);
+
+	}
+	int mid = model_register("models/bunny.iqm");
+	model_t *m = model_returnById(mid);
+	model_load(m);
+//	print("loaded model %s with %i verts and %i tris");
+//	if(m->type) printf("error\n");
+	int sid = shader_register("shaders/test.program");
+	shader_t *s = shader_returnById(sid);
+	shader_load(s);
+	viewport_t v = {0};
+	v.type = 1;
+	v.fov = 90.0;
+	v.aspect = 4.0/3.0;
+	v.far = 1000.0;
+	v.near = 0.1;
+	v.angle[1] = cnt;
+	v.angle[0] = 30.0;
+	v.pos[0] = sin((v.angle[1]/180.0) * -M_PI) * 10.0;
+	v.pos[2] = cos((v.angle[1]/180.0) * -M_PI) * 10.0;
+	v.pos[1] = 3.0;
+
+	cnt++;
+	v.changed = 3;
+	viewport_recalc(&v);
+
+	glUseProgram(s->programid);
+	CHECKGLERROR
+
+//	printf("bunny vao id %i\n", m->vbo.vaoid);
+	glBindVertexArray(m->vbo.vaoid);
+	CHECKGLERROR
+	float tmat[16];
+	Matrix4x4_ToArrayFloatGL(&v.viewproj, tmat);
+	glUniformMatrix4fv(s->uniloc[0], 1, GL_FALSE, tmat);
+	CHECKGLERROR
+//	printf("%i tris\n", m->vbo.numfaces);
+//	glDrawElements(GL_TRIANGLES, m->vbo.numfaces * 3, GL_UNSIGNED_INT, 0);
+	CHECKGLERROR
+
+	planebox_renderDebug(&tmp, &v);
+
 	return 1;
 }

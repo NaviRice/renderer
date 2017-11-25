@@ -11,6 +11,8 @@ int tgwidth = 0;
 int tgheight = 0;
 int tgtriangles = 0;
 
+GLfloat *resultsbuffer = 0;
+
 //using an untracked vbo
 
 int tracegrid_init(void){
@@ -89,7 +91,31 @@ int tracegrid_resize(int width, int height){
 
 	if(texcoords) free(texcoords); //TODO do i want to keep these around?
 	if(indices) free(indices);
-	return FALSE;
+
+	resultsbuffer = realloc(resultsbuffer, width * height * 2 * sizeof(GLfloat));
+	return TRUE;
+}
+
+
+int tracegrid_trace(void){
+	//oh boy
+	//todo tile, simd, or other improvments
+	//note can just do check here if it falls
+	int x, y;
+//	for(y = 0; y < height; y++){
+//		for(x = 0; x < width; x++){
+			//get ready for spaghetti
+			//returns TRUE if fell on the real screen
+			//if(do_trace(&pointah, &pointah)) update_VST_BB;
+//		}
+//	}
+}
+
+int tracegrid_pushresults(void){
+	glBindVertexArray(tgvbo.vaoid);
+	glBindBuffer(GL_ARRAY_BUFFER, tgvbo.vertsid[0]);
+	glBufferData(GL_ARRAY_BUFFER, tgwidth * tgheight * 2 * sizeof(GLfloat), resultsbuffer, GL_STREAM_DRAW); // temporarily filling with the texcoords, will later fill with traced results, may change this.
+	return TRUE;
 }
 
 int tracegrid_shutdown(void){
