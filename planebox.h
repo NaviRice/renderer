@@ -17,10 +17,18 @@ typedef struct planebox_s {
 	vec3_t loc;
 	vec3_t rot;
 	//todo bboxp
-	int texwidth;
-	int texheight;
-	float * texdata;
+
+	char * depthname;
+	int depthwidth;
+	int depthheight;
+	float * depthdata;
 	GLuint depthtexid;
+
+	char * normname;
+	int normwidth;
+	int normheight;
+	float * normdata;
+	GLuint normtexid;
 	vbo_t thevbo; //generated for each, because differing resolutions
 }planebox_t;
 
@@ -28,7 +36,7 @@ typedef struct planebox_s {
 
 int planebox_renderDebug(planebox_t *p, viewport_t *v);
 
-int planebox_renderDebugBBox(planebox_t *p, viewport_t *v);
+int planebox_renderDebugLines(planebox_t *p, viewport_t *v);
 
 int planebox_init(void);
 

@@ -508,6 +508,7 @@ int shader_load(shader_t *s){
 	switch(s->type){
 		case 1:
 			shader_parseProgramFile(s);
+			//todo add checks
 			s->type = 2;
 		case 2:
 			shader_loadSources(s->vsources);

@@ -1,0 +1,4 @@
+vertexsource: ./shaders/debugmesh.names
+fragmentsource: ./shaders/debugmesh.names
+VertexSource: ./shaders/debugmesh.vert
+FragmentSource: ./shaders/debugmesh.frag

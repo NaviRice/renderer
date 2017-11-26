@@ -93,8 +93,8 @@ int glfw_init(int width, int height, int bpp, int debugmode){
 	}
 
 	if(!glfw_resizeWindow2(width, height, bpp, debugmode)) return FALSE;
-	glfwMakeContextCurrent(window);
-//	glfwMakeContextCurrent(window);
+	glfwMakeContextCurrent(window);//todo figure this shit out
+//	glfwMakeContextCurrent(window2);
 	return TRUE;
 }
 

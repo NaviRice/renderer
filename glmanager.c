@@ -208,6 +208,7 @@ int gl_renderDebug(void){
 	CHECKGLERROR
 
 	planebox_renderDebug(&tmp, &v);
+	planebox_renderDebugLines(&tmp, &v);
 
 	return 1;
 }
