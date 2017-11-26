@@ -296,6 +296,7 @@ int planebox_load(planebox_t *p){
 
 
 int planebox_renderDebug(planebox_t *p, viewport_t *v){
+	glEnable(GL_DEPTH_TEST);
 	if(!p || !p->type){
 		printf("PLANEBOX/renderDebug: ERROR invalid planebox!\n");
 		return 0;
@@ -326,6 +327,7 @@ int planebox_renderDebug(planebox_t *p, viewport_t *v){
 	return TRUE;
 }
 int planebox_renderDebugLines(planebox_t *p, viewport_t *v){
+	glEnable(GL_DEPTH_TEST);
 	if(!p || !p->type){
 		printf("PLANEBOX/renderDebug: ERROR invalid planebox!\n");
 		return 0;
