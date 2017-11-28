@@ -2,7 +2,7 @@
 #include <epoxy/glx.h>
 #include "globaldefs.h"
 #include "vbomanager.h"
-
+#include "glmanager.h"
 
 
 IDLIST_INTERNAL_NOHASH(vbo, vbo_t);

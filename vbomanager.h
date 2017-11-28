@@ -26,7 +26,6 @@ IDLIST_HEADER_NOHASH(vbo, vbo_t);
 int vbo_init(void);
 int vbo_setup(vbo_t *v);
 
-
 int vbo_unload(vbo_t *v);
 
 #endif

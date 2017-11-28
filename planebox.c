@@ -23,6 +23,9 @@ int planebox_debugmesh_id = 0;
 
 //generate a bbox vao
 int planebox_init(void){
+	return 1;
+}
+int planebox_initOtherContext(void){
 	planebox_vao.type = 1;	//trick vbo manager into its a legit vao
 	planebox_vao.datawidth[0] = 3; //pos
 	planebox_vao.datawidth[3] = 3; //color

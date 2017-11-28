@@ -83,7 +83,7 @@ int glfw_init(int width, int height, int bpp, int debugmode){
 		printf("ERROR -- GLFW window creation failed\n");
 		return FALSE;
 	}
-	if(!glfw_resizeWindow(width, height, bpp, debugmode)) return FALSE;
+	glfwMakeContextCurrent(window);//todo figure this shit out
 	window2 = glfwCreateWindow(width, height, "Debug Screen", NULL, window);
 
 	if(!window2){
@@ -92,8 +92,8 @@ int glfw_init(int width, int height, int bpp, int debugmode){
 		return FALSE;
 	}
 
+	if(!glfw_resizeWindow(width, height, bpp, debugmode)) return FALSE;
 	if(!glfw_resizeWindow2(width, height, bpp, debugmode)) return FALSE;
-	glfwMakeContextCurrent(window);//todo figure this shit out
 //	glfwMakeContextCurrent(window2);
 	return TRUE;
 }

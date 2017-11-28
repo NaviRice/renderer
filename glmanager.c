@@ -1,5 +1,6 @@
 #include <epoxy/gl.h>
 #include <epoxy/glx.h> //opengl includes
+#include <math.h>
 
 #include "globaldefs.h"
 
@@ -25,6 +26,9 @@
 
 #include "planebox.h"
 
+
+extern int glfw_context1(void);
+extern int glfw_context2(void);
 
 //todo move into glinit and then just keep track of the lowest?
 int msaa_maxSamples=0, msaa_maxIntSamples=0, msaa_maxColorSamples=0, msaa_maxDepthSamples=0;
@@ -102,7 +106,22 @@ int gl_init(void){
 	shader_init();
 	tracegrid_init();
 	viewport_init();
-//	planebox_init();
+	planebox_init();
+
+
+
+//second context stuff
+	glfw_context2();
+	CHECKGLERROR
+	planebox_initOtherContext();
+	tmp.type = 1;
+	tmp.name = strdup("tmp.planebox");
+	planebox_load(&tmp);
+	//everything but the vao should work in context 1
+	CHECKGLERROR
+	glfw_context1();
+
+
 //	int mid = model_register("test.iqm");
 //	printf("registered model id %i\n", mid);
 //	model_load(model_returnById(mid));
@@ -158,17 +177,8 @@ int gl_renderFrame(void){ //temp
 	return 1;
 }
 
-int fuck = 0;
 int gl_renderDebug(void){
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	if(!fuck){
-		planebox_init();
-		fuck = 1;
-	tmp.type = 1;
-	tmp.name = strdup("tmp.planebox");
-	planebox_load(&tmp);
-
-	}
 	int mid = model_register("models/bunny.iqm");
 	model_t *m = model_returnById(mid);
 	model_load(m);

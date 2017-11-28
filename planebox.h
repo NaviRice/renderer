@@ -40,6 +40,8 @@ int planebox_renderDebugLines(planebox_t *p, viewport_t *v);
 
 int planebox_init(void);
 
+int planebox_initOtherContext(void);
+
 int planebox_parsePlaneboxFIle(planebox_t *p);
 
 int planebox_load(planebox_t *p);
