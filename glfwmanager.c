@@ -4,7 +4,8 @@
 #include "glfwmanager.h"
 
 //temp
-extern int glResizeViewports(int width, int height);
+extern int gl_resizeViewports(int width, int height);
+extern int gl_resizeDebugViewports(int width, int height);
 
 
 GLFWwindow * window;
@@ -31,11 +32,11 @@ int glfw_resizeWindow(int width, int height, int bpp, int debugmode){
 	if(height <1) height =1;
 	if(width <1) width =1;
 	glfwSetWindowSize(window, width, height);
-//	int r = glResizeViewports(width, height);
-//	if(!r){
-//		console_printf("ERROR -- GL framebuffers resize failed\n");
-//		return FALSE;
-//	}
+	int r = gl_resizeViewports(width, height);
+	if(!r){
+		printf("ERROR -- GL framebuffers resize failed\n");
+		return FALSE;
+	}
 	winwidth = width;
 	winheight = height;
 	return TRUE;
@@ -47,11 +48,11 @@ int glfw_resizeWindow2(int width, int height, int bpp, int debugmode){
 	if(height <1) height =1;
 	if(width <1) width =1;
 	glfwSetWindowSize(window2, width, height);
-//	int r = glResizeViewports(width, height);
-//	if(!r){
-//		console_printf("ERROR -- GL framebuffers resize failed\n");
-//		return FALSE;
-//	}
+	int r = gl_resizeDebugViewports(width, height);
+	if(!r){
+		printf("ERROR -- GL debug framebuffers resize failed\n");
+		return FALSE;
+	}
 	win2width = width;
 	win2height = height;
 	return TRUE;
@@ -121,9 +122,9 @@ int glfw_checkEvent(void){
 	}
 	int iw, ih;
 	glfwGetWindowSize(window, &iw, &ih);
-	if(iw != winwidth || ih != winheight) glfw_resizeWindow(iw, ih, 24, 0);
+	if(iw != winwidth || ih != winheight) glfw_resizeWindow(iw, ih, 24, 1);
 	glfwGetWindowSize(window2, &iw, &ih);
-	if(iw != win2width || ih != win2height) glfw_resizeWindow2(iw, ih, 24, 0);
+	if(iw != win2width || ih != win2height) glfw_resizeWindow2(iw, ih, 24, 1);
 	return TRUE;
 }
 

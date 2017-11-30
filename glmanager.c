@@ -91,6 +91,11 @@ void gl_printError(int errornumber, const char *filename, int linenumber){
 
 planebox_t tmp = {0};
 viewport_t tmpvst = {0};
+viewport_t debugvp = {0};
+
+//tmp
+int debugwidth = 800;
+int debugheight = 600;
 
 //true is everything initialized correctly
 int gl_init(void){
@@ -123,6 +128,14 @@ int gl_init(void){
 	glfw_context1();
 
 
+
+	debugvp.type = 1;
+	debugvp.fov = 90.0;
+	debugvp.aspect = (double)debugwidth/(double)debugheight;
+	debugvp.far = 1000.0;
+	debugvp.near = 0.1;
+	debugvp.changed = 3;
+	viewport_recalc(&debugvp);
 
 	tmpvst.type = 1;
 	tmpvst.fov = 30.0;
@@ -189,47 +202,34 @@ int gl_renderFrame(void){ //temp
 }
 
 int gl_renderDebug(void){
+	glViewport(0,0, debugwidth, debugheight);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	int mid = model_register("models/bunny.iqm");
-	model_t *m = model_returnById(mid);
-	model_load(m);
-//	print("loaded model %s with %i verts and %i tris");
-//	if(m->type) printf("error\n");
-	int sid = shader_register("shaders/test.program");
-	shader_t *s = shader_returnById(sid);
-	shader_load(s);
-	viewport_t v = {0};
-	v.type = 1;
-	v.fov = 90.0;
-	v.aspect = 4.0/3.0;
-	v.far = 1000.0;
-	v.near = 0.1;
-	v.angle[1] = cnt;
-	v.angle[0] = 30.0;
-	v.pos[0] = sin((v.angle[1]/180.0) * -M_PI) * 10.0;
-	v.pos[2] = cos((v.angle[1]/180.0) * -M_PI) * 10.0;
-	v.pos[1] = 3.0;
+	debugvp.angle[1] = cnt;
+	debugvp.angle[0] = 30.0;
+	debugvp.pos[0] = sin((debugvp.angle[1]/180.0) * -M_PI) * 10.0;
+	debugvp.pos[2] = cos((debugvp.angle[1]/180.0) * -M_PI) * 10.0;
+	debugvp.pos[1] = 3.0;
+	debugvp.changed |= 1;
+	viewport_recalc(&debugvp);
 
 	cnt++;
-	v.changed = 3;
-	viewport_recalc(&v);
 
-	glUseProgram(s->programid);
-	CHECKGLERROR
-
-//	printf("bunny vao id %i\n", m->vbo.vaoid);
-	glBindVertexArray(m->vbo.vaoid);
-	CHECKGLERROR
-	float tmat[16];
-	Matrix4x4_ToArrayFloatGL(&v.viewproj, tmat);
-	glUniformMatrix4fv(s->uniloc[0], 1, GL_FALSE, tmat);
-	CHECKGLERROR
-//	printf("%i tris\n", m->vbo.numfaces);
-//	glDrawElements(GL_TRIANGLES, m->vbo.numfaces * 3, GL_UNSIGNED_INT, 0);
-	CHECKGLERROR
-
-	planebox_renderDebug(&tmp, &v);
-	planebox_renderDebugLines(&tmp, &v);
-	planebox_renderViewportDebugLines(&tmpvst, &v);
+	planebox_renderDebug(&tmp, &debugvp);
+	planebox_renderDebugLines(&tmp, &debugvp);
+	planebox_renderViewportDebugLines(&tmpvst, &debugvp);
 	return 1;
+}
+
+
+
+int gl_resizeViewports(int width, int height){
+	return TRUE;
+}
+int gl_resizeDebugViewports(int width, int height){
+	//todo framebuffer class that keeps track of height
+	debugwidth = width;
+	debugheight = height;
+	debugvp.aspect = (double)debugwidth/(double)debugheight;
+	debugvp.changed |=2;
+	return TRUE;
 }

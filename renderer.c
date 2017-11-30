@@ -53,6 +53,7 @@ int main(int argc, char *argv[]){
 		glfw_context2();
 		gl_renderDebug();
 		glfw_swapBuffers2();
+		glfw_checkEvent();
 	}
 	shutitdown();
 	return FALSE;
