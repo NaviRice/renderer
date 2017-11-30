@@ -90,6 +90,7 @@ void gl_printError(int errornumber, const char *filename, int linenumber){
 }
 
 planebox_t tmp = {0};
+viewport_t tmpvst = {0};
 
 //true is everything initialized correctly
 int gl_init(void){
@@ -121,6 +122,16 @@ int gl_init(void){
 	CHECKGLERROR
 	glfw_context1();
 
+
+
+	tmpvst.type = 1;
+	tmpvst.fov = 30.0;
+	tmpvst.aspect = 4.0/3.0;
+	tmpvst.far = 10.0;
+	tmpvst.near = 0.1;
+	tmpvst.changed = 3;
+	tmpvst.pos[2] = 5.0;
+	viewport_recalc(&tmpvst);
 
 //	int mid = model_register("test.iqm");
 //	printf("registered model id %i\n", mid);
@@ -219,6 +230,6 @@ int gl_renderDebug(void){
 
 	planebox_renderDebug(&tmp, &v);
 	planebox_renderDebugLines(&tmp, &v);
-
+	planebox_renderViewportDebugLines(&tmpvst, &v);
 	return 1;
 }

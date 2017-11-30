@@ -301,7 +301,6 @@ int planebox_load(planebox_t *p){
 
 
 int planebox_renderDebug(planebox_t *p, viewport_t *v){
-	glEnable(GL_DEPTH_TEST);
 	if(!p || !p->type){
 		printf("PLANEBOX/renderDebug: ERROR invalid planebox!\n");
 		return 0;
@@ -310,6 +309,11 @@ int planebox_renderDebug(planebox_t *p, viewport_t *v){
 		printf("PLANEBOX/renderDebug:planebox has no verts\n");
 		return 0;
 	}
+	if(!v || !v->type){
+		printf("PLANEBOX/renderDebug: ERROR invalid viewport!\n");
+		return 0;
+	}
+	glEnable(GL_DEPTH_TEST);
 //	printf("planebox vao %i\n", planebox_vao.vaoid);
 	glBindVertexArray(p->thevbo.vaoid);
 	CHECKGLERROR
@@ -332,11 +336,15 @@ int planebox_renderDebug(planebox_t *p, viewport_t *v){
 	return TRUE;
 }
 int planebox_renderDebugLines(planebox_t *p, viewport_t *v){
-	glEnable(GL_DEPTH_TEST);
 	if(!p || !p->type){
-		printf("PLANEBOX/renderDebug: ERROR invalid planebox!\n");
+		printf("PLANEBOX/renderDebugLines: ERROR invalid planebox!\n");
 		return 0;
 	}
+	if(!v || !v->type){
+		printf("PLANEBOX/renderDebugLines: ERROR invalid viewport!\n");
+		return 0;
+	}
+	glEnable(GL_DEPTH_TEST);
 //	printf("planebox vao %i\n", planebox_vao.vaoid);
 	glBindVertexArray(planebox_vao.vaoid);
 	CHECKGLERROR
@@ -346,6 +354,36 @@ int planebox_renderDebugLines(planebox_t *p, viewport_t *v){
 	CHECKGLERROR
 	matrix4x4_t tmath;
 	Matrix4x4_Concat(&tmath, &v->viewproj, &p->model);
+//	Matrix4x4_Concat(&tmath, &p->model, &v->viewproj);
+	float tmat[16];
+	Matrix4x4_ToArrayFloatGL(&tmath, tmat);
+	CHECKGLERROR
+	glUniformMatrix4fv(s->uniloc[0], 1, GL_FALSE, tmat);
+
+	CHECKGLERROR
+	glDrawElements(GL_LINES, planebox_vao.numfaces *2, GL_UNSIGNED_INT, 0);
+	CHECKGLERROR
+	return TRUE;
+}
+int planebox_renderViewportDebugLines(viewport_t * debug, viewport_t *v){
+	if(!v || !v->type){
+		printf("PLANEBOX/renderViewportDebugLines: ERROR invalid viewport!\n");
+		return 0;
+	}
+	if(!debug || !debug->type){
+		printf("PLANEBOX/renderViewportDebugLines: ERROR invalid debug viewport!\n");
+		return 0;
+	}
+	glEnable(GL_DEPTH_TEST);
+//	printf("planebox vao %i\n", planebox_vao.vaoid);
+	glBindVertexArray(planebox_vao.vaoid);
+	CHECKGLERROR
+
+	shader_t *s = shader_returnById(planebox_lineshader_id);
+	glUseProgram(s->programid);
+	CHECKGLERROR
+	matrix4x4_t tmath;
+	Matrix4x4_Concat(&tmath, &v->viewproj, &debug->viewprojinv);
 //	Matrix4x4_Concat(&tmath, &p->model, &v->viewproj);
 	float tmat[16];
 	Matrix4x4_ToArrayFloatGL(&tmath, tmat);
