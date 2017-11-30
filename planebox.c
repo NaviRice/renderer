@@ -273,6 +273,8 @@ int planebox_genMats(planebox_t *p){
 //	Matrix4x4_ConcatScale3(&p->model, p->width/2.0, p->height/2.0, p->depth);
 //	Matrix4x4_ConcatTranslate(&p->model, p->loc[0], p->loc[1], p->loc[2]);
 	Matrix4x4_CreateFromQuakeEntity3(&p->model, p->loc[0], p->loc[1], p->loc[2], p->rot[0], p->rot[1], p->rot[2], p->width/2.0, p->height/2.0, p->depth);
+	Matrix4x4_CopyRotateOnly(&p->modelrotonly, &p->model);
+	Matrix4x4_Invert_Full(&p->frusty, &p->model);
 	return TRUE;
 }
 

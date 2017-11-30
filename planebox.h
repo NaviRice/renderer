@@ -4,9 +4,9 @@
 
 typedef struct planebox_s {
 	int type;
-	matrix4x4_t model; // maybe not used, scales a unit box to location
-	matrix4x4_t modelrotonly; // maybe not used
-	matrix4x4_t frusty;	//maybe not used
+	matrix4x4_t model; // debug mode view, and going from planeboxspace back to world
+	matrix4x4_t modelrotonly; // normals from planeboxspace back to world
+	matrix4x4_t frusty;	//world to planeboxspace
 //	plane_t *p;
 //	vec3_t center;
 	float width;
