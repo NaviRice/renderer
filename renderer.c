@@ -13,6 +13,7 @@
 #include "matrixlib.h"
 //#include "entitymanager.h" //init
 
+	extern double glfwGetTime(void);
 
 int shutitdown(){
 	printf("Shutting down\n");
@@ -45,8 +46,26 @@ int main(int argc, char *argv[]){
 	if(!glfw_init(800, 600, 24,1)){printf("Unable to init glfw\n"); shutitdown(); return 2;}
 	if(!gl_init()){printf("Unable to init gl\n"); shutitdown(); return 3;}
 
+	double t, to;
+
+	to=glfwGetTime();
+
+	double timesincelastfpsupdate = 0.0;
+	int framecount = 0;
+
 
 	while(TRUE){		//temp
+		t = glfwGetTime();
+		double delta = t-to;
+		to = t;
+		timesincelastfpsupdate+=delta;
+		if(timesincelastfpsupdate > 5.0){
+			printf("%f fps: %i frames in %f seconds: %f ms per frame\n", (float)framecount/(float)timesincelastfpsupdate, framecount,
+				timesincelastfpsupdate, 1000.0*(float)timesincelastfpsupdate / (float) framecount);
+			framecount = 0;
+			timesincelastfpsupdate = 0;
+		}
+		framecount++;
 		glfw_context1();
 		gl_renderFrame();
 		glfw_swapBuffers();
