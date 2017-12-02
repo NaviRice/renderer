@@ -120,7 +120,7 @@ int gl_init(void){
 	CHECKGLERROR
 	planebox_initOtherContext();
 	tmp.type = 1;
-	tmp.name = strdup("tmp.planebox");
+	tmp.name = strdup("planeboxes/tmp.planebox");
 	planebox_load(&tmp);
 	//everything but the vao should work in context 1
 	CHECKGLERROR

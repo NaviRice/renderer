@@ -14,7 +14,7 @@ char * file_getEntireLine(file_t *f){
 	char c;
 	for(c = fgetc(f->f); c != EOF && c != '\n'; c=fgetc(f->f)){
 		if(lplace >= lsize) lsize = (lplace + 32) & ~(32-1); //TODO FIX
-//		if(lplace >= lsize) lsize = lplace + 32;
+		//		if(lplace >= lsize) lsize = lplace + 32;
 		line = realloc(line, lsize);
 		line[lplace++] = c;
 	}
@@ -44,6 +44,9 @@ file_t file_open(const char * name, const char * mode){
 	//todo more
 	file_t f;
 	f.f = fopen(name, mode);
+	if(!f.f){
+		printf("Couldn't open: %s\n", name);
+	}
 	return f;
 }
 

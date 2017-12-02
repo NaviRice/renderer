@@ -1,5 +1,3 @@
-*.o
-renderer
-renderer-debug
-renderer-profile
-renderer-valgrind
+build
+.DS_Store
+*.swp
