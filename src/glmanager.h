@@ -16,7 +16,7 @@ void gl_printError(int errornumber, const char *filename, int line);
 int gl_resizeViewports(int width, int height);
 int gl_resizeDebugViewports(int width, int height);
 
-#define CHECKGLERROR {if (TRUE){if (FALSE) printf("CHECKGLERROR at %s:%d\n", __FILE__, __LINE__);int checkglerror_errornumber = glGetError();if (checkglerror_errornumber) gl_printError(checkglerror_errornumber, __FILE__, __LINE__);}}
+#define CHECKGLERROR {if (FALSE){if (FALSE) printf("CHECKGLERROR at %s:%d\n", __FILE__, __LINE__);int checkglerror_errornumber = glGetError();if (checkglerror_errornumber) gl_printError(checkglerror_errornumber, __FILE__, __LINE__);}}
 
 
 #endif
