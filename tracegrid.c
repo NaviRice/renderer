@@ -1,5 +1,4 @@
 #include <epoxy/gl.h>
-#include <epoxy/glx.h>
 #include "glmanager.h" // for CHECKGLERROR
 #include "globaldefs.h"
 #include "tracegrid.h"

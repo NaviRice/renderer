@@ -1,5 +1,4 @@
 #include <epoxy/gl.h>
-#include <epoxy/glx.h> //opengl includes
 #include <math.h>
 
 #include "globaldefs.h"

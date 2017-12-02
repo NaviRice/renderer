@@ -1,5 +1,4 @@
 #include <epoxy/gl.h>
-#include <epoxy/glx.h>
 #include "globaldefs.h"
 
 #include "matrixlib.h"
