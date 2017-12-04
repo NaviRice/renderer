@@ -1,0 +1,4 @@
+#define mvp uniform0
+#define posattrib attrib0
+#define tcattrib attrib2
+

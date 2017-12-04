@@ -19,6 +19,9 @@ vbo_t planebox_vao = {0};
 int planebox_lineshader_id = 0;
 int planebox_debugmesh_id = 0;
 
+int planebox_shutdown(void){ //todo
+	return TRUE;
+}
 
 //generate a bbox vao
 int planebox_init(void){
@@ -208,10 +211,10 @@ int planebox_genMeshData(planebox_t *p){
 	for(y = 0; y < maxheight; y++){
 		GLfloat *vertlinedata = vertdata + y*maxwidth*3;
 		GLfloat *tclinedata = tcdata + y*maxwidth*2;
-		GLfloat ytc = (float)y/(float)maxheight;
+		GLfloat ytc = (float)y/(float)(maxheight-1);
 		GLfloat ypos = 2* ytc - 1.0;
 		for(x = 0; x < maxwidth; x++){
-			GLfloat xtc = (float)x/(float)maxwidth;
+			GLfloat xtc = (float)x/(float)(maxwidth-1);
 			GLfloat xpos = 2.0* xtc - 1.0;
 			vertlinedata[x * 3 +0] = xpos;
 			vertlinedata[x * 3 +1] = ypos;

@@ -45,7 +45,7 @@ int gl_shutdown(void){
 	vbo_shutdown();
 	viewport_shutdown();
 	tracegrid_shutdown();
-//	planebox_shutdown();
+	planebox_shutdown();
 	return TRUE; //successful shutdown
 }
 
@@ -109,19 +109,20 @@ int gl_init(void){
 	vbo_init();
 	model_init();
 	shader_init();
-	tracegrid_init();
 	viewport_init();
 	planebox_init();
+	tracegrid_init();
 
 
 
 //second context stuff
 	glfw_context2();
 	CHECKGLERROR
-	planebox_initOtherContext();
-	tmp.type = 1;
-	tmp.name = strdup("planeboxes/tmp.planebox");
-	planebox_load(&tmp);
+		planebox_initOtherContext();
+		tmp.type = 1;
+		tmp.name = strdup("planeboxes/tmp.planebox");
+		planebox_load(&tmp);
+		tracegrid_initOtherContext();
 	//everything but the vao should work in context 1
 	CHECKGLERROR
 	glfw_context1();
@@ -203,7 +204,7 @@ int gl_renderFrame(void){ //temp
 int gl_renderDebug(void){
 	glViewport(0,0, debugwidth, debugheight);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	debugvp.angle[1] = cnt;
+	debugvp.angle[1] = cnt*0.001;
 	debugvp.angle[0] = 30.0;
 	debugvp.pos[0] = sin((debugvp.angle[1]/180.0) * -M_PI) * 10.0;
 	debugvp.pos[2] = cos((debugvp.angle[1]/180.0) * -M_PI) * 10.0;
@@ -216,7 +217,12 @@ int gl_renderDebug(void){
 	planebox_renderDebug(&tmp, &debugvp);
 	planebox_renderDebugLines(&tmp, &debugvp);
 	planebox_renderViewportDebugLines(&tmpvst, &debugvp);
-	return 1;
+	tracegrid_renderDebugGrid(&tmpvst, &debugvp);
+
+	float phi = sin(cnt/5000.0) * 10;
+	phi*=phi;
+	tracegrid_resize((int)phi+2, (int)phi+2);
+	return TRUE;
 }
 
 

@@ -27,8 +27,7 @@ int win2height = 0;
 
 
 int glfw_resizeWindow(int width, int height, int bpp, int debugmode){
-//	if(debugmode) console_printf("DEBUG -- GLFW video resize to: %ix%i width who gives a fuck about bpp i dont handle it\n", width, height);
-	if(debugmode) printf("DEBUG -- GLFW video resize to: %ix%i width who gives a fuck about bpp i dont handle it\n", width, height);
+	if(debugmode) printf("DEBUG -- GLFW video resize to: %ix%i\n", width, height);
 	if(height <1) height =1;
 	if(width <1) width =1;
 	glfwSetWindowSize(window, width, height);
@@ -43,8 +42,7 @@ int glfw_resizeWindow(int width, int height, int bpp, int debugmode){
 }
 
 int glfw_resizeWindow2(int width, int height, int bpp, int debugmode){
-//	if(debugmode) console_printf("DEBUG -- GLFW video resize to: %ix%i width who gives a fuck about bpp i dont handle it\n", width, height);
-	if(debugmode) printf("DEBUG -- GLFW video resize to: %ix%i width who gives a fuck about bpp i dont handle it\n", width, height);
+	if(debugmode) printf("DEBUG -- GLFW video resize to: %ix%i\n", width, height);
 	if(height <1) height =1;
 	if(width <1) width =1;
 	glfwSetWindowSize(window2, width, height);

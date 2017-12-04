@@ -1,0 +1,6 @@
+vertexsource: ./shaders/debuggrid.names
+fragmentsource: ./shaders/debuggrid.names
+VertexSource: ./shaders/debuggrid.vert
+FragmentSource: ./shaders/debuggrid.frag
+geometrysource: ./shaders/debuggrid.names
+geometrysource: ./shaders/debuggrid.geom
