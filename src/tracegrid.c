@@ -55,6 +55,9 @@ int tracegrid_resize(int width, int height){
 		printf("TRACEGRID/tracegrid_resize warning height is < 2, not resizing\n");
 		return 0;
 	}
+	if(width == tgwidth && height == tgwidth){
+		return 0;
+	}
 	//generate temp stuff
 	GLfloat * texcoords = malloc(width * height * 2 * sizeof(GLfloat));
 	GLfloat * positions = malloc(width * height * 2 * sizeof(GLfloat));
