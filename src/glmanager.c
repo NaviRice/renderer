@@ -1,3 +1,4 @@
+
 #include <epoxy/gl.h>
 #include <math.h>
 
@@ -164,7 +165,7 @@ int gl_init(void){
 
 int cnt = 0;
 //ALL OF THIS TEMP
-int gl_renderFrame(void){ //temp
+int gl_renderFrame(double time){ //temp
 
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 /*	int mid = model_register("models/coil.iqm");
@@ -205,18 +206,18 @@ int gl_renderFrame(void){ //temp
 }
 
 
-int gl_renderFirstbounce(void){
+int gl_renderFirstbounce(double time){
 	tracegrid_bindBounce();
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	planebox_renderFirstbounce(&tmp, &tmpvst);
 	return TRUE;
 }
 
-int gl_renderDebug(void){
+int gl_renderDebug(double time){
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0,0, debugwidth, debugheight);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	debugvp.angle[1] = cnt*0.001;
+	debugvp.angle[1] = time*10.0;
 	debugvp.angle[0] = 30.0;
 	debugvp.pos[0] = sin((debugvp.angle[1]/180.0) * -M_PI) * 10.0;
 	debugvp.pos[2] = cos((debugvp.angle[1]/180.0) * -M_PI) * 10.0;
@@ -226,11 +227,11 @@ int gl_renderDebug(void){
 
 
 
-	tmpvst.angle[1] = sin(cnt *0.01) * 10;
-	tmpvst.angle[0] = sin(cnt *0.0031415926868) * 10;
-	tmpvst.pos[0] = sin(cnt * 0.0003111111111);
-	tmpvst.pos[1] = sin(cnt * 0.0002111111111);
-	tmpvst.pos[2] = 5.0 + sin(cnt * 0.0001111111111);
+	tmpvst.angle[1] = sin(time * 1.0) * 10;
+	tmpvst.angle[0] = sin(time * 3.1415926868) * 10;
+	tmpvst.pos[0] = sin(time * 3.111111111);
+	tmpvst.pos[1] = sin(time * 2.111111111);
+	tmpvst.pos[2] = 5.0 + sin(time * 1.11111111);
 	tmpvst.changed |= 1;
 	viewport_recalc(&tmpvst);
 
@@ -243,7 +244,7 @@ int gl_renderDebug(void){
 	tracegrid_renderDebugFirstbounce(&tmpvst, &debugvp);
 	tracegrid_renderDebugGridMini(&tmpvst, &debugvp);
 
-	float phi = sin(cnt/5000.0) * 10;
+	float phi = sin(time / 5.0) * 10;
 	phi*=phi;
 	tracegrid_resize((int)phi+2, (int)phi+2);
 	return TRUE;

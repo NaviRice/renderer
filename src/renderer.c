@@ -67,12 +67,12 @@ int main(int argc, char *argv[]){
 		}
 		framecount++;
 		glfw_context1();
-		gl_renderFrame();
+		gl_renderFrame(t);
 		glfw_swapBuffers();
 		glfw_context2();
 		//todo move to context 1 once i verify that it worky
-		gl_renderFirstbounce();
-		gl_renderDebug();
+		gl_renderFirstbounce(t);
+		gl_renderDebug(t);
 		glfw_swapBuffers2();
 		glfw_checkEvent();
 	}

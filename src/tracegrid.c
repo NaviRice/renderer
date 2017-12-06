@@ -145,6 +145,7 @@ int tracegrid_resize(int width, int height){
 	if(width == tgwidth && height == tgwidth){
 		return 0;
 	}
+//	printf("TRACEGRID/tracegrid_resize resizing tracegrid to %i by %i\n", width, height);
 	//generate temp stuff
 	GLfloat * texcoords = malloc(width * height * 2 * sizeof(GLfloat));
 	GLfloat * positions = malloc(width * height * 2 * sizeof(GLfloat));

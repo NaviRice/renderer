@@ -2,16 +2,15 @@
 #define GLMANAGERHEADER
 
 int gl_init(void);
-int gl_renderFrame(void);
-int gl_renderDebug(void);
-int gl_renderFirstbounce(void);
+int gl_renderDebug(double time);
+int gl_renderFirstbounce(double time);
 
 int gl_resize(int width, int height);
 
 
 int gl_shutdown(void);
 
-int gl_renderFrame(void); //temp
+int gl_renderFrame(double time); //temp
 
 void gl_printError(int errornumber, const char *filename, int line);
 int gl_resizeViewports(int width, int height);
