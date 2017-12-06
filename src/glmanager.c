@@ -243,7 +243,7 @@ int gl_renderDebug(void){
 	tracegrid_renderDebugFirstbounce(&tmpvst, &debugvp);
 	tracegrid_renderDebugGridMini(&tmpvst, &debugvp);
 
-	float phi = sin(cnt/5000.0) * 5;
+	float phi = sin(cnt/5000.0) * 10;
 	phi*=phi;
 	tracegrid_resize((int)phi+2, (int)phi+2);
 	return TRUE;
