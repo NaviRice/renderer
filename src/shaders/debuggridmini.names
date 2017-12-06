@@ -1,6 +1,4 @@
-#define vstmodel uniform0
-#define debugmv uniform1
-#define bounces uniform2
+#define mvp uniform0
 #define posattrib attrib0
 #define tcattrib attrib2
 #define postex texture0

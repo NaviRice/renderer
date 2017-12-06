@@ -99,6 +99,7 @@ int debugheight = 600;
 
 //true is everything initialized correctly
 int gl_init(void){
+	glDepthFunc(GL_LEQUAL);
 
 	glGetIntegerv(GL_MAX_SAMPLES,			&msaa_maxSamples);
 	glGetIntegerv(GL_MAX_INTEGER_SAMPLES,		&msaa_maxIntSamples);
@@ -230,9 +231,9 @@ int gl_renderDebug(void){
 	planebox_renderViewportDebugLines(&tmpvst, &debugvp);
 	tracegrid_renderDebugGrid(&tmpvst, &debugvp);
 	tracegrid_renderDebugFirstbounce(&tmpvst, &debugvp);
-//	planebox_renderFirstbounce(&tmp, &tmpvst);
+	tracegrid_renderDebugGridMini(&tmpvst, &debugvp);
 
-	float phi = sin(cnt/5000.0) * 10;
+	float phi = sin(cnt/5000.0) * 5;
 	phi*=phi;
 	tracegrid_resize((int)phi+2, (int)phi+2);
 	return TRUE;

@@ -12,6 +12,7 @@ out vec2 tc;
 void main(){
 	tc = tcattrib;
 	vec4 posmodel = vec4(posattrib.xy, texture(depth, tc).r, 1.0);
-	gl_Position = mvp * posmodel;
+	vec4 worldpos = model * posmodel;
+	gl_Position = mvp * worldpos;
 	pos = vec3(model * posmodel);
 }

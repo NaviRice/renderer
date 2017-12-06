@@ -331,7 +331,8 @@ int planebox_renderFirstbounce(planebox_t *p, viewport_t *v){
 	Matrix4x4_Concat(&tmath, &v->viewproj, &p->model);
 //	Matrix4x4_Concat(&tmath, &p->model, &v->viewproj);
 	float tmat[16];
-	Matrix4x4_ToArrayFloatGL(&tmath, tmat);
+	Matrix4x4_ToArrayFloatGL(&v->viewproj, tmat);
+//	Matrix4x4_ToArrayFloatGL(&tmath, tmat);
 	glUniformMatrix4fv(s->uniloc[0], 1, GL_FALSE, tmat);
 
 //	Matrix4x4_ToArrayFloatGL(&v->viewproj, tmat);
