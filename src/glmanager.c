@@ -224,6 +224,16 @@ int gl_renderDebug(void){
 	debugvp.changed |= 1;
 	viewport_recalc(&debugvp);
 
+
+
+	tmpvst.angle[1] = sin(cnt *0.01) * 10;
+	tmpvst.angle[0] = sin(cnt *0.0031415926868) * 10;
+	tmpvst.pos[0] = sin(cnt * 0.0003111111111);
+	tmpvst.pos[1] = sin(cnt * 0.0002111111111);
+	tmpvst.pos[2] = 5.0 + sin(cnt * 0.0001111111111);
+	tmpvst.changed |= 1;
+	viewport_recalc(&tmpvst);
+
 	cnt++;
 
 	planebox_renderDebug(&tmp, &debugvp);
