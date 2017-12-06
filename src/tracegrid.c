@@ -233,25 +233,30 @@ int tracegrid_renderDebugGrid(viewport_t * caster, viewport_t * v){
 }
 
 int tracegrid_renderDebugFirstbounce(viewport_t *caster, viewport_t *v){
-	//figure out how big we wanna render it
-	float box = caster->aspect;
-	float view = v->aspect;
-	float scale = box > view ? 0.5/box : 0.5/view;
-	vec4_t resize = {scale *box, scale *view, scale*box-1.0, scale*view - 1.0};
-	glDisable(GL_DEPTH_TEST);
 	glBindTexture(GL_TEXTURE_2D, tracegrid_fbo_postex);
 	glBindVertexArray(tracegrid_vao.vaoid);
 	CHECKGLERROR
 
 	shader_t *s = shader_returnById(tracegrid_debugfirstbounceshader_id);
 	glUseProgram(s->programid);
-	glUniform4fv(s->uniloc[0], 1, resize);
+//	glUniform4fv(s->uniloc[0], 1, resize);
 	CHECKGLERROR
-//	matrix4x4_t tmath;
-//	Matrix4x4_Concat(&tmath, &v->viewproj, &caster->viewprojinv);
-//	float tmat[16];
-//	Matrix4x4_ToArrayFloatGL(&tmath, tmat);
-//	glUniformMatrix4fv(s->uniloc[0], 1, GL_FALSE, tmat);
+	matrix4x4_t tmath;
+	Matrix4x4_Concat(&tmath, &v->viewproj, &caster->viewprojinv);
+	float tmat[16];
+	Matrix4x4_ToArrayFloatGL(&tmath, tmat);
+	glUniformMatrix4fv(s->uniloc[0], 1, GL_FALSE, tmat);
+	fsquad_render();
+	glDisable(GL_DEPTH_TEST);
+
+	//figure out how big we wanna render it
+	float box = caster->aspect;
+	float view = v->aspect;
+	float scale = box > view ? 0.5/box : 0.5/view;
+	Matrix4x4_CreateTranslate(&tmath, scale * box - 1.0, scale * view - 1.0, 0.0);
+	Matrix4x4_ConcatScale3(&tmath, scale * box, scale * view, 1.0);
+	Matrix4x4_ToArrayFloatGL(&tmath, tmat);
+	glUniformMatrix4fv(s->uniloc[0], 1, GL_FALSE, tmat);
 //	CHECKGLERROR
 
 	//printf("%i triangles\n", tracegrid_vao.numfaces);

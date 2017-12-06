@@ -1,5 +1,6 @@
 in vec2 tc;
-in vec2 pos;
+//in vec2 pos;
+in vec3 pos;
 
 uniform sampler2D color;
 

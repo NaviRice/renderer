@@ -1,4 +1,5 @@
-#define resize uniform0
+//#define resize uniform0
+#define mvp uniform0
 #define color texture0
 #define posattrib attrib0
 #define tcattrib attrib2
