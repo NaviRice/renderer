@@ -1,0 +1,6 @@
+#define mvp uniform0
+#define model uniform1
+#define depth texture0
+#define posattrib attrib0
+#define tcattrib attrib2
+#define colattrib attrib3

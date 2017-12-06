@@ -1,0 +1,4 @@
+vertexsource: ./shaders/debugfirstbounce.names
+fragmentsource: ./shaders/debugfirstbounce.names
+VertexSource: ./shaders/debugfirstbounce.vert
+FragmentSource: ./shaders/debugfirstbounce.frag

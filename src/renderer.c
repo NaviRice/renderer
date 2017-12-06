@@ -70,6 +70,8 @@ int main(int argc, char *argv[]){
 		gl_renderFrame();
 		glfw_swapBuffers();
 		glfw_context2();
+		//todo move to context 1 once i verify that it worky
+		gl_renderFirstbounce();
 		gl_renderDebug();
 		glfw_swapBuffers2();
 		glfw_checkEvent();

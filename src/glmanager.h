@@ -4,6 +4,7 @@
 int gl_init(void);
 int gl_renderFrame(void);
 int gl_renderDebug(void);
+int gl_renderFirstbounce(void);
 
 int gl_resize(int width, int height);
 

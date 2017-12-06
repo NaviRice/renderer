@@ -36,6 +36,7 @@ typedef struct planebox_s {
 
 vbo_t planebox_vao;
 int planebox_renderDebug(planebox_t *p, viewport_t *v);
+int planebox_renderFirstbounce(planebox_t *p, viewport_t *v);
 
 int planebox_renderDebugLines(planebox_t *p, viewport_t *v);
 int planebox_renderViewportDebugLines(viewport_t *debug, viewport_t *v);

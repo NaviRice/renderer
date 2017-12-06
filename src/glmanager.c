@@ -24,6 +24,7 @@
 #include "tracegrid.h" // for tracegrid duh
 
 #include "planebox.h"
+#include "fsquad.h"
 
 
 extern int glfw_context1(void);
@@ -123,6 +124,7 @@ int gl_init(void){
 		tmp.name = strdup("planeboxes/tmp.planebox");
 		planebox_load(&tmp);
 		tracegrid_initOtherContext();
+		fsquad_init();
 	//everything but the vao should work in context 1
 	CHECKGLERROR
 	glfw_context1();
@@ -201,7 +203,16 @@ int gl_renderFrame(void){ //temp
 	return 1;
 }
 
+
+int gl_renderFirstbounce(void){
+	tracegrid_bindBounce();
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	planebox_renderFirstbounce(&tmp, &tmpvst);
+	return TRUE;
+}
+
 int gl_renderDebug(void){
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0,0, debugwidth, debugheight);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	debugvp.angle[1] = cnt*0.001;
@@ -218,6 +229,8 @@ int gl_renderDebug(void){
 	planebox_renderDebugLines(&tmp, &debugvp);
 	planebox_renderViewportDebugLines(&tmpvst, &debugvp);
 	tracegrid_renderDebugGrid(&tmpvst, &debugvp);
+	tracegrid_renderDebugFirstbounce(&tmpvst, &debugvp);
+//	planebox_renderFirstbounce(&tmp, &tmpvst);
 
 	float phi = sin(cnt/5000.0) * 10;
 	phi*=phi;

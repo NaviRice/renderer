@@ -9,17 +9,84 @@
 #include "shadermanager.h"
 #include "vbomanager.h"
 
+
+#include "fsquad.h" // for render of debug
+
 vbo_t tracegrid_vao = {0};
 int tgwidth = 0;
 int tgheight = 0;
 int tgtriangles = 0;
 
 int tracegrid_debuggridshader_id = 0;
+int tracegrid_firstbounceshader_id = 0;
+int tracegrid_debugfirstbounceshader_id = 0;
+
+
+
+
+//tmp
+//todo multiple contexts and fbo sharing issues... probably how im gonna do it is just render in the main context
+GLuint tracegrid_fbo = 0;
+GLuint tracegrid_fbo_postex = 0; //maybe change to depth, idk
+GLuint tracegrid_fbo_normtex = 0;
+GLuint tracegrid_fbo_renderbuffer = 0;
+
+int tracegrid_fbo_width = 0;
+int tracegrid_fbo_height = 0;
+
+//todo really move this to a framebuffermanager
+int tracegrid_bindBounce(void){
+	glBindFramebuffer(GL_FRAMEBUFFER, tracegrid_fbo);
+	glViewport(0,0, tracegrid_fbo_width, tracegrid_fbo_height);
+	shader_t *s = shader_returnById(tracegrid_firstbounceshader_id);
+	glUseProgram(s->programid);
+	CHECKGLERROR
+	//todo
+	return TRUE;
+}
+
+
+//todo move to a framebuffer manager
+int tracegrid_initFramebuffer(int width, int height){
+	glGenFramebuffers(1, &tracegrid_fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, tracegrid_fbo);
+	glGenTextures(1, &tracegrid_fbo_postex);
+	glGenTextures(1, &tracegrid_fbo_normtex);
+	glBindTexture(GL_TEXTURE_2D, tracegrid_fbo_postex);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tracegrid_fbo_postex, 0);
+
+	glBindTexture(GL_TEXTURE_2D, tracegrid_fbo_normtex);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, tracegrid_fbo_normtex, 0);
+
+
+	glGenRenderbuffers(1, &tracegrid_fbo_renderbuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, tracegrid_fbo_renderbuffer);
+	//look into depth32 and depth32f
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, tracegrid_fbo_renderbuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	tracegrid_fbo_width = width;
+	tracegrid_fbo_height = height;
+
+	return TRUE;
+}
 
 
 int tracegrid_init(void){
 	return TRUE;
 }
+
+
+
+
+
 
 //todo multi contexts
 int tracegrid_initOtherContext(void){
@@ -38,9 +105,20 @@ int tracegrid_initOtherContext(void){
 
 
 
+
 	tracegrid_debuggridshader_id = shader_register("shaders/debuggrid.program");
 	shader_t *s = shader_returnById(tracegrid_debuggridshader_id);
 	shader_load(s);
+
+	tracegrid_firstbounceshader_id = shader_register("shaders/firstbounce.program");
+	s = shader_returnById(tracegrid_firstbounceshader_id);
+	shader_load(s);
+
+	tracegrid_debugfirstbounceshader_id = shader_register("shaders/debugfirstbounce.program");
+	s = shader_returnById(tracegrid_debugfirstbounceshader_id);
+	shader_load(s);
+
+	tracegrid_initFramebuffer(800, 600); //todo
 	return TRUE;
 }
 
@@ -127,7 +205,7 @@ int tracegrid_resize(int width, int height){
 
 int tracegrid_renderDebugGrid(viewport_t * caster, viewport_t * v){
 	if(!v || !v->type){
-		printf("TRACEGRID/renderDebugGrid: ERROR invaliud viewport!\n");
+		printf("TRACEGRID/renderDebugGrid: ERROR invalid viewport!\n");
 		return 0;
 	}
 	if(!caster || !caster->type){
@@ -151,6 +229,35 @@ int tracegrid_renderDebugGrid(viewport_t * caster, viewport_t * v){
 	//printf("%i triangles\n", tracegrid_vao.numfaces);
 
 	glDrawElements(GL_TRIANGLES, tracegrid_vao.numfaces * 3, GL_UNSIGNED_INT, 0);
+	return TRUE;
+}
+
+int tracegrid_renderDebugFirstbounce(viewport_t *caster, viewport_t *v){
+	//figure out how big we wanna render it
+	float box = caster->aspect;
+	float view = v->aspect;
+	float scale = box > view ? 0.5/box : 0.5/view;
+	vec4_t resize = {scale *box, scale *view, scale*box-1.0, scale*view - 1.0};
+	glDisable(GL_DEPTH_TEST);
+	glBindTexture(GL_TEXTURE_2D, tracegrid_fbo_postex);
+	glBindVertexArray(tracegrid_vao.vaoid);
+	CHECKGLERROR
+
+	shader_t *s = shader_returnById(tracegrid_debugfirstbounceshader_id);
+	glUseProgram(s->programid);
+	glUniform4fv(s->uniloc[0], 1, resize);
+	CHECKGLERROR
+//	matrix4x4_t tmath;
+//	Matrix4x4_Concat(&tmath, &v->viewproj, &caster->viewprojinv);
+//	float tmat[16];
+//	Matrix4x4_ToArrayFloatGL(&tmath, tmat);
+//	glUniformMatrix4fv(s->uniloc[0], 1, GL_FALSE, tmat);
+//	CHECKGLERROR
+
+	//printf("%i triangles\n", tracegrid_vao.numfaces);
+
+//	glDrawElements(GL_TRIANGLES, tracegrid_vao.numfaces * 3, GL_UNSIGNED_INT, 0);
+	fsquad_render();
 	return TRUE;
 }
 

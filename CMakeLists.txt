@@ -22,6 +22,7 @@ set(SOURCES
 	src/planebox.c
 	src/shadermanager.c
 	src/glmanager.c
+	src/fsquad.c
 	)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/shaders
