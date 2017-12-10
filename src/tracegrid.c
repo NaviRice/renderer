@@ -4,13 +4,16 @@
 
 #include "matrixlib.h"
 #include "viewportmanager.h"
-#include "tracegrid.h"
+
 
 #include "shadermanager.h"
 #include "vbomanager.h"
 
 
 #include "fsquad.h" // for render of debug
+#include "planebox.h"
+#include "tracegrid.h"
+
 
 vbo_t tracegrid_vao = {0};
 int tgwidth = 0;
@@ -54,13 +57,14 @@ int tracegrid_initFramebuffer(int width, int height){
 	glGenTextures(1, &tracegrid_fbo_postex);
 	glGenTextures(1, &tracegrid_fbo_normtex);
 	glBindTexture(GL_TEXTURE_2D, tracegrid_fbo_postex);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, width, height, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tracegrid_fbo_postex, 0);
 	CHECKGLERROR
+//i probably dont need this
 	glBindTexture(GL_TEXTURE_2D, tracegrid_fbo_normtex);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, width, height, 0, GL_RGB, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -213,7 +217,7 @@ int tracegrid_resize(int width, int height){
 
 
 
-int tracegrid_renderDebugGrid(viewport_t * caster, viewport_t * v){
+int tracegrid_renderDebugGrid(viewport_t * caster, viewport_t * v, planebox_t * screen){
 	if(!v || !v->type){
 		printf("TRACEGRID/renderDebugGrid: ERROR invalid viewport!\n");
 		return 0;
@@ -222,6 +226,9 @@ int tracegrid_renderDebugGrid(viewport_t * caster, viewport_t * v){
 		printf("TRACEGRID/renderDebugGrid: ERROR invalid caster viewport!\n");
 		return 0;
 	}
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, tracegrid_fbo_normtex);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, tracegrid_fbo_postex);
 	glEnable(GL_DEPTH_TEST);
 	glBindVertexArray(tracegrid_vao.vaoid);
@@ -235,6 +242,14 @@ int tracegrid_renderDebugGrid(viewport_t * caster, viewport_t * v){
 	glUniformMatrix4fv(s->uniloc[0], 1, GL_FALSE, tmat);
 	Matrix4x4_ToArrayFloatGL(&v->viewproj, tmat);
 	glUniformMatrix4fv(s->uniloc[1], 1, GL_FALSE, tmat);
+
+	Matrix4x4_ToArrayFloatGL(&screen->frusty, tmat);
+	glUniformMatrix4fv(s->uniloc[4], 1, GL_FALSE, tmat);
+
+	Matrix4x4_ToArrayFloatGL(&screen->model, tmat);
+	glUniformMatrix4fv(s->uniloc[5], 1, GL_FALSE, tmat);
+
+	glUniform3fv(s->uniloc[3], 1, &caster->pos);
 	glUniform1i(s->uniloc[2], 0);
 	CHECKGLERROR
 
@@ -243,6 +258,9 @@ int tracegrid_renderDebugGrid(viewport_t * caster, viewport_t * v){
 	glDrawElements(GL_TRIANGLES, tracegrid_vao.numfaces * 3, GL_UNSIGNED_INT, 0);
 
 	glUniform1i(s->uniloc[2], 1);
+	glDrawElements(GL_TRIANGLES, tracegrid_vao.numfaces * 3, GL_UNSIGNED_INT, 0);
+
+	glUniform1i(s->uniloc[2], 2);
 	glDrawElements(GL_TRIANGLES, tracegrid_vao.numfaces * 3, GL_UNSIGNED_INT, 0);
 	return TRUE;
 }

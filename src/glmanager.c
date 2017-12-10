@@ -22,9 +22,9 @@
 //extern int viewport_init(void);
 //extern int viewport_shutdown(void);
 
-#include "tracegrid.h" // for tracegrid duh
 
 #include "planebox.h"
+#include "tracegrid.h" // for tracegrid duh
 #include "fsquad.h"
 
 
@@ -91,6 +91,7 @@ void gl_printError(int errornumber, const char *filename, int linenumber){
 }
 
 planebox_t tmp = {0};
+planebox_t tmpscreen = {0};
 viewport_t tmpvst = {0};
 viewport_t debugvp = {0};
 
@@ -125,6 +126,10 @@ int gl_init(void){
 		tmp.type = 1;
 		tmp.name = strdup("planeboxes/tmp.planebox");
 		planebox_load(&tmp);
+
+		tmpscreen.type = 1;
+		tmpscreen.name = strdup("planeboxes/screen.planebox");
+		planebox_load(&tmpscreen);
 		tracegrid_initOtherContext();
 		fsquad_init();
 	//everything but the vao should work in context 1
@@ -206,8 +211,11 @@ int gl_renderFrame(double time){ //temp
 }
 
 
+
 int gl_renderFirstbounce(double time){
 	tracegrid_bindBounce();
+	GLenum renderbuffs[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+	glDrawBuffers(2, renderbuffs);//todo move
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	planebox_renderFirstbounce(&tmp, &tmpvst);
 	return TRUE;
@@ -239,8 +247,9 @@ int gl_renderDebug(double time){
 
 	planebox_renderDebug(&tmp, &debugvp);
 	planebox_renderDebugLines(&tmp, &debugvp);
+	planebox_renderDebugLines(&tmpscreen, &debugvp);
 	planebox_renderViewportDebugLines(&tmpvst, &debugvp);
-	tracegrid_renderDebugGrid(&tmpvst, &debugvp);
+	tracegrid_renderDebugGrid(&tmpvst, &debugvp, &tmpscreen);
 	tracegrid_renderDebugFirstbounce(&tmpvst, &debugvp);
 	tracegrid_renderDebugGridMini(&tmpvst, &debugvp);
 

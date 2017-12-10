@@ -1,5 +1,6 @@
 #define mvp uniform0
-#define depth texture0
+#define offsetmap texture0
+#define normalmap texture1
 #define posattrib attrib0
 #define tcattrib attrib2
 #define colattrib attrib3

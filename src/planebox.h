@@ -30,6 +30,9 @@ typedef struct planebox_s {
 	float * normdata;
 	GLuint normtexid;
 	vbo_t thevbo; //generated for each, because differing resolutions
+
+
+	int flat;
 }planebox_t;
 
 

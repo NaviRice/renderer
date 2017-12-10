@@ -15,6 +15,9 @@
 #include "shadermanager.h"	//todo renderqueue?
 
 
+#include "mathlib.h" //vec3norm2
+
+
 vbo_t planebox_vao = {0};
 int planebox_lineshader_id = 0;
 int planebox_debugmesh_id = 0;
@@ -115,6 +118,10 @@ int planebox_parsePlaneboxFile(planebox_t *p){
 				p->normname = strdup(vd[1]);
 			else if (string_testEqualCI(vd[0], "Heightmap"))
 				p->depthname = strdup(vd[1]);
+			else if (string_testEqualCI(vd[0], "Flat")){
+				p->flat = 1;
+				string_toVec(vd[1], &p->depth, 1);
+			}
 		}
 	}
 	file_close(&f);
@@ -131,22 +138,43 @@ int planebox_fakeImages(planebox_t *p){
 	float depth = 0.0;
 
 	float * data = malloc(width * height * sizeof(float));
+	float * data2 = malloc(width * height * 3 * sizeof(float));
 	int x, y;
+	vec3_t norm ={0.0, 0.0, 1.0};
 	for(y = 0; y < height; y++){
 		float ybump = ((float)y/(float)height) - 0.5;
+//		ybump *= 0.5;
+
+		norm[1] = -2.0 * ybump;
 		ybump*=ybump;
 		float * dataline = data + y*width;
+		float * normline = data2 + y*width*3;
 		for(x = 0; x < width; x++){
 			float xbump = 2.0 * ((float)x/(float)width) -1.0;
+//			xbump *= 0.5;
+			norm[0] = -2.0 * xbump;
 			xbump*=xbump;
 			dataline[x] = xbump + ybump;
 			if(dataline[x] > depth) depth = dataline[x];
+
+
+			vec3norm2(normline + x*3, norm);
+
+
 		}
 	}
 	p->depthwidth = width;
 	p->depthheight = height;
+	p->normwidth = width;
+	p->normheight = height;
 	p->depthdata = data;
+	p->normdata = data2;
 	p->depth = depth;
+
+
+
+
+
 	return TRUE;
 }
 
@@ -171,6 +199,22 @@ int planebox_loadImages(planebox_t *p){
 		glGenTextures(1, &p->depthtexid);
 		glBindTexture(GL_TEXTURE_2D, p->depthtexid);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, p->depthwidth, p->depthheight, 0, GL_RED, GL_FLOAT, p->depthdata);
+		//no mipmapping... idk
+		// look into depth textures
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	}
+	if(p->normdata){
+	//now have to go through and normalize... or do i?
+	//might wanna double check with normals
+	//if i dont care about normals when im in box space, then its fine
+	//at this point i dont care about normals in box space, i grab them at the box location and then only rotate
+//		if(!planebox_normalizeImages(p)) return FALSE;
+		glGenTextures(1, &p->normtexid);
+		glBindTexture(GL_TEXTURE_2D, p->normtexid);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, p->normwidth, p->normheight, 0, GL_RGB, GL_FLOAT, p->normdata);
 		//no mipmapping... idk
 		// look into depth textures
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -288,7 +332,11 @@ int planebox_load(planebox_t *p){
 			p->type = 2;
 		//return 0
 		case 2:
-			planebox_loadImages(p);
+			if(p->flat){
+				p->depthwidth = p->normwidth = 2;
+				p->depthheight= p->normheight= 2;
+			} else
+				planebox_loadImages(p);
 			planebox_genMeshData(p);
 //			p->depth = 1.0; //tmp
 			p->type = 3;
@@ -322,6 +370,9 @@ int planebox_renderFirstbounce(planebox_t *p, viewport_t *v){
 //	printf("planebox vao %i\n", planebox_vao.vaoid);
 	glBindVertexArray(p->thevbo.vaoid);
 	CHECKGLERROR
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, p->normtexid);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, p->depthtexid);
 //todo clean up this hack shit
 	shader_t *s = shader_returnById(tracegrid_firstbounceshader_id);
@@ -338,6 +389,10 @@ int planebox_renderFirstbounce(planebox_t *p, viewport_t *v){
 //	Matrix4x4_ToArrayFloatGL(&v->viewproj, tmat);
 	Matrix4x4_ToArrayFloatGL(&p->model, tmat);
 	glUniformMatrix4fv(s->uniloc[1], 1, GL_FALSE, tmat);
+
+
+	Matrix4x4_ToArrayFloatGL(&v->view, tmat);
+	glUniformMatrix4fv(s->uniloc[2], 1, GL_FALSE, tmat);
 
 	CHECKGLERROR
 	glDrawElements(GL_TRIANGLES, p->thevbo.numfaces *3, GL_UNSIGNED_INT, 0);
@@ -363,6 +418,9 @@ int planebox_renderDebug(planebox_t *p, viewport_t *v){
 //	printf("planebox vao %i\n", planebox_vao.vaoid);
 	glBindVertexArray(p->thevbo.vaoid);
 	CHECKGLERROR
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, p->normtexid);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, p->depthtexid);
 	shader_t *s = shader_returnById(planebox_debugmesh_id);
 	glUseProgram(s->programid);

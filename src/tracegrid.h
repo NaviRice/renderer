@@ -11,7 +11,7 @@ int tracegrid_shutdown(void);
 int tracegrid_bindBounce(void);
 
 
-int tracegrid_renderDebugGrid(viewport_t *view, viewport_t *debug);
+int tracegrid_renderDebugGrid(viewport_t *view, viewport_t *debug, planebox_t * screen);
 int tracegrid_renderDebugGridMini(viewport_t *view, viewport_t *debug);
 int tracegrid_renderDebugFirstbounce(viewport_t *view, viewport_t *debug);
 
