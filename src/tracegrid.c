@@ -40,7 +40,9 @@ int tracegrid_fbo_height = 0;
 
 //todo really move this to a framebuffermanager
 int tracegrid_bindBounce(void){
+//	printf("tracegrid fbo is %i, rbo is %i, texture is %i\n", tracegrid_fbo, tracegrid_fbo_renderbuffer, tracegrid_fbo_postex);
 	glBindFramebuffer(GL_FRAMEBUFFER, tracegrid_fbo);
+
 	glViewport(0,0, tracegrid_fbo_width, tracegrid_fbo_height);
 	shader_t *s = shader_returnById(tracegrid_firstbounceshader_id);
 	glUseProgram(s->programid);
@@ -54,6 +56,8 @@ int tracegrid_bindBounce(void){
 int tracegrid_initFramebuffer(int width, int height){
 	glGenFramebuffers(1, &tracegrid_fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, tracegrid_fbo);
+	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		printf("werefucked1\n");
 	glGenTextures(1, &tracegrid_fbo_postex);
 	glGenTextures(1, &tracegrid_fbo_normtex);
 	glBindTexture(GL_TEXTURE_2D, tracegrid_fbo_postex);
@@ -63,15 +67,19 @@ int tracegrid_initFramebuffer(int width, int height){
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tracegrid_fbo_postex, 0);
+	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		printf("werefucked2\n");
 	CHECKGLERROR
 //i probably dont need this
 	glBindTexture(GL_TEXTURE_2D, tracegrid_fbo_normtex);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, width, height, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, tracegrid_fbo_normtex, 0);
+	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		printf("werefucked3\n");
 
 
 	glGenRenderbuffers(1, &tracegrid_fbo_renderbuffer);
@@ -79,6 +87,8 @@ int tracegrid_initFramebuffer(int width, int height){
 	//look into depth32 and depth32f
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, tracegrid_fbo_renderbuffer);
+	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		printf("werefucked4\n");
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	tracegrid_fbo_width = width;
