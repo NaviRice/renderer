@@ -12,6 +12,7 @@
 
 #include "matrixlib.h"
 //#include "entitymanager.h" //init
+#include "contextmanager.h"
 
 	extern double glfwGetTime(void);
 
@@ -66,14 +67,14 @@ int main(int argc, char *argv[]){
 			timesincelastfpsupdate = 0;
 		}
 		framecount++;
-		glfw_context1();
+		context_switch(0);
 		gl_renderFrame(t);
 		glfw_swapBuffers();
-		glfw_context2();
+		context_switch(1);
 		//todo move to context 1 once i verify that it worky
 		gl_renderFirstbounce(t);
 		gl_renderDebug(t);
-		glfw_swapBuffers2();
+		glfw_swapBuffers();
 		glfw_checkEvent();
 	}
 	shutitdown();

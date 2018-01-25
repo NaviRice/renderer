@@ -16,6 +16,7 @@
 
 
 vbo_t tracegrid_vao = {0};
+vbo_t tracegrid_screen_vao = {0};
 int tgwidth = 0;
 int tgheight = 0;
 int tgtriangles = 0;
@@ -99,6 +100,17 @@ int tracegrid_initFramebuffer(int width, int height){
 
 
 int tracegrid_init(void){
+	tracegrid_screen_vao.type = 1; //trick vbo manager to thinking it is tracked
+	//set up strides
+	tracegrid_screen_vao.datawidth[0] = 2; // pos
+	tracegrid_screen_vao.datawidth[2] = 2; // texcoord
+//todo
+	if(vbo_setup(&tracegrid_screen_vao) != 3) {
+		printf("TRACEGRID/tracegrid_init error tracegrid_screen_vao failed to initialize\n");
+		return FALSE;
+	}
+
+
 	return TRUE;
 }
 
@@ -116,9 +128,10 @@ int tracegrid_initOtherContext(void){
 	tracegrid_vao.datawidth[0] = 2; // pos
 	tracegrid_vao.datawidth[2] = 2; // texcoord
 	if(vbo_setup(&tracegrid_vao) != 3) {
-		printf("TRACEGRID/tracegrid_init error VBO failed to initialize\n");
+		printf("TRACEGRID/tracegrid_init error tracegrid_vao failed to initialize\n");
 		return FALSE;
 	}
+
 
 	tracegrid_resize(100, 100);
 

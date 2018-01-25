@@ -28,8 +28,6 @@
 #include "fsquad.h"
 
 
-extern int glfw_context1(void);
-extern int glfw_context2(void);
 
 //todo move into glinit and then just keep track of the lowest?
 int msaa_maxSamples=0, msaa_maxIntSamples=0, msaa_maxColorSamples=0, msaa_maxDepthSamples=0;
@@ -120,7 +118,7 @@ int gl_init(void){
 
 
 //second context stuff
-	glfw_context2();
+	context_switch(1);
 	CHECKGLERROR
 		planebox_initOtherContext();
 		tmp.type = 1;
@@ -134,7 +132,7 @@ int gl_init(void){
 		fsquad_init();
 	//everything but the vao should work in context 1
 	CHECKGLERROR
-	glfw_context1();
+	context_switch(0);
 
 
 

@@ -7,7 +7,7 @@ include_directories("${PROJECT_BINARY_DIR}")
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCES 
+set(SOURCES
 	src/tracegrid.c
 	src/filesys.c
 	src/vbomanager.c
@@ -23,6 +23,7 @@ set(SOURCES
 	src/shadermanager.c
 	src/glmanager.c
 	src/fsquad.c
+	src/contextmanager.c
 	)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/shaders
