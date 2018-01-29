@@ -28,6 +28,9 @@
 #include "fsquad.h"
 
 
+#include "contextmanager.h"
+
+
 
 //todo move into glinit and then just keep track of the lowest?
 int msaa_maxSamples=0, msaa_maxIntSamples=0, msaa_maxColorSamples=0, msaa_maxDepthSamples=0;
@@ -220,8 +223,16 @@ int gl_renderFirstbounce(double time){
 }
 
 int gl_renderDebug(double time){
+	int width = mycontexts[context_current].width;
+	int height = mycontexts[context_current].height;
+	double newaspect = (double)width/(double)height;
+	if(newaspect != debugvp.aspect){
+		debugvp.aspect = newaspect;
+		debugvp.changed |=2;
+	}
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0,0, debugwidth, debugheight);
+	glViewport(0,0, width, height);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	debugvp.angle[1] = time*10.0;
 	debugvp.angle[0] = 30.0;
