@@ -125,9 +125,9 @@ int gl_init(void){
 	tmpscreen.name = strdup("planeboxes/screen.planebox");
 	planebox_load(&tmpscreen);
 	fsquad_init();
-	context_switch(1);
-	tracegrid_init(); // still need some fuckery here because of framebuffers
-	context_switch(0);
+//	context_switch(1);
+	tracegrid_init();
+//	context_switch(0);
 
 	debugvp.type = 1;
 	debugvp.fov = 90.0;
