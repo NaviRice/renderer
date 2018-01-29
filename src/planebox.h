@@ -47,8 +47,6 @@ int planebox_renderViewportDebugLines(viewport_t *debug, viewport_t *v);
 int planebox_shutdown(void);
 int planebox_init(void);
 
-int planebox_initOtherContext(void);
-
 int planebox_parsePlaneboxFIle(planebox_t *p);
 
 int planebox_load(planebox_t *p);

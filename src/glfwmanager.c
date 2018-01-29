@@ -23,13 +23,16 @@ int glfw_resizeWindow(int con, int width, int height, int bpp, int debugmode){
 	if(width <1) width =1;
 	mycontext_t *c = mycontexts+con;
 	glfwSetWindowSize(c->window, width, height);
-	int r = gl_resizeViewports(width, height);
+//not used anymore
+/*	int r = gl_resizeViewports(width, height);
 	if(!r){
 		printf("ERROR -- GL framebuffers resize failed\n");
 		return FALSE;
 	}
+*/
 	c->width = width;
 	c->height = height;
+	c->changed = TRUE;
 	return TRUE;
 }
 int glfw_resizeWindow_current(int width, int height, int bpp, int debugmode){
@@ -59,6 +62,7 @@ int glfw_init(int width, int height, int bpp, int debugmode){
 	int i;
 	for(i = 0; i < NUMCONTEXTS; i++){
 		mycontext_t *c = mycontexts+i;
+		c->changed = TRUE;
 		c->window = glfwCreateWindow(width, height, "Main Screen", NULL, i ? mycontexts[0].window : NULL);
 		if(!c->window){
 			glfwTerminate();

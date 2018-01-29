@@ -10,6 +10,7 @@ typedef struct mycontext_s {
 #endif
 	int width;
 	int height;
+	int changed;
 } mycontext_t;
 
 mycontext_t mycontexts[NUMCONTEXTS];

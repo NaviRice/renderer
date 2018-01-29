@@ -7,7 +7,8 @@ typedef struct vbo_s {
 	int type;
 	int myid;
 
-	unsigned int vaoid;
+//	unsigned int vaoid;
+	unsigned int vaoid[NUMCONTEXTS];
 //	unsigned int vertsid;
 	unsigned int vertsid[MAXATTRIBS];
 	unsigned int facesid; //indices
@@ -25,6 +26,7 @@ IDLIST_HEADER_NOHASH(vbo, vbo_t);
 
 int vbo_init(void);
 int vbo_setup(vbo_t *v);
+int vbo_bind(vbo_t *v);
 
 int vbo_unload(vbo_t *v);
 

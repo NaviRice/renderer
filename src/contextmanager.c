@@ -12,6 +12,7 @@ int context_switch(int c){
 	if(c == context_current) return 1;
 	if(c > NUMCONTEXTS || c < 0) return 0;
 
+//	printf("swatch %i\n", c);
 	//different c, valid one
 	glfwMakeContextCurrent(mycontexts[c].window);
 	context_current = c;

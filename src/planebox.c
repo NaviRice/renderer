@@ -3,6 +3,7 @@
 
 #include "matrixlib.h"
 #include "viewportmanager.h"
+#include "contextmanager.h"
 #include "vbomanager.h"
 #include "glmanager.h"
 
@@ -28,15 +29,12 @@ int planebox_shutdown(void){ //todo
 
 //generate a bbox vao
 int planebox_init(void){
-	return 1;
-}
-int planebox_initOtherContext(void){
 	planebox_vao.type = 1;	//trick vbo manager into its a legit vao
 	planebox_vao.datawidth[0] = 3; //pos
 	planebox_vao.datawidth[3] = 3; //color
 
-	if(vbo_setup(&planebox_vao) != 3){
-		printf("PLANEBOX/init error vbo setup for lines failedi\n");
+	if(vbo_setup(&planebox_vao) != 2){
+		printf("PLANEBOX/init error vbo setup for lines failed\n");
 		return 0;
 	}
 //	vbo_setup(&planebox_vao);
@@ -59,7 +57,7 @@ int planebox_initOtherContext(void){
 		0, 1,	1, 2,	2, 3,	3, 0,
 		4, 5,	5, 6,	6, 7,	7, 4,
 		8,12,	9,13,	10,14,	11,15 };
-	glBindVertexArray(planebox_vao.vaoid);
+	vbo_bind(&planebox_vao);
 	CHECKGLERROR
 	glBindBuffer(GL_ARRAY_BUFFER, planebox_vao.vertsid[0]);
 	glBufferData(GL_ARRAY_BUFFER, numverts * planebox_vao.datawidth[0] * sizeof(GLfloat), posdata, GL_STATIC_DRAW);
@@ -239,7 +237,7 @@ int planebox_genMeshData(planebox_t *p){
 	p->thevbo.type = 1;
 	p->thevbo.datawidth[0] = 3;
 	p->thevbo.datawidth[2] = 2;
-	if(vbo_setup(&p->thevbo)!= 3){
+	if(vbo_setup(&p->thevbo)!= 2){
 		printf("PLANEBOX/genMeshData, error vbo creation failed\n");
 		return 0;
 	}
@@ -287,7 +285,7 @@ int planebox_genMeshData(planebox_t *p){
 	}
 
 
-	glBindVertexArray(p->thevbo.vaoid);
+	vbo_bind(&p->thevbo);
 	CHECKGLERROR
 	glBindBuffer(GL_ARRAY_BUFFER, p->thevbo.vertsid[0]);
 	glBufferData(GL_ARRAY_BUFFER, numverts * p->thevbo.datawidth[0] * sizeof(GLfloat), vertdata, GL_STATIC_DRAW);
@@ -368,7 +366,7 @@ int planebox_renderFirstbounce(planebox_t *p, viewport_t *v){
 	}
 	glEnable(GL_DEPTH_TEST);
 //	printf("planebox vao %i\n", planebox_vao.vaoid);
-	glBindVertexArray(p->thevbo.vaoid);
+	vbo_bind(&p->thevbo);
 	CHECKGLERROR
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, p->normtexid);
@@ -416,7 +414,7 @@ int planebox_renderDebug(planebox_t *p, viewport_t *v){
 	}
 	glEnable(GL_DEPTH_TEST);
 //	printf("planebox vao %i\n", planebox_vao.vaoid);
-	glBindVertexArray(p->thevbo.vaoid);
+	vbo_bind(&p->thevbo);
 	CHECKGLERROR
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, p->normtexid);
@@ -451,7 +449,7 @@ int planebox_renderDebugLines(planebox_t *p, viewport_t *v){
 	}
 	glEnable(GL_DEPTH_TEST);
 //	printf("planebox vao %i\n", planebox_vao.vaoid);
-	glBindVertexArray(planebox_vao.vaoid);
+	vbo_bind(&planebox_vao);
 	CHECKGLERROR
 
 	shader_t *s = shader_returnById(planebox_lineshader_id);
@@ -481,7 +479,7 @@ int planebox_renderViewportDebugLines(viewport_t * debug, viewport_t *v){
 	}
 	glEnable(GL_DEPTH_TEST);
 //	printf("planebox vao %i\n", planebox_vao.vaoid);
-	glBindVertexArray(planebox_vao.vaoid);
+	vbo_bind(&planebox_vao);
 	CHECKGLERROR
 
 	shader_t *s = shader_returnById(planebox_lineshader_id);

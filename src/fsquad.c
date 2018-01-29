@@ -2,9 +2,11 @@
 #include "glmanager.h"
 #include "globaldefs.h"
 
+#include "contextmanager.h"
 #include "vbomanager.h"
 
 //todo move to a named one?
+//TODO MOVE TO A NAMED ONE
 
 vbo_t fsquad_vao = {0};
 
@@ -26,11 +28,11 @@ int fsquad_init(void){
 	fsquad_vao.type = 1;
 	fsquad_vao.datawidth[0] = 2;
 	fsquad_vao.datawidth[2] = 2;
-	if(vbo_setup(&fsquad_vao)!=3){
+	if(vbo_setup(&fsquad_vao)!=2){
 		printf("FSQUAD/fsquad_init error vbo failed to initialize\n");
 		return FALSE;
 	}
-	glBindVertexArray(fsquad_vao.vaoid);
+	vbo_bind(&fsquad_vao);
 	glBindBuffer(GL_ARRAY_BUFFER, fsquad_vao.vertsid[0]);
 	glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(GLfloat), fsquad_posdata, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, fsquad_vao.vertsid[2]);
@@ -45,7 +47,7 @@ int fsquad_init(void){
 }
 
 int fsquad_render(void){
-	glBindVertexArray(fsquad_vao.vaoid);
+	vbo_bind(&fsquad_vao);
 	glDrawElements(GL_TRIANGLES, fsquad_vao.numfaces*3, GL_UNSIGNED_INT, 0);
 	return TRUE;
 }

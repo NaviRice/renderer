@@ -7,6 +7,8 @@
 
 
 #include "shadermanager.h"
+
+#include "contextmanager.h"
 #include "vbomanager.h"
 
 
@@ -99,41 +101,23 @@ int tracegrid_initFramebuffer(int width, int height){
 }
 
 
-int tracegrid_init(void){
-	tracegrid_screen_vao.type = 1; //trick vbo manager to thinking it is tracked
-	//set up strides
-	tracegrid_screen_vao.datawidth[0] = 2; // pos
-	tracegrid_screen_vao.datawidth[2] = 2; // texcoord
-//todo
-	if(vbo_setup(&tracegrid_screen_vao) != 3) {
-		printf("TRACEGRID/tracegrid_init error tracegrid_screen_vao failed to initialize\n");
-		return FALSE;
-	}
-
-
-	return TRUE;
-}
-
-
-
-
 
 
 //todo multi contexts
-int tracegrid_initOtherContext(void){
+int tracegrid_init(void){
 	//currently nothing here
 	//set up vbo
 	tracegrid_vao.type = 1; //trick vbo manager to thinking it is tracked
 	//set up strides
 	tracegrid_vao.datawidth[0] = 2; // pos
 	tracegrid_vao.datawidth[2] = 2; // texcoord
-	if(vbo_setup(&tracegrid_vao) != 3) {
+	if(vbo_setup(&tracegrid_vao) != 2) {
 		printf("TRACEGRID/tracegrid_init error tracegrid_vao failed to initialize\n");
 		return FALSE;
 	}
 
-
 	tracegrid_resize(100, 100);
+
 
 
 
@@ -210,7 +194,7 @@ int tracegrid_resize(int width, int height){
 			indicesrow[x*6 + 5] = (y+1) * width + x+1;
 		}
 	}
-	glBindVertexArray(tracegrid_vao.vaoid);
+	vbo_bind(&tracegrid_vao);
 
 	glBindBuffer(GL_ARRAY_BUFFER, tracegrid_vao.vertsid[0]);
 	glBufferData(GL_ARRAY_BUFFER, width * height * 2 * sizeof(GLfloat), positions, GL_STATIC_DRAW);
@@ -254,7 +238,7 @@ int tracegrid_renderDebugGrid(viewport_t * caster, viewport_t * v, planebox_t * 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, tracegrid_fbo_postex);
 	glEnable(GL_DEPTH_TEST);
-	glBindVertexArray(tracegrid_vao.vaoid);
+	vbo_bind(&tracegrid_vao);
 	CHECKGLERROR
 
 	shader_t *s = shader_returnById(tracegrid_debuggridshader_id);
@@ -299,7 +283,7 @@ int tracegrid_renderDebugGridMini(viewport_t * caster, viewport_t *v){
 	}
 //	glBindTexture(GL_TEXTURE_2D, tracegrid_fbo_postex);
 	glDisable(GL_DEPTH_TEST);
-	glBindVertexArray(tracegrid_vao.vaoid);
+	vbo_bind(&tracegrid_vao);
 	CHECKGLERROR
 
 	shader_t *s = shader_returnById(tracegrid_debuggridminishader_id);
@@ -334,7 +318,7 @@ int tracegrid_renderDebugFirstbounce(viewport_t *caster, viewport_t *v){
 		return 0;
 	}
 	glBindTexture(GL_TEXTURE_2D, tracegrid_fbo_postex);
-	glBindVertexArray(tracegrid_vao.vaoid);
+	vbo_bind(&tracegrid_vao);
 	CHECKGLERROR
 
 	shader_t *s = shader_returnById(tracegrid_debugfirstbounceshader_id);
@@ -385,7 +369,7 @@ int tracegrid_trace(void){
 }
 /*
 int tracegrid_pushresults(void){
-	glBindVertexArray(tracegrid_vao.vaoid);
+	vbo_bind(&tracegrid_vao);
 	glBindBuffer(GL_ARRAY_BUFFER, tracegrid_vao.vertsid[0]);
 	glBufferData(GL_ARRAY_BUFFER, tgwidth * tgheight * 2 * sizeof(GLfloat), resultsbuffer, GL_STREAM_DRAW); // temporarily filling with the texcoords, will later fill with traced results, may change this.
 	return TRUE;

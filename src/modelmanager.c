@@ -1,6 +1,7 @@
 #include <epoxy/gl.h>
 
 #include "globaldefs.h"
+#include "contextmanager.h"
 #include "vbomanager.h"
 #include "modelmanager.h"
 #include "stringlib.h"	//for idlist
@@ -81,11 +82,11 @@ int loadIQMMeshes(model_t *m, const struct iqmheader hdr, unsigned char * buf){
 		return FALSE;
 	}
 
-	if(vbo_setup(&m->vbo) != 3){
+	if(vbo_setup(&m->vbo) != 2){
 		printf("MODEL/loadIQMMeshes error VBO failed to initialize for mesh #%i of model %s (vbo->type is %i)\n", 0, m->name, m->vbo.type);
 		return FALSE;
 	}
-	glBindVertexArray(m->vbo.vaoid);
+	vbo_bind(&m->vbo);
 	for(i = 0; i < MAXATTRIBS; i++){
 		int dwidth = m->vbo.datawidth[i];
 		if(!dwidth) continue;

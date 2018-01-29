@@ -9,6 +9,7 @@
 
 
 
+#include "contextmanager.h"
 #include "vbomanager.h"		//for init
 #include "modelmanager.h"	//for init, register, load
 
@@ -96,10 +97,6 @@ planebox_t tmpscreen = {0};
 viewport_t tmpvst = {0};
 viewport_t debugvp = {0};
 
-//tmp
-int debugwidth = 800;
-int debugheight = 600;
-
 //true is everything initialized correctly
 int gl_init(void){
 	glDepthFunc(GL_LEQUAL);
@@ -115,33 +112,26 @@ int gl_init(void){
 	model_init();
 	shader_init();
 	viewport_init();
-	planebox_init();
-	tracegrid_init();
+//	planebox_init();
 
 
 
 //second context stuff
+	planebox_init(); //still requiring some fuckery?
+	tmp.type = 1;
+	tmp.name = strdup("planeboxes/tmp.planebox");
+	planebox_load(&tmp);
+	tmpscreen.type = 1;
+	tmpscreen.name = strdup("planeboxes/screen.planebox");
+	planebox_load(&tmpscreen);
+	fsquad_init();
 	context_switch(1);
-	CHECKGLERROR
-		planebox_initOtherContext();
-		tmp.type = 1;
-		tmp.name = strdup("planeboxes/tmp.planebox");
-		planebox_load(&tmp);
-
-		tmpscreen.type = 1;
-		tmpscreen.name = strdup("planeboxes/screen.planebox");
-		planebox_load(&tmpscreen);
-		tracegrid_initOtherContext();
-		fsquad_init();
-	//everything but the vao should work in context 1
-	CHECKGLERROR
+	tracegrid_init(); // still need some fuckery here because of framebuffers
 	context_switch(0);
-
-
 
 	debugvp.type = 1;
 	debugvp.fov = 90.0;
-	debugvp.aspect = (double)debugwidth/(double)debugheight;
+	debugvp.aspect = 1.0;
 	debugvp.far = 1000.0;
 	debugvp.near = 0.1;
 	debugvp.changed = 3;
@@ -199,7 +189,7 @@ int gl_renderFrame(double time){ //temp
 	glUseProgram(s->programid);
 	CHECKGLERROR
 
-	glBindVertexArray(m->vbo.vaoid);
+	vbo_bind(&m->vbo);
 	CHECKGLERROR
 	float tmat[16];
 	Matrix4x4_ToArrayFloatGL(&v.viewproj, tmat);
@@ -222,12 +212,15 @@ int gl_renderFirstbounce(double time){
 	return TRUE;
 }
 
+
+
 int gl_renderDebug(double time){
-	int width = mycontexts[context_current].width;
-	int height = mycontexts[context_current].height;
-	double newaspect = (double)width/(double)height;
-	if(newaspect != debugvp.aspect){
-		debugvp.aspect = newaspect;
+	mycontext_t *c = mycontexts+context_current;
+	int width = c->width;
+	int height = c->width;
+	if(c->changed){
+		c->changed = FALSE;
+		debugvp.aspect = (double)width/(double)height;
 		debugvp.changed |=2;
 	}
 
@@ -270,9 +263,12 @@ int gl_renderDebug(double time){
 
 
 
+//not used anymore
+/*
 int gl_resizeViewports(int width, int height){
 	return TRUE;
 }
+
 int gl_resizeDebugViewports(int width, int height){
 	//todo framebuffer class that keeps track of height
 	debugwidth = width;
@@ -281,3 +277,4 @@ int gl_resizeDebugViewports(int width, int height){
 	debugvp.changed |=2;
 	return TRUE;
 }
+*/
