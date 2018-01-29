@@ -1,0 +1,6 @@
+vertexsource: ./shaders/grid.names
+fragmentsource: ./shaders/grid.names
+VertexSource: ./shaders/grid.vert
+FragmentSource: ./shaders/grid.frag
+geometrysource: ./shaders/grid.names
+geometrysource: ./shaders/grid.geom

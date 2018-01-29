@@ -23,6 +23,7 @@ int tgheight = 0;
 int tgtriangles = 0;
 
 int tracegrid_debuggridshader_id = 0;
+int tracegrid_gridshader_id = 0;
 int tracegrid_debuggridminishader_id = 0;
 int tracegrid_firstbounceshader_id = 0;
 int tracegrid_debugfirstbounceshader_id = 0;
@@ -142,8 +143,12 @@ int tracegrid_init(void){
 
 
 
+	tracegrid_gridshader_id = shader_register("shaders/grid.program");
+	shader_t *s = shader_returnById(tracegrid_gridshader_id);
+	shader_load(s);
+
 	tracegrid_debuggridshader_id = shader_register("shaders/debuggrid.program");
-	shader_t *s = shader_returnById(tracegrid_debuggridshader_id);
+	s = shader_returnById(tracegrid_debuggridshader_id);
 	shader_load(s);
 
 	tracegrid_firstbounceshader_id = shader_register("shaders/firstbounce.program");
@@ -244,6 +249,53 @@ int tracegrid_resize(int width, int height){
 
 
 
+int tracegrid_renderGrid(viewport_t * caster, viewport_t * v, planebox_t * screen){
+	if(!v || !v->type){
+		printf("TRACEGRID/renderGrid: ERROR invalid viewport!\n");
+		return 0;
+	}
+	if(!caster || !caster->type){
+		printf("TRACEGRID/renderGrid: ERROR invalid caster viewport!\n");
+		return 0;
+	}
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, tracegrid_fbo_normtex);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, tracegrid_fbo_postex);
+	glEnable(GL_DEPTH_TEST);
+	vbo_bind(&tracegrid_vao);
+	CHECKGLERROR
+
+	shader_t *s = shader_returnById(tracegrid_gridshader_id);
+	glUseProgram(s->programid);
+	CHECKGLERROR
+	float tmat[16];
+	Matrix4x4_ToArrayFloatGL(&caster->viewprojinv, tmat);
+	glUniformMatrix4fv(s->uniloc[0], 1, GL_FALSE, tmat);
+	Matrix4x4_ToArrayFloatGL(&v->viewproj, tmat);
+	glUniformMatrix4fv(s->uniloc[1], 1, GL_FALSE, tmat);
+
+	Matrix4x4_ToArrayFloatGL(&screen->frusty, tmat);
+	glUniformMatrix4fv(s->uniloc[4], 1, GL_FALSE, tmat);
+
+	Matrix4x4_ToArrayFloatGL(&screen->model, tmat);
+	glUniformMatrix4fv(s->uniloc[5], 1, GL_FALSE, tmat);
+
+	glUniform3fv(s->uniloc[3], 1, &caster->pos);
+//	glUniform1i(s->uniloc[2], 0);
+	CHECKGLERROR
+
+	//printf("%i triangles\n", tracegrid_vao.numfaces);
+
+//	glDrawElements(GL_TRIANGLES, tracegrid_vao.numfaces * 3, GL_UNSIGNED_INT, 0);
+
+//	glUniform1i(s->uniloc[2], 1);
+//	glDrawElements(GL_TRIANGLES, tracegrid_vao.numfaces * 3, GL_UNSIGNED_INT, 0);
+
+	glUniform1i(s->uniloc[2], 2);
+	glDrawElements(GL_TRIANGLES, tracegrid_vao.numfaces * 3, GL_UNSIGNED_INT, 0);
+	return TRUE;
+}
 int tracegrid_renderDebugGrid(viewport_t * caster, viewport_t * v, planebox_t * screen){
 	if(!v || !v->type){
 		printf("TRACEGRID/renderDebugGrid: ERROR invalid viewport!\n");

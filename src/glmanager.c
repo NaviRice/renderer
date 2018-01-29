@@ -162,8 +162,21 @@ int gl_init(void){
 int cnt = 0;
 //ALL OF THIS TEMP
 int gl_renderFrame(double time){ //temp
+	mycontext_t *c = mycontexts+context_current;
+	int width = c->width;
+	int height = c->width;
+	if(c->changed){
+		c->changed = FALSE;
+//		debugvp.aspect = (double)width/(double)height;
+//		debugvp.changed |=2;
+	}
 
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0,0, width, height);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	tracegrid_renderGrid(&tmpvst, &debugvp, &tmpscreen);
+//	tracegrid_renderDebugFirstbounce(&tmpvst, &debugvp);
+//	tracegrid_renderDebugGridMini(&tmpvst, &debugvp);
 /*	int mid = model_register("models/coil.iqm");
 	model_t *m = model_returnById(mid);
 	model_load(m);
