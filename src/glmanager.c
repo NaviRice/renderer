@@ -214,6 +214,11 @@ int gl_renderFrame(double time){ //temp
 	return 1;
 }
 
+int gl_renderWorld(double time){
+	
+	return TRUE;
+}
+
 
 
 int gl_renderFirstbounce(double time){
@@ -267,6 +272,8 @@ int gl_renderDebug(double time){
 	tracegrid_renderDebugGrid(&tmpvst, &debugvp, &tmpscreen);
 	tracegrid_renderDebugFirstbounce(&tmpvst, &debugvp);
 	tracegrid_renderDebugGridMini(&tmpvst, &debugvp);
+
+
 
 	float phi = sin(time / 5.0) * 10;
 	phi*=phi;

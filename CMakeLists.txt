@@ -24,6 +24,8 @@ set(SOURCES
 	src/glmanager.c
 	src/fsquad.c
 	src/contextmanager.c
+	src/entitymanager.c
+	src/worldrenderer.c
 	)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/shaders

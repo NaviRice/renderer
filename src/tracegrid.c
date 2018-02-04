@@ -54,6 +54,7 @@ int tracegrid_initFramebufferonly(void){
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, tracegrid_fbo_renderbuffer);
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		printf("werefucked4\n");
+	return TRUE;
 }
 
 //todo really move this to a framebuffermanager
@@ -281,7 +282,7 @@ int tracegrid_renderGrid(viewport_t * caster, viewport_t * v, planebox_t * scree
 	Matrix4x4_ToArrayFloatGL(&screen->model, tmat);
 	glUniformMatrix4fv(s->uniloc[5], 1, GL_FALSE, tmat);
 
-	glUniform3fv(s->uniloc[3], 1, &caster->pos);
+	glUniform3fv(s->uniloc[3], 1, (GLfloat*)&caster->pos);
 //	glUniform1i(s->uniloc[2], 0);
 	CHECKGLERROR
 
@@ -328,7 +329,7 @@ int tracegrid_renderDebugGrid(viewport_t * caster, viewport_t * v, planebox_t * 
 	Matrix4x4_ToArrayFloatGL(&screen->model, tmat);
 	glUniformMatrix4fv(s->uniloc[5], 1, GL_FALSE, tmat);
 
-	glUniform3fv(s->uniloc[3], 1, &caster->pos);
+	glUniform3fv(s->uniloc[3], 1, (GLfloat*)&caster->pos);
 	glUniform1i(s->uniloc[2], 0);
 	CHECKGLERROR
 
@@ -449,6 +450,7 @@ int tracegrid_pushresults(void){
 */
 int tracegrid_shutdown(void){
 	//probably remove the vbo
+	//todo framebuffer stuff
 	vbo_unload(&tracegrid_vao);
 	return TRUE;
 }

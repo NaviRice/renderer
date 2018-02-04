@@ -11,7 +11,7 @@
 #include "cvarmanager.h"
 
 #include "matrixlib.h"
-//#include "entitymanager.h" //init
+#include "entitymanager.h" //init
 #include "contextmanager.h"
 
 	extern double glfwGetTime(void);
@@ -20,7 +20,7 @@ int shutitdown(){
 	printf("Shutting down\n");
 	gl_shutdown();
 	glfw_shutdown();
-//	entity_shutdown();
+	entity_shutdown();
 	cvar_shutdown();
 	//todo
 	return FALSE;
@@ -45,7 +45,8 @@ int main(int argc, char *argv[]){
 //	if(!entity_init()){printf("Unable to init entity\n"); shutitdown(); return 4;}
 
 	if(!glfw_init(800, 600, 24,1)){printf("Unable to init glfw\n"); shutitdown(); return 2;}
-	if(!gl_init()){printf("Unable to init gl\n"); shutitdown(); return 3;}
+	if(!entity_init()){printf("Unable to init entity\n"); shutitdown(); return 3;}
+	if(!gl_init()){printf("Unable to init gl\n"); shutitdown(); return 4;}
 
 	double t, to;
 
