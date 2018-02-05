@@ -1,0 +1,12 @@
+#define vstmodel uniform0
+#define debugmv uniform1
+#define bounces uniform2
+#define raystart uniform3
+#define invmodelscreen uniform4
+#define modelscreen uniform5
+#define posattrib attrib0
+#define tcattrib attrib2
+#define posdata texture0
+#define normdata texture1
+#define color texture2
+

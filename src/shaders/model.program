@@ -1,0 +1,5 @@
+vertexsource: ./shaders/model.names
+fragmentource: ./shaders/model.names
+
+vertexsource: ./shaders/model.vert
+fragmentsource: ./shaders/model.frag

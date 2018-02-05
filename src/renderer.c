@@ -68,12 +68,14 @@ int main(int argc, char *argv[]){
 			timesincelastfpsupdate = 0;
 		}
 		framecount++;
+		//todo recalc viewport stuff here
 		context_switch(0);
+		gl_renderWorld(t);
+		gl_renderFirstbounce(t);
 		gl_renderFrame(t);
 		glfw_swapBuffers();
 		context_switch(1);
 		//todo move to context 1 once i verify that it worky
-		gl_renderFirstbounce(t);
 		gl_renderDebug(t);
 		glfw_swapBuffers();
 		glfw_checkEvent();

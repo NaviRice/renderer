@@ -1,0 +1,4 @@
+vertexsource: ./shaders/output.names
+fragmentsource: ./shaders/output.names
+VertexSource: ./shaders/output.vert
+FragmentSource: ./shaders/output.frag

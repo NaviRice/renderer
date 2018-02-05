@@ -26,6 +26,7 @@
 
 #include "planebox.h"
 #include "tracegrid.h" // for tracegrid duh
+#include "worldrenderer.h"
 #include "fsquad.h"
 
 
@@ -97,6 +98,11 @@ planebox_t tmpscreen = {0};
 viewport_t tmpvst = {0};
 viewport_t debugvp = {0};
 
+
+//this is temp
+int mid = 0;
+matrix4x4_t tmegga;
+
 //true is everything initialized correctly
 int gl_init(void){
 	glDepthFunc(GL_LEQUAL);
@@ -108,10 +114,14 @@ int gl_init(void){
 
 	printf("MSAA Samples: %i, int %i, color %i, depth %i\n", msaa_maxSamples, msaa_maxIntSamples, msaa_maxColorSamples, msaa_maxDepthSamples);
 
+//temp
+	Matrix4x4_CreateFromQuakeEntity(&tmegga, 0.0, 0.0, -2.0, 0.0, 0.0, -90.0, 2.0);
+
 	vbo_init();
 	model_init();
 	shader_init();
 	viewport_init();
+	worldrenderer_init();
 //	planebox_init();
 
 
@@ -140,11 +150,15 @@ int gl_init(void){
 	tmpvst.type = 1;
 	tmpvst.fov = 30.0;
 	tmpvst.aspect = 4.0/3.0;
-	tmpvst.far = 10.0;
+	tmpvst.far = 20.0;
 	tmpvst.near = 0.1;
 	tmpvst.changed = 3;
 	tmpvst.pos[2] = 5.0;
 	viewport_recalc(&tmpvst);
+
+	mid = model_register("models/teapot.iqm");
+	printf("registered model id %i\n", mid);
+	model_load(model_returnById(mid));
 
 //	int mid = model_register("test.iqm");
 //	printf("registered model id %i\n", mid);
@@ -174,6 +188,7 @@ int gl_renderFrame(double time){ //temp
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0,0, width, height);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	tracegrid_renderOutput(&tmpvst, &debugvp, &tmpscreen);
 	tracegrid_renderGrid(&tmpvst, &debugvp, &tmpscreen);
 //	tracegrid_renderDebugFirstbounce(&tmpvst, &debugvp);
 //	tracegrid_renderDebugGridMini(&tmpvst, &debugvp);
@@ -215,7 +230,23 @@ int gl_renderFrame(double time){ //temp
 }
 
 int gl_renderWorld(double time){
-	
+	worldrenderer_bindEASTEREGG();
+	GLenum renderbuffs[] = {GL_COLOR_ATTACHMENT0};
+	glDrawBuffers(1, renderbuffs);//todo move
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	//todo actually use this
+	worldrenderer_renderEntities(&tmpvst);
+	worldrenderer_renderModel(&tmpvst, mid, &tmegga); //temp
+
+//cheap hack for stuff
+
+	return TRUE;
+}
+extern int worldrenderer_modelshader_id;
+int gl_renderWorldDebug(double time){
+	//todo
+	worldrenderer_renderEntities(&debugvp);
+	worldrenderer_renderModel(&debugvp, mid, &tmegga); //temem
 	return TRUE;
 }
 
@@ -269,9 +300,15 @@ int gl_renderDebug(double time){
 	planebox_renderDebugLines(&tmp, &debugvp);
 	planebox_renderDebugLines(&tmpscreen, &debugvp);
 	planebox_renderViewportDebugLines(&tmpvst, &debugvp);
+
+	gl_renderWorldDebug(time);
+
+	tracegrid_renderDebugOutput(&tmpvst, &debugvp, &tmpscreen);
 	tracegrid_renderDebugGrid(&tmpvst, &debugvp, &tmpscreen);
 	tracegrid_renderDebugFirstbounce(&tmpvst, &debugvp);
 	tracegrid_renderDebugGridMini(&tmpvst, &debugvp);
+
+	worldrenderer_renderDebugFramebufferMini(&tmpvst, &debugvp);
 
 
 

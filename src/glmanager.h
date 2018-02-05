@@ -2,6 +2,8 @@
 #define GLMANAGERHEADER
 
 int gl_init(void);
+int gl_renderWorldDebug(double time);
+int gl_renderWorld(double time);
 int gl_renderDebug(double time);
 int gl_renderFirstbounce(double time);
 

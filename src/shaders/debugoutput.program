@@ -1,0 +1,6 @@
+vertexsource: ./shaders/debugoutput.names
+fragmentsource: ./shaders/debugoutput.names
+VertexSource: ./shaders/debugoutput.vert
+FragmentSource: ./shaders/debugoutput.frag
+geometrysource: ./shaders/debugoutput.names
+geometrysource: ./shaders/debugoutput.geom

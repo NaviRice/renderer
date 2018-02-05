@@ -22,6 +22,8 @@ int tgwidth = 0;
 int tgheight = 0;
 int tgtriangles = 0;
 
+int tracegrid_outputshader_id = 0;
+int tracegrid_debugoutputshader_id = 0;
 int tracegrid_debuggridshader_id = 0;
 int tracegrid_gridshader_id = 0;
 int tracegrid_debuggridminishader_id = 0;
@@ -77,10 +79,6 @@ int tracegrid_bindBounce(void){
 
 //todo move to a framebuffer manager
 int tracegrid_initFramebuffer(int width, int height){
-//	glGenFramebuffers(1, &tracegrid_fbo[context_current]);
-//	glBindFramebuffer(GL_FRAMEBUFFER, tracegrid_fbo[context_current]);
-//	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-//		printf("werefucked1\n");
 	glGenTextures(1, &tracegrid_fbo_postex);
 	glGenTextures(1, &tracegrid_fbo_normtex);
 	glBindTexture(GL_TEXTURE_2D, tracegrid_fbo_postex);
@@ -89,9 +87,6 @@ int tracegrid_initFramebuffer(int width, int height){
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-//	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tracegrid_fbo_postex, 0);
-//	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-//		printf("werefucked2\n");
 	CHECKGLERROR
 //i probably dont need this
 	glBindTexture(GL_TEXTURE_2D, tracegrid_fbo_normtex);
@@ -100,23 +95,17 @@ int tracegrid_initFramebuffer(int width, int height){
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-//	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, tracegrid_fbo_normtex, 0);
-//	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-//		printf("werefucked3\n");
 
 
 	glGenRenderbuffers(1, &tracegrid_fbo_renderbuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, tracegrid_fbo_renderbuffer);
 	//look into depth32 and depth32f
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
-//	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, tracegrid_fbo_renderbuffer);
-//	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-//		printf("werefucked4\n");
 
 	tracegrid_fbo_width = width;
 	tracegrid_fbo_height = height;
 
-	tracegrid_initFramebufferonly();
+//	tracegrid_initFramebufferonly();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	return TRUE;
@@ -146,6 +135,14 @@ int tracegrid_init(void){
 
 	tracegrid_gridshader_id = shader_register("shaders/grid.program");
 	shader_t *s = shader_returnById(tracegrid_gridshader_id);
+	shader_load(s);
+
+	tracegrid_outputshader_id = shader_register("shaders/output.program");
+	s = shader_returnById(tracegrid_outputshader_id);
+	shader_load(s);
+
+	tracegrid_debugoutputshader_id = shader_register("shaders/debugoutput.program");
+	s = shader_returnById(tracegrid_debugoutputshader_id);
 	shader_load(s);
 
 	tracegrid_debuggridshader_id = shader_register("shaders/debuggrid.program");
@@ -250,6 +247,57 @@ int tracegrid_resize(int width, int height){
 
 
 
+extern int worldrenderer_fbo_postex;
+int tracegrid_renderOutput(viewport_t * caster, viewport_t * v, planebox_t * screen){
+	if(!v || !v->type){
+		printf("TRACEGRID/renderOutput: ERROR invalid viewport!\n");
+		return 0;
+	}
+	if(!caster || !caster->type){
+		printf("TRACEGRID/renderOutput: ERROR invalid caster viewport!\n");
+		return 0;
+	}
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, worldrenderer_fbo_postex);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, tracegrid_fbo_normtex);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, tracegrid_fbo_postex);
+	glEnable(GL_DEPTH_TEST);
+	vbo_bind(&tracegrid_vao);
+	CHECKGLERROR
+
+	shader_t *s = shader_returnById(tracegrid_outputshader_id);
+	glUseProgram(s->programid);
+
+	CHECKGLERROR
+	float tmat[16];
+	Matrix4x4_ToArrayFloatGL(&caster->viewprojinv, tmat);
+	glUniformMatrix4fv(s->uniloc[0], 1, GL_FALSE, tmat);
+	Matrix4x4_ToArrayFloatGL(&v->viewproj, tmat);
+	glUniformMatrix4fv(s->uniloc[1], 1, GL_FALSE, tmat);
+
+	Matrix4x4_ToArrayFloatGL(&screen->frusty, tmat);
+	glUniformMatrix4fv(s->uniloc[4], 1, GL_FALSE, tmat);
+
+	Matrix4x4_ToArrayFloatGL(&screen->model, tmat);
+	glUniformMatrix4fv(s->uniloc[5], 1, GL_FALSE, tmat);
+
+	glUniform3fv(s->uniloc[3], 1, (GLfloat*)&caster->pos);
+	CHECKGLERROR
+
+	//printf("%i triangles\n", tracegrid_vao.numfaces);
+
+//	glDrawElements(GL_TRIANGLES, tracegrid_vao.numfaces * 3, GL_UNSIGNED_INT, 0);
+
+//	glUniform1i(s->uniloc[2], 1);
+//	glDrawElements(GL_TRIANGLES, tracegrid_vao.numfaces * 3, GL_UNSIGNED_INT, 0);
+
+	glUniform1i(s->uniloc[2], 2);
+	glDrawElements(GL_TRIANGLES, tracegrid_vao.numfaces * 3, GL_UNSIGNED_INT, 0);
+	return TRUE;
+}
+
 int tracegrid_renderGrid(viewport_t * caster, viewport_t * v, planebox_t * screen){
 	if(!v || !v->type){
 		printf("TRACEGRID/renderGrid: ERROR invalid viewport!\n");
@@ -269,6 +317,7 @@ int tracegrid_renderGrid(viewport_t * caster, viewport_t * v, planebox_t * scree
 
 	shader_t *s = shader_returnById(tracegrid_gridshader_id);
 	glUseProgram(s->programid);
+
 	CHECKGLERROR
 	float tmat[16];
 	Matrix4x4_ToArrayFloatGL(&caster->viewprojinv, tmat);
@@ -283,7 +332,6 @@ int tracegrid_renderGrid(viewport_t * caster, viewport_t * v, planebox_t * scree
 	glUniformMatrix4fv(s->uniloc[5], 1, GL_FALSE, tmat);
 
 	glUniform3fv(s->uniloc[3], 1, (GLfloat*)&caster->pos);
-//	glUniform1i(s->uniloc[2], 0);
 	CHECKGLERROR
 
 	//printf("%i triangles\n", tracegrid_vao.numfaces);
@@ -345,6 +393,55 @@ int tracegrid_renderDebugGrid(viewport_t * caster, viewport_t * v, planebox_t * 
 	return TRUE;
 }
 
+int tracegrid_renderDebugOutput(viewport_t * caster, viewport_t * v, planebox_t * screen){
+	if(!v || !v->type){
+		printf("TRACEGRID/renderDebugOutput: ERROR invalid viewport!\n");
+		return 0;
+	}
+	if(!caster || !caster->type){
+		printf("TRACEGRID/renderDebugOutput: ERROR invalid caster viewport!\n");
+		return 0;
+	}
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, worldrenderer_fbo_postex);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, tracegrid_fbo_normtex);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, tracegrid_fbo_postex);
+	glEnable(GL_DEPTH_TEST);
+	vbo_bind(&tracegrid_vao);
+	CHECKGLERROR
+
+	shader_t *s = shader_returnById(tracegrid_debugoutputshader_id);
+	glUseProgram(s->programid);
+	CHECKGLERROR
+	float tmat[16];
+	Matrix4x4_ToArrayFloatGL(&caster->viewprojinv, tmat);
+	glUniformMatrix4fv(s->uniloc[0], 1, GL_FALSE, tmat);
+	Matrix4x4_ToArrayFloatGL(&v->viewproj, tmat);
+	glUniformMatrix4fv(s->uniloc[1], 1, GL_FALSE, tmat);
+
+	Matrix4x4_ToArrayFloatGL(&screen->frusty, tmat);
+	glUniformMatrix4fv(s->uniloc[4], 1, GL_FALSE, tmat);
+
+	Matrix4x4_ToArrayFloatGL(&screen->model, tmat);
+	glUniformMatrix4fv(s->uniloc[5], 1, GL_FALSE, tmat);
+
+	glUniform3fv(s->uniloc[3], 1, (GLfloat*)&caster->pos);
+	CHECKGLERROR
+
+	//printf("%i triangles\n", tracegrid_vao.numfaces);
+
+//	glDrawElements(GL_TRIANGLES, tracegrid_vao.numfaces * 3, GL_UNSIGNED_INT, 0);
+
+//	glUniform1i(s->uniloc[2], 1);
+//	glDrawElements(GL_TRIANGLES, tracegrid_vao.numfaces * 3, GL_UNSIGNED_INT, 0);
+
+	glUniform1i(s->uniloc[2], 2);
+	glDrawElements(GL_TRIANGLES, tracegrid_vao.numfaces * 3, GL_UNSIGNED_INT, 0);
+	return TRUE;
+}
+
 int tracegrid_renderDebugGridMini(viewport_t * caster, viewport_t *v){
 	if(!v || !v->type){
 		printf("TRACEGRID/renderDebugGridMini: ERROR invalid viewport!\n");
@@ -368,7 +465,7 @@ int tracegrid_renderDebugGridMini(viewport_t * caster, viewport_t *v){
 	float tmat[16];
 	float box = caster->aspect;
 	float view = v->aspect;
-	float scale = box > view ? 0.5/box : 0.5/view;
+	float scale = box > view ? 0.33/box : 0.33/view;
 	Matrix4x4_CreateTranslate(&tmath, scale * box - 1.0, scale * view - 1.0, 0.0);
 	Matrix4x4_ConcatScale3(&tmath, scale * box, scale * view, 1.0);
 	Matrix4x4_ToArrayFloatGL(&tmath, tmat);
@@ -409,7 +506,7 @@ int tracegrid_renderDebugFirstbounce(viewport_t *caster, viewport_t *v){
 	//figure out how big we wanna render it
 	float box = caster->aspect;
 	float view = v->aspect;
-	float scale = box > view ? 0.5/box : 0.5/view;
+	float scale = box > view ? 0.33/box : 0.33/view;
 	Matrix4x4_CreateTranslate(&tmath, scale * box - 1.0, scale * view - 1.0, 0.0);
 	Matrix4x4_ConcatScale3(&tmath, scale * box, scale * view, 1.0);
 	Matrix4x4_ToArrayFloatGL(&tmath, tmat);

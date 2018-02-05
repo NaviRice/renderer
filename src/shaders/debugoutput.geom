@@ -1,0 +1,47 @@
+layout (triangles) in;
+layout (triangle_strip, max_vertices=3) out;
+
+
+in VS_OUT {
+	vec3 pos;
+	vec2 tc;
+	vec4 col;
+	bool ontarget;
+} gs_in[];
+
+out VS_OUT {
+	vec3 pos;
+	vec2 tc;
+	vec4 col;
+} gs_out;
+
+uniform int bounces;
+
+void main(){
+
+	vec4 col;
+	//might be 0
+	bool anytarget = gs_in[0].ontarget && gs_in[1].ontarget && gs_in[2].ontarget;
+//	bool anytarget = true;
+	if(anytarget) col = vec4(0.0, 1.0, 0.0, 1.0);
+	else col = vec4(1.0, 0.0, 0.0, 1.0);
+
+	if(anytarget || bounces == 0){
+		gl_Position = gl_in[0].gl_Position;
+		gs_out.tc = gs_in[0].tc;
+		gs_out.col = col;
+		EmitVertex();
+
+		gl_Position = gl_in[1].gl_Position;
+		gs_out.tc = gs_in[1].tc;
+		gs_out.col = col;
+		EmitVertex();
+
+		gl_Position = gl_in[2].gl_Position;
+		gs_out.tc = gs_in[2].tc;
+		gs_out.col = col;
+		EmitVertex();
+
+		EndPrimitive();
+	}
+}

@@ -10,11 +10,17 @@ int worldrenderer_shutdown(void);
 
 
 
-
+GLuint worldrenderer_fbo_postex; //needed for when rendering the tracegrid to the actual screen
 
 int worldrenderer_renderFakeVP(viewport_t *v);
 
+int worldrenderer_bindEASTEREGG(void);
 
+
+int worldrenderer_renderEntities(viewport_t *v);
+int worldrenderer_renderDebugFramebufferMini(viewport_t * caster, viewport_t *v);
+
+int worldrenderer_renderModel(viewport_t *v, int mid, matrix4x4_t *m);
 
 
 #endif
