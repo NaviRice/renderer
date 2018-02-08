@@ -126,11 +126,32 @@ int worldrenderer_renderModel(viewport_t *v, int mid, matrix4x4_t *mat){
 
 
 int worldrenderer_recalcFakeVP(viewport_t *v){ //todo change this to also do shrinking based on windshield bboxp
+	vec3_t mins = {10000.0, 10000.0, 10000.0};
+	vec3_t maxs = {-10000.0, -10000.0, -10000.0};
 	int i;
-	for(i =0 ; i <= entity_arraylasttaken; i++){
+	int counter;
+	for(i=counter=0; i <= entity_arraylasttaken; i++){
 		entity_t *e = &entity_list[i];
 		if(!e->myid)continue;
+		counter++;
+		int z;
+		for(z = 0; z < 6; z++){
+			vec_t *v1 = &e->bboxp[z*3];
+			vec3_t v2;
+			vec3_t v3;
+			vec3subvec(v2, v1, v->pos);
+			vec3norm2(v3, v2);
+			if(v3[0] < mins[0]) mins[0] = v3[0];
+			else if(v3[0] > maxs[0]) maxs[0] = v3[0];
+			if(v3[1] < mins[1]) mins[1] = v3[1];
+			else if(v3[1] > maxs[1]) maxs[1] = v3[1];
+			if(v3[2] < mins[2]) mins[2] = v3[2];
+			else if(v3[2] > maxs[2]) maxs[2] = v3[2];
+		}
+
 	}
+	if(!counter) return FALSE;
+
 	//im probably going to recalc fov, aspect, near, far, angle
 	//pos stays the same
 	return TRUE;
