@@ -33,6 +33,9 @@
 #include "contextmanager.h"
 
 
+#include "headclient.h"
+
+
 
 //todo move into glinit and then just keep track of the lowest?
 int msaa_maxSamples=0, msaa_maxIntSamples=0, msaa_maxColorSamples=0, msaa_maxDepthSamples=0;
@@ -263,6 +266,8 @@ int gl_renderFirstbounce(double time){
 
 
 
+extern viewport_t headclient_kinectvp;
+extern vec3_t headclient_headpos;
 int gl_renderDebug(double time){
 	mycontext_t *c = mycontexts+context_current;
 	int width = c->width;
@@ -286,11 +291,14 @@ int gl_renderDebug(double time){
 
 
 
-	tmpvst.angle[1] = sin(time * 1.0) * 10;
-	tmpvst.angle[0] = sin(time * 3.1415926868) * 10;
-	tmpvst.pos[0] = sin(time * 3.111111111);
-	tmpvst.pos[1] = sin(time * 2.111111111);
-	tmpvst.pos[2] = 5.0 + sin(time * 1.11111111);
+//	tmpvst.angle[1] = sin(time * 1.0) * 10;
+//	tmpvst.angle[0] = sin(time * 3.1415926868) * 10;
+//	tmpvst.pos[0] = sin(time * 3.111111111);
+//	tmpvst.pos[1] = sin(time * 2.111111111);
+//	tmpvst.pos[2] = 5.0 + sin(time * 1.11111111);
+	tmpvst.pos[0] = headclient_headpos[0];
+	tmpvst.pos[1] = headclient_headpos[1];
+	tmpvst.pos[2] = headclient_headpos[2];
 	tmpvst.changed |= 1;
 	viewport_recalc(&tmpvst);
 
@@ -300,6 +308,7 @@ int gl_renderDebug(double time){
 	planebox_renderDebugLines(&tmp, &debugvp);
 	planebox_renderDebugLines(&tmpscreen, &debugvp);
 	planebox_renderViewportDebugLines(&tmpvst, &debugvp);
+	planebox_renderViewportDebugLines(&headclient_kinectvp, &debugvp);
 
 	gl_renderWorldDebug(time);
 

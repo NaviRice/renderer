@@ -13,6 +13,7 @@
 #include "matrixlib.h"
 #include "entitymanager.h" //init
 #include "contextmanager.h"
+#include "headclient.h"
 
 	extern double glfwGetTime(void);
 
@@ -47,6 +48,7 @@ int main(int argc, char *argv[]){
 	if(!glfw_init(800, 600, 24,1)){printf("Unable to init glfw\n"); shutitdown(); return 2;}
 	if(!entity_init()){printf("Unable to init entity\n"); shutitdown(); return 3;}
 	if(!gl_init()){printf("Unable to init gl\n"); shutitdown(); return 4;}
+	headclient_init();
 
 	double t, to;
 
@@ -68,6 +70,8 @@ int main(int argc, char *argv[]){
 			timesincelastfpsupdate = 0;
 		}
 		framecount++;
+		//grab most recent head
+		headclient_update();
 		//todo recalc viewport stuff here
 		context_switch(0);
 		gl_renderWorld(t);
