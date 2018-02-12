@@ -26,6 +26,10 @@ int model_register(char * name);
 
 int model_load(model_t *m);
 
+
+//eh, i dont like doing this check so often....
+int model_bind(model_t *m);
+
 int model_unload(model_t *m);
 
 int model_shutdown(void);

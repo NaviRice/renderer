@@ -102,9 +102,6 @@ viewport_t tmpvst = {0};
 viewport_t debugvp = {0};
 
 
-//this is temp
-int mid = 0;
-matrix4x4_t tmegga;
 
 //true is everything initialized correctly
 int gl_init(void){
@@ -118,7 +115,6 @@ int gl_init(void){
 	printf("MSAA Samples: %i, int %i, color %i, depth %i\n", msaa_maxSamples, msaa_maxIntSamples, msaa_maxColorSamples, msaa_maxDepthSamples);
 
 //temp
-	Matrix4x4_CreateFromQuakeEntity(&tmegga, 0.0, 0.0, -2.0, 0.0, 0.0, -90.0, 2.0);
 
 	vbo_init();
 	model_init();
@@ -159,9 +155,9 @@ int gl_init(void){
 	tmpvst.pos[2] = 5.0;
 	viewport_recalc(&tmpvst);
 
-	mid = model_register("models/teapot.iqm");
-	printf("registered model id %i\n", mid);
-	model_load(model_returnById(mid));
+	//mid = model_register("models/teapot.iqm");
+//	printf("registered model id %i\n", mid);
+//	model_load(model_returnById(mid));
 
 //	int mid = model_register("test.iqm");
 //	printf("registered model id %i\n", mid);
@@ -226,7 +222,7 @@ int gl_renderFrame(double time){ //temp
 	Matrix4x4_ToArrayFloatGL(&v.viewproj, tmat);
 	glUniformMatrix4fv(s->uniloc[0], 1, GL_FALSE, tmat);
 	CHECKGLERROR
-	glDrawElements(GL_TRIANGLES, m->vbo.numverts * 3, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, m->vbo.numfaces * 3, GL_UNSIGNED_INT, 0);
 	CHECKGLERROR
 */
 	return 1;
@@ -239,7 +235,6 @@ int gl_renderWorld(double time){
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	//todo actually use this
 	worldrenderer_renderEntities(&tmpvst);
-	worldrenderer_renderModel(&tmpvst, mid, &tmegga); //temp
 
 //cheap hack for stuff
 
@@ -249,7 +244,6 @@ extern int worldrenderer_modelshader_id;
 int gl_renderWorldDebug(double time){
 	//todo
 	worldrenderer_renderEntities(&debugvp);
-	worldrenderer_renderModel(&debugvp, mid, &tmegga); //temem
 	return TRUE;
 }
 

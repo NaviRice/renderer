@@ -16,7 +16,7 @@ extern const matrix4x4_t identitymatrix;
 // functions for manipulating 4x4 matrices
 
 // print a matrix4x4
-void Matrix4x4_Copy (matrix4x4_t *out, const matrix4x4_t *in);
+void Matrix4x4_Print (matrix4x4_t *i);
 // copy a matrix4x4
 void Matrix4x4_Copy (matrix4x4_t *out, const matrix4x4_t *in);
 // copy only the rotation portion of a matrix4x4

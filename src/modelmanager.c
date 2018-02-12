@@ -158,6 +158,11 @@ int model_load(model_t *m){
 	return FALSE;
 }
 
+int model_bind(model_t *m){
+	if(m->type != 3) model_load(m);
+	return vbo_bind(&m->vbo);
+}
+
 int model_unload(model_t *m){
 //TODO
 	//unload vbo

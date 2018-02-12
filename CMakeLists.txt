@@ -27,6 +27,7 @@ set(SOURCES
 	src/entitymanager.c
 	src/worldrenderer.c
 	src/headclient.c
+	src/gamecodemanager.c
 	)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/shaders

@@ -22,6 +22,7 @@ IDLIST_INTERNAL(entity, entity_t, entitylist_t);
 
 int entity_init(void){
 	IDLIST_INIT(entity, entity_t, entitylist_t);
+	entity_ok = TRUE;
 	return TRUE;
 }
 int entity_unload(entity_t *e){

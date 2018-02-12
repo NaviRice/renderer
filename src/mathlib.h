@@ -113,4 +113,6 @@ unsigned char checkBBoxPInBBox(const vec_t *bbox, const vec_t *bboxp);
 unsigned char checkSphereInSphere(const vec3_t sphere1, const vec_t size1, const vec3_t sphere2, const vec_t size2);
 unsigned char checkVertsInBBox(const vec_t *bbox, const vec_t *verts, const unsigned int count);
 
+
+
 #endif

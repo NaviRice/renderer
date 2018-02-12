@@ -24,7 +24,6 @@ const matrix4x4_t identitymatrix =
 
 void Matrix4x4_Print (matrix4x4_t *i)
 {
-	int x,y;
 	#ifdef MATRIX4x4_OPENGLORIENTATION
 	printf("{%f %f %f %f,\n", i->m[0][0], i->m[0][1], i->m[0][2], i->m[0][3]);
 	printf(" %f %f %f %f,\n", i->m[1][0], i->m[1][1], i->m[1][2], i->m[1][3]);

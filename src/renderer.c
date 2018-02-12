@@ -15,6 +15,8 @@
 #include "contextmanager.h"
 #include "headclient.h"
 
+#include "gamecodemanager.h"
+
 	extern double glfwGetTime(void);
 
 int shutitdown(){
@@ -46,9 +48,13 @@ int main(int argc, char *argv[]){
 //	if(!entity_init()){printf("Unable to init entity\n"); shutitdown(); return 4;}
 
 	if(!glfw_init(800, 600, 24,1)){printf("Unable to init glfw\n"); shutitdown(); return 2;}
-	if(!entity_init()){printf("Unable to init entity\n"); shutitdown(); return 3;}
-	if(!gl_init()){printf("Unable to init gl\n"); shutitdown(); return 4;}
+	if(!gl_init()){printf("Unable to init gl\n"); shutitdown(); return 3;}
+	if(!gamecode_init()){printf("Unable to init gamecode\n"); shutitdown(); return 4;}
+	//todo move to gamecode but whatever
 	headclient_init();
+
+
+
 
 	double t, to;
 
@@ -56,6 +62,7 @@ int main(int argc, char *argv[]){
 
 	double timesincelastfpsupdate = 0.0;
 	int framecount = 0;
+	double accum = 0.0;
 
 
 	while(TRUE){		//temp
@@ -70,8 +77,18 @@ int main(int argc, char *argv[]){
 			timesincelastfpsupdate = 0;
 		}
 		framecount++;
+
+		accum += delta;
 		//grab most recent head
+
+		glfw_checkEvent();
+		//todo figure out if thise should be reordered
 		headclient_update();
+		while(accum * 1000.0 > GCTIMESTEP){
+			gamecode_tick();
+			accum -= (double)GCTIMESTEP/1000.0;
+		}
+
 		//todo recalc viewport stuff here
 		context_switch(0);
 		gl_renderWorld(t);
@@ -82,7 +99,8 @@ int main(int argc, char *argv[]){
 		//todo move to context 1 once i verify that it worky
 		gl_renderDebug(t);
 		glfw_swapBuffers();
-		glfw_checkEvent();
+
+
 	}
 	shutitdown();
 	return FALSE;

@@ -106,12 +106,13 @@ int worldrenderer_shutdown(void){
 
 
 int worldrenderer_renderModel(viewport_t *v, int mid, matrix4x4_t *mat){
+//	Matrix4x4_Print(mat);
 	model_t *m = model_returnById(mid);
 	if(!m){
-		printf("WORLDRENDERER/renderModel: ERROR invalid model id!\n");
+		printf("WORLDRENDERER/renderModel: ERROR invalid model id! %i\n", mid);
 		return 0;
 	}
-	vbo_bind(&m->vbo);
+	model_bind(m);
 	shader_t *s = shader_returnById(worldrenderer_modelshader_id);
 	glUseProgram(s->programid);
 	matrix4x4_t tmath;
@@ -119,7 +120,7 @@ int worldrenderer_renderModel(viewport_t *v, int mid, matrix4x4_t *mat){
 	Matrix4x4_Concat(&tmath, &v->viewproj, mat);
 	Matrix4x4_ToArrayFloatGL(&tmath, tmat);
 	glUniformMatrix4fv(s->uniloc[0], 1, GL_FALSE, tmat);
-	glDrawElements(GL_TRIANGLES, m->vbo.numverts * 3, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, m->vbo.numfaces * 3, GL_UNSIGNED_INT, 0);
 }
 
 
@@ -162,13 +163,28 @@ int worldrenderer_renderEntities(viewport_t *v){
 	int counter = 0;
 	for(i=0 ; i <= entity_arraylasttaken; i++){
 		entity_t *e = &entity_list[i];
-		if(!e->myid)continue;
-		worldrenderer_renderModel(v, e->modelid, &e->final);
+		if(!e->myid || !e->modelid)continue;
+//		worldrenderer_renderModel(v, e->modelid, &e->final);
+		worldrenderer_renderModel(v, e->modelid, &e->mat);
 		counter++;
 	}
 	return counter;
 }
-
+//todo
+/*
+int worldrenderer_renderEntitiesBboxes(viewport_t *v){
+	int i;
+	int counter = 0;
+	for(i=0 ; i <= entity_arraylasttaken; i++){
+		entity_t *e = &entity_list[i];
+		if(!e->myid || !e->modelid)continue;
+//		worldrenderer_renderModel(v, e->modelid, &e->final);
+		worldrenderer_renderModel(v, e->modelid, &e->mat);
+		counter++;
+	}
+	return counter;
+}
+*/
 
 
 extern int tracegrid_debugfirstbounceshader_id;

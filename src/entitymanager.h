@@ -6,13 +6,22 @@ typedef struct entity_s {
 	char * name;
 
 	vec3_t pos;
+	vec3_t vel;
+
 	vec3_t angle;
+	vec3_t anglevel;
+
 	float scale;
+	float scalevel; //NEW AND IMPROVED
+
+	int attachmentid;
 	//used to generate
 	matrix4x4_t mat;
 	//which is further used to generate
+	//TODO actually set this up!
 	matrix4x4_t final;
 	int needsmatupdate;
+	int needsbboxupdate; //might be able to get rid of... seems to always appear false
 
 	//and finally generates this
 	vec_t bboxp[24];
