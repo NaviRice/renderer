@@ -70,7 +70,7 @@ int headclient_init(void){
 packetdata_t headpos = {0};
 
 int fuck = 0;
-vec4_t headclient_headpos = {0.0, 0.0, 1.0, 0.0};
+vec4_t headclient_headpos = {0.0, 0.0, 4.0, 0.0};
 int headclient_update(void){
 	fuck++;
 	size_t toread = 0;

@@ -182,6 +182,9 @@ int worldrenderer_recalcFakeVP(viewport_t *v){ //todo change this to also do shr
 //	vec3copy(v->angle, viewangle);
 //	printf("%f %f %f\n", v->angle[0], v->angle[1], v->angle[2]);
 	v->changed |=1;
+	//get vertical angle
+	float vertangle =  (180.0/M_PI)* (atan2(topright[1], sqrt(topright[0] * topright[0] + topright[2] * topright[2]))-atan2(bottomleft[1], sqrt(bottomleft[0] * bottomleft[0] + bottomleft[2] * bottomleft[2])));
+//	printf("vertangle is %f\n", vertangle);
 	//pos stays the same
 	return TRUE;
 }
