@@ -121,6 +121,7 @@ int worldrenderer_renderModel(viewport_t *v, int mid, matrix4x4_t *mat){
 	Matrix4x4_ToArrayFloatGL(&tmath, tmat);
 	glUniformMatrix4fv(s->uniloc[0], 1, GL_FALSE, tmat);
 	glDrawElements(GL_TRIANGLES, m->vbo.numfaces * 3, GL_UNSIGNED_INT, 0);
+	return m->vbo.numfaces;
 }
 
 
@@ -130,8 +131,8 @@ int worldrenderer_recalcFakeVP(viewport_t *v){ //todo change this to also do shr
 	vec3_t mins = {10000.0, 10000.0, 10000.0};
 	vec3_t maxs = {-10000.0, -10000.0, -10000.0};
 	int i;
-	int counter;
-	for(i=counter=0; i <= entity_arraylasttaken; i++){
+	int counter = 0;
+	for(i=0; i <= entity_arraylasttaken; i++){
 		entity_t *e = &entity_list[i];
 		if(!e->myid)continue;
 		counter++;
@@ -154,6 +155,33 @@ int worldrenderer_recalcFakeVP(viewport_t *v){ //todo change this to also do shr
 	if(!counter) return FALSE;
 
 	//im probably going to recalc fov, aspect, near, far, angle
+	//normalize all the vectors
+	vec3_t topright;
+	vec3_t bottomleft;
+	vec3norm2(topright, maxs);
+	vec3norm2(bottomleft, mins);
+	//get average
+	vec3_t mid;
+	vec3addvec(mid, topright, bottomleft);
+	vec3mult(mid, mid, 0.5);
+	vec3_t newlook;
+	vec3norm2(newlook, mid);
+
+
+
+//	printf("%f %f %f\n", newlook[0], newlook[1], newlook[2]);
+	vec3_t viewangle = {0};
+
+	//darkplaces mathlib.h anglesfromvectors as a ref
+	viewangle[0] = -atan2(newlook[1], sqrt(newlook[0]*newlook[0]+newlook[2]*newlook[2]));
+	viewangle[1] = atan2(newlook[0], -newlook[2]);
+	viewangle[2] = 0;
+
+
+	vec3mult(v->angle, viewangle, 180.0/M_PI);
+//	vec3copy(v->angle, viewangle);
+//	printf("%f %f %f\n", v->angle[0], v->angle[1], v->angle[2]);
+	v->changed |=1;
 	//pos stays the same
 	return TRUE;
 }
@@ -165,6 +193,7 @@ int worldrenderer_renderEntities(viewport_t *v){
 		entity_t *e = &entity_list[i];
 		if(!e->myid || !e->modelid)continue;
 //		worldrenderer_renderModel(v, e->modelid, &e->final);
+//todo adjust ents so they have a final
 		worldrenderer_renderModel(v, e->modelid, &e->mat);
 		counter++;
 	}

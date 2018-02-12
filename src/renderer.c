@@ -89,6 +89,7 @@ int main(int argc, char *argv[]){
 			accum -= (double)GCTIMESTEP/1000.0;
 		}
 
+
 		//todo recalc viewport stuff here
 		context_switch(0);
 		gl_renderWorld(t);

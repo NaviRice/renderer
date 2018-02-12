@@ -233,10 +233,7 @@ int gl_renderWorld(double time){
 	GLenum renderbuffs[] = {GL_COLOR_ATTACHMENT0};
 	glDrawBuffers(1, renderbuffs);//todo move
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	//todo actually use this
 	worldrenderer_renderEntities(&tmpvst);
-
-//cheap hack for stuff
 
 	return TRUE;
 }
@@ -294,6 +291,8 @@ int gl_renderDebug(double time){
 	tmpvst.pos[1] = headclient_headpos[1];
 	tmpvst.pos[2] = headclient_headpos[2];
 	tmpvst.changed |= 1;
+	//todo move
+	worldrenderer_recalcFakeVP(&tmpvst);
 	viewport_recalc(&tmpvst);
 
 	cnt++;
