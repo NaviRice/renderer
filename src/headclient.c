@@ -2,7 +2,7 @@
 #include "headclient.h"
 
 #define PORT 4007
-#define HOST "75.136.80.95"
+#define HOST "130.215.125.157"
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <string.h>
@@ -83,7 +83,7 @@ int headclient_update(void){
 	}
 //	printf("captured ios %i\n", captured);
 	if(!captured) return 0;
-	Matrix4x4_Transform(&headclient_kinectvp.viewprojinv, fakehead_pos, headclient_headpos);
+	Matrix4x4_Transform(&headclient_kinectvp.viewproj, fakehead_pos, headclient_headpos);
 //	headclient_headpos[0] /= headclient_headpos[3];
 //	headclient_headpos[1] /= headclient_headpos[3];
 	//ok now we get real head location from the input

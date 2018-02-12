@@ -164,6 +164,7 @@ int viewport_recalc(viewport_t *v){
 	if(changed){
 		Matrix4x4_Concat(&v->viewproj, &v->projection, &v->view);
 		Matrix4x4_Invert_Full(&v->viewprojinv, &v->viewproj);
+//		Matrix4x4_Print(&v->viewprojinv);
 		recalcFrustum(v);
 		recalcFrustumBBoxP(v);
 	}

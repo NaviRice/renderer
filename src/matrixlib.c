@@ -22,6 +22,22 @@ const matrix4x4_t identitymatrix =
 	}
 };
 
+void Matrix4x4_Print (matrix4x4_t *i)
+{
+	int x,y;
+	#ifdef MATRIX4x4_OPENGLORIENTATION
+	printf("{%f %f %f %f,\n", i->m[0][0], i->m[0][1], i->m[0][2], i->m[0][3]);
+	printf(" %f %f %f %f,\n", i->m[1][0], i->m[1][1], i->m[1][2], i->m[1][3]);
+	printf(" %f %f %f %f,\n", i->m[2][0], i->m[2][1], i->m[2][2], i->m[2][3]);
+	printf(" %f %f %f %f}\n", i->m[3][0], i->m[3][1], i->m[3][2], i->m[3][3]);
+	#else
+	printf("{%f %f %f %f,\n", i->m[0][0], i->m[1][0], i->[2][0], i->[3][0]);
+	printf(" %f %f %f %f,\n", i->m[0][1], i->m[1][1], i->[2][1], i->[3][1]);
+	printf(" %f %f %f %f,\n", i->m[0][2], i->m[1][2], i->[2][2], i->[3][2]);
+	printf(" %f %f %f %f}\n", i->m[0][3], i->m[1][3], i->[2][3], i->[3][3]);
+	#endif
+}
+
 void Matrix4x4_Copy (matrix4x4_t *out, const matrix4x4_t *in)
 {
 	*out = *in;
