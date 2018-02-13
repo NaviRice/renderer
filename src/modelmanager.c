@@ -38,6 +38,43 @@ int model_register(char * name){
 //VERY UNTESTED
 int genIQMBBoxes(model_t *m, const struct iqmheader hdr, unsigned char * buf){
 	//TODO
+	//this was causing some BULLSHIT so i should've done it earlier
+	int numverts =	hdr.num_vertexes;
+	if(numverts<1){
+		printf("MODEL/genIQMBBoxess error vertex count is 0 (or less), defaulting to a ZERO bbox for mesh # %i of model %s\n", 0, m->name);
+		memset(m->bbox, 0, sizeof(m->bbox));
+		memset(m->bboxp, 0, sizeof(m->bboxp));
+		return FALSE;
+	}
+	float * posptr = 0;
+	struct iqmvertexarray *vas = (struct iqmvertexarray *) &buf[hdr.ofs_vertexarrays];
+	int i;
+	for(i = 0; i < (int)hdr.num_vertexarrays; i++){
+		struct iqmvertexarray va = vas[i];
+		if(va.type == IQM_POSITION && va.format == IQM_FLOAT && va.size == 3) posptr = (float *)&buf[va.offset];
+		//todo maybe support posdata that isnt 3 floats
+	}
+	if(!posptr){
+		printf("MODEL/genIQMBBoxess warning count not find a position vertex attrib... defaulting to a ZERO bbox for mesh # %i of model %s\n", 0, m->name);
+		memset(m->bbox, 0, sizeof(m->bbox));
+		memset(m->bboxp, 0, sizeof(m->bboxp));
+		return FALSE;
+	}
+	//should be all set to calc them
+	float *v = posptr;
+	m->bbox[0] = m->bbox[1] = v[0];
+	m->bbox[2] = m->bbox[3] = v[1];
+	m->bbox[4] = m->bbox[5] = v[2];
+	for(i=1; i < numverts; i++){
+		v = &posptr[i*3];
+		if(v[0] > m->bbox[0]) m->bbox[0] = v[0];
+		else if(v[0] < m->bbox[1]) m->bbox[1] = v[0];
+		if(v[1] > m->bbox[2]) m->bbox[2] = v[1];
+		else if(v[1] < m->bbox[3]) m->bbox[3] = v[1];
+		if(v[2] > m->bbox[4]) m->bbox[4] = v[2];
+		else if(v[2] < m->bbox[5]) m->bbox[5] = v[2];
+	}
+	getBBoxPFromBBox(m->bbox, m->bboxp);
 	return TRUE;
 }
 
@@ -52,7 +89,8 @@ int loadIQMBBoxes(model_t *m, const struct iqmheader hdr, unsigned char * buf){
 	m->bbox[5] = b->bbmax[2];
 
 	getBBoxPFromBBox(m->bbox, m->bboxp);
-	return TRUE;
+//	return TRUE;
+	return FALSE;
 }
 
 

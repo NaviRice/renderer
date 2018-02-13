@@ -171,15 +171,13 @@ int gamecode_init(void){
 int recalcEntBBox(entity_t * e){
 	model_t * m = model_returnById(e->modelid);
 	if(!m) return FALSE;
-	int i;
-	e->bbox[0] = -3.4028e+38;
-	e->bbox[1] = 3.4028e+38;
-	e->bbox[2] = -3.4028e+38;
-	e->bbox[3] = 3.4028e+38;
-	e->bbox[4] = -3.4028e+38;
-	e->bbox[5] = 3.4028e+38;
+		Matrix4x4_Transformsimdu(&e->mat, &m->bboxp[0], &e->bboxp[0]);
 
-	for(i = 0; i < 8; i++){
+		e->bbox[0] = e->bbox[1] =  e->bboxp[0];
+		e->bbox[2] = e->bbox[3] =  e->bboxp[1];
+		e->bbox[4] = e->bbox[5] =  e->bboxp[2];
+	int i;
+	for(i = 1; i < 8; i++){
 		int oneplace = i*3;
 		Matrix4x4_Transformsimdu(&e->mat, &m->bboxp[oneplace], &e->bboxp[oneplace]);
 
