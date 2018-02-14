@@ -177,7 +177,7 @@ int cnt = 0;
 int gl_renderFrame(double time){ //temp
 	mycontext_t *c = mycontexts+context_current;
 	int width = c->width;
-	int height = c->width;
+	int height = c->height;
 	if(c->changed){
 		c->changed = FALSE;
 //		debugvp.aspect = (double)width/(double)height;
@@ -262,7 +262,7 @@ extern vec3_t headclient_headpos;
 int gl_renderDebug(double time){
 	mycontext_t *c = mycontexts+context_current;
 	int width = c->width;
-	int height = c->width;
+	int height = c->height;
 	if(c->changed){
 		c->changed = FALSE;
 		debugvp.aspect = (double)width/(double)height;

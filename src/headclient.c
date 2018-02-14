@@ -90,9 +90,9 @@ int headclient_update(void){
 	}
 //	printf("captured ios %i\n", captured);
 	if(!captured) return 0;
-//	fakehead_pos[0] = 1.0;
-//	fakehead_pos[1] = 0.0;
-//	fakehead_pos[2] = (sin(fuck * 0.002)* 0.5 + 0.5);
+	fakehead_pos[0] = 1.0;
+	fakehead_pos[1] = 0.0;
+	fakehead_pos[2] = (sin(fuck * 0.002)* 0.5 + 0.5);
 	//get Z back into clip space
 
 //	vec4_t jumbo_jet = {0.0, 0.0, -fakehead_pos[2], 1.0};

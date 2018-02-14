@@ -174,14 +174,14 @@ int worldrenderer_recalcFakeVP(viewport_t *v){ //todo change this to also do shr
 
 	//darkplaces mathlib.h anglesfromvectors as a ref
 	viewangle[0] = -atan2(newlook[1], sqrt(newlook[0]*newlook[0]+newlook[2]*newlook[2]));
-	viewangle[1] = atan2(newlook[0], -newlook[2]);
+	viewangle[1] = atan2(newlook[0], newlook[2]);
 	viewangle[2] = 0;
 
 
-	vec3mult(v->angle, viewangle, 180.0/M_PI);
+//	vec3mult(v->angle, viewangle, 180.0/M_PI);
 //	vec3copy(v->angle, viewangle);
 //	printf("%f %f %f\n", v->angle[0], v->angle[1], v->angle[2]);
-	v->changed |=1;
+//	v->changed |=1;
 	//get vertical angle
 	float vertangle =  (180.0/M_PI)* (atan2(topright[1], sqrt(topright[0] * topright[0] + topright[2] * topright[2]))-atan2(bottomleft[1], sqrt(bottomleft[0] * bottomleft[0] + bottomleft[2] * bottomleft[2])));
 //	printf("vertangle is %f\n", vertangle);
