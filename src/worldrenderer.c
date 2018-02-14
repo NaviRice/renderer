@@ -160,12 +160,14 @@ int worldrenderer_recalcFakeVP(viewport_t *v){ //todo change this to also do shr
 	vec3_t bottomleft;
 	vec3norm2(topright, maxs);
 	vec3norm2(bottomleft, mins);
-	//get average
+	//get center
 	vec3_t mid;
 	vec3addvec(mid, topright, bottomleft);
 	vec3mult(mid, mid, 0.5);
 	vec3_t newlook;
 	vec3norm2(newlook, mid);
+
+	//normalized direction we want to look in is newlook
 
 
 

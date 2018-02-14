@@ -14,6 +14,7 @@
 
 #include "hashtables.h"	//for idlist
 #include "mathlib.h"	//for bbox stuff currently
+#include <math.h>
 
 
 #include "glmanager.h"	//for checkglerror
@@ -75,9 +76,12 @@ int genIQMBBoxes(model_t *m, const struct iqmheader hdr, unsigned char * buf){
 		if(v[2] > m->bbox[4]) m->bbox[4] = v[2];
 		else if(v[2] < m->bbox[5]) m->bbox[5] = v[2];
 
-		float len = vec3length(v);
+//		float len = vec3length(v);
+		float len = vec3dot(v, v);
 		if(len > m->bsphere) m->bsphere = len;
 	}
+	//have to sqrt it here since I did "fast" length during the find-the-max
+	m->bsphere = sqrt(m->bsphere);
 	getBBoxPFromBBox(m->bbox, m->bboxp);
 	return TRUE;
 }
