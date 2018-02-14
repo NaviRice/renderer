@@ -65,6 +65,7 @@ int genIQMBBoxes(model_t *m, const struct iqmheader hdr, unsigned char * buf){
 	m->bbox[0] = m->bbox[1] = v[0];
 	m->bbox[2] = m->bbox[3] = v[1];
 	m->bbox[4] = m->bbox[5] = v[2];
+	m->bsphere = 0;
 	for(i=1; i < numverts; i++){
 		v = &posptr[i*3];
 		if(v[0] > m->bbox[0]) m->bbox[0] = v[0];
@@ -73,6 +74,9 @@ int genIQMBBoxes(model_t *m, const struct iqmheader hdr, unsigned char * buf){
 		else if(v[1] < m->bbox[3]) m->bbox[3] = v[1];
 		if(v[2] > m->bbox[4]) m->bbox[4] = v[2];
 		else if(v[2] < m->bbox[5]) m->bbox[5] = v[2];
+
+		float len = vec3length(v);
+		if(len > m->bsphere) m->bsphere = len;
 	}
 	getBBoxPFromBBox(m->bbox, m->bboxp);
 	return TRUE;

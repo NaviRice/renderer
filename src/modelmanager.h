@@ -8,6 +8,7 @@ typedef struct model_s {
 
 	vec_t bboxp[24];
 	vec_t bbox[6];
+	float bsphere;
 
 } model_t;
 

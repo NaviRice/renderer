@@ -27,6 +27,7 @@ typedef struct entity_s {
 	vec_t bboxp[24];
 	vec_t bbox[6];
 
+	vec3_t finalpos; //todo maybe use this?
 
 
 	int modelid; //todo multiple models per ent? thoughts about that

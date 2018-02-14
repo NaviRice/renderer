@@ -188,6 +188,22 @@ int recalcEntBBox(entity_t * e){
 		if(e->bboxp[oneplace+2] > e->bbox[4]) e->bbox[4] = e->bboxp[oneplace+2];
 		else if(e->bboxp[oneplace+2] < e->bbox[5]) e->bbox[5] = e->bboxp[oneplace+2];
 	}
+	//now clamp to sphere size
+	//assumes finalpos is set
+	vec3_t maxs, mins;
+	vec3add(maxs, e->finalpos, m->bsphere);
+	vec3sub(mins, e->finalpos, m->bsphere);
+
+
+	//note, no elses here, because it can easily be both
+	if(e->bbox[0] > maxs[0]) e->bbox[0] = maxs[0];
+	if(e->bbox[1] < mins[0]) e->bbox[1] = mins[0];
+	if(e->bbox[2] > maxs[1]) e->bbox[2] = maxs[1];
+	if(e->bbox[3] < mins[1]) e->bbox[3] = mins[1];
+	if(e->bbox[4] > maxs[2]) e->bbox[4] = maxs[2];
+	if(e->bbox[5] < mins[2]) e->bbox[5] = mins[2];
+
+
 	e->needsbboxupdate = FALSE;
 
 
@@ -348,8 +364,20 @@ void gamecode_tick(void){ //todo maybe change to float in seconds
 	for(i = 0; i <= entity_arraylasttaken; i++){
 		entity_t *e = &entity_list[i];
 		if(!e->myid) continue;
+		//crazy recursive attachment system
 		calcEntAttachMat(e);
-		if(e->needsmatupdate || e->needsbboxupdate) recalcEntBBox(e);
+		//was it updated in the process?
+		if(e->needsmatupdate || e->needsbboxupdate){
+			if(e->attachmentid){
+				//todo update for finalmatrix
+				Matrix4x4_OriginFromMatrix(&e->mat, e->finalpos);
+			} else {
+				e->finalpos[0] = e->pos[0];
+				e->finalpos[1] = e->pos[1];
+				e->finalpos[2] = e->pos[2];
+			}
+			recalcEntBBox(e);
+		}
 	}
 	//todo maybe convert to an entity "carry" system instead of a light attach system
 //	lightLoop();
