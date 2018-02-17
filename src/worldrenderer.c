@@ -145,23 +145,28 @@ int worldrenderer_recalcFakeVP(viewport_t *v){ //todo change this to also do shr
 		if(!e->myid)continue;
 		int z;
 		for(z = 0; z < 6; z++){
-//			vec_t *v1 = &e->bboxp[z*3];
-			vec_t *v1 = &e->finalpos;
+			vec_t *v1 = &e->bboxp[z*3];
+//			vec_t *v1 = &e->finalpos;
 			vec3_t v2;
 			vec3subvec(v2, v->pos, v1);
 //			vec3norm2(v2, v2);
 
 			float pitch = atan2(v2[1], sqrt(v2[0]*v2[0]+v2[2]*v2[2]));
-			float yaw = atan2(v2[0], v2[2]);
+			float yaw = atan2(-v2[0], v2[2]);
 //			float pitch = asin(v2[1]);
-			printf("v1 is %f %f %f, v->pos is %f %f %f\n", v1[0], v1[1], v1[2], v->pos[0], v->pos[1], v->pos[2]);
-			printf("v2 is %f %f %f, pitch is %f\n", v2[0], v2[1], v2[2], pitch);
+//			printf("v1 is %f %f %f, v->pos is %f %f %f\n", v1[0], v1[1], v1[2], v->pos[0], v->pos[1], v->pos[2]);
+//			printf("v2 is %f %f %f, pitch is %f\n", v2[0], v2[1], v2[2], pitch);
 
-			maxpitch = minpitch = pitch;
-//			if(pitch > maxpitch) maxpitch = pitch;
-//			else if(pitch < minpitch) minpitch = pitch;
+			if(!counter) maxpitch = minpitch = pitch;
+			else if(pitch > maxpitch) maxpitch = pitch;
+			else if(pitch < minpitch) minpitch = pitch;
 
-//			maxyaw = minyaw = yaw;
+
+			//todo make the legit 2 pass method
+			if(!counter) maxyaw = minyaw = yaw;
+			else if(yaw > maxyaw) maxyaw = yaw;
+			else if(yaw < minyaw) minyaw = yaw;
+
 			counter++;
 		}
 	}
@@ -182,9 +187,9 @@ int worldrenderer_recalcFakeVP(viewport_t *v){ //todo change this to also do shr
 	if(minpitch < 0.0) minpitch+= 360.0;
 	else if(minpitch >= 360.0) minpitch -= 360.0;
 */
-//	v->angle[0] = (maxpitch+minpitch) * 0.5;
+	v->angle[0] = (maxpitch+minpitch) * 0.5;
 
-	v->angle[0] = minpitch;
+//	v->angle[0] = minpitch;
 
 	//calculate yaw angles
 //	float maxyaw = -atan2(maxs[0], -maxs[2]) * 180.0/M_PI;
@@ -200,18 +205,18 @@ int worldrenderer_recalcFakeVP(viewport_t *v){ //todo change this to also do shr
 //	printf("maxyaw minyaw %f %f\n", maxyaw, minyaw);
 
 
-//	v->angle[1] = (maxyaw+minyaw) * 0.5;
+	v->angle[1] = (maxyaw+minyaw) * 0.5;
 //	v->angle[1] = maxyaw;
 
 
-//	v->fov = fabs(maxpitch-minpitch);
+	v->fov = fabs(maxpitch-minpitch);
 
-//	float hfov = fabs(maxyaw-minyaw);
-//	v->aspect = hfov/v->fov;
+	float hfov = fabs(maxyaw-minyaw);
+	v->aspect = hfov/v->fov;
 
 	v->changed |= 1;
 	v->changed |= 2;
-	v->aspect = 1.0;
+//	v->aspect = 1.0;
 
 //	printf("maxpitch is %f\n", maxpitch);
 

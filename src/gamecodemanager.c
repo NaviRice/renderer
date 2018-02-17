@@ -142,17 +142,28 @@ int gamecode_init(void){
 
 
 	//temp till i get seperated gamecode
-	entity_t e = {0};
-	e.name = strdup("teapot");
-	e.pos[2] = -8.0;
-	e.angle[2] = -90.0;
-	e.anglevel[1] = 20.0;
-	e.needsmatupdate = 1;
-	e.scale = 0.1;
-//	e.type = 1;
-	e.modelid = model_register("models/teapot.iqm");
-	entity_t *teapot = entity_addRPOINT(e);
+	entity_t crank ={0};
+	crank.name = strdup("crank");
+	crank.anglevel[0] = 100.0;
+	crank.needsmatupdate =1;
+	crank.scale = 1.0;
+	crank.pos[2] = -5.0;
+	int crankid = entity_addRINT(crank);
 
+
+	entity_t tp = {0};
+	tp.attachmentid = crankid;
+	tp.name = strdup("teapot");
+	tp.pos[2] = -5.0;
+	tp.angle[2] = -90.0;
+	tp.anglevel[1] = 20.0;
+	tp.needsmatupdate = 1;
+	tp.scale = 2.0;
+//	tp.type = 1;
+	tp.modelid = model_register("models/teapot.iqm");
+	entity_t *teapot = entity_addRPOINT(tp);
+
+	entity_t e ={0};
 	e.name = strdup("bunny ass bitch");
 	e.pos[2] = -1.5;
 	e.angle[2] = -90.0;

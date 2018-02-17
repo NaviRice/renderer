@@ -31,10 +31,12 @@ typedef struct packetdata_s {
 viewport_t headclient_kinectvp = {0};
 int headclient_generateKinectMats(void){
 	headclient_kinectvp.type = 1;
-	headclient_kinectvp.pos[0] = 0.0;
-	headclient_kinectvp.pos[1] = 0.0;
-	headclient_kinectvp.pos[2] = 1.0;
+	headclient_kinectvp.pos[0] = 2.0;
+	headclient_kinectvp.pos[1] = -2.5;
+	headclient_kinectvp.pos[2] = 1.5;
 	headclient_kinectvp.angle[1] = 180;
+	headclient_kinectvp.angle[1] = 200;
+	headclient_kinectvp.angle[0]= -20.0;
 	headclient_kinectvp.fov = 70.6;
 	headclient_kinectvp.aspect=70.6/60.0;
 	headclient_kinectvp.near = 0.1;
@@ -97,7 +99,7 @@ int headclient_update(void){
 
 
 	fakehead_pos[2] = 4.0;
-//	fakehead_pos[0] = sin(fuck * 0.002);
+	fakehead_pos[0] = sin(fuck * 0.00031415926);
 	fakehead_pos[1] = cos(fuck * 0.00025);
 //	printf("new head pos is %f %f %f\n", fakehead_pos[0], fakehead_pos[1], fakehead_pos[2]);
 

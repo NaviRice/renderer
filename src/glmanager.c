@@ -234,7 +234,9 @@ int gl_renderWorld(double time){
 	worldrenderer_bindEASTEREGG();
 	GLenum renderbuffs[] = {GL_COLOR_ATTACHMENT0};
 	glDrawBuffers(1, renderbuffs);//todo move
+	glClearColor(0.0, 0.0, 0.1, 0.0);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	glClearColor(0.0, 0.0, 0.0, 0.0);
 	worldrenderer_renderEntities(&tmpvst);
 	worldrenderer_renderEntitiesBBoxes(&tmpvst);
 
