@@ -130,6 +130,10 @@ int worldrenderer_renderModel(viewport_t *v, int mid, matrix4x4_t *mat){
 
 
 int worldrenderer_recalcFakeVP(viewport_t *v){ //todo change this to also do shrinking based on windshield bboxp
+
+//	v->pos[0] = 0.0;
+//	v->pos[1] = 0.0;
+//	v->pos[2] = 4.0;
 	int i;
 	int counter = 0;
 	float maxpitch = 0.0;
@@ -141,21 +145,23 @@ int worldrenderer_recalcFakeVP(viewport_t *v){ //todo change this to also do shr
 		if(!e->myid)continue;
 		int z;
 		for(z = 0; z < 6; z++){
-			vec_t *v1 = &e->bboxp[z*3];
+//			vec_t *v1 = &e->bboxp[z*3];
+			vec_t *v1 = &e->finalpos;
 			vec3_t v2;
 			vec3subvec(v2, v->pos, v1);
 //			vec3norm2(v2, v2);
 
-//			printf("v2 is %f %f %f\n", v2[0], v2[1], v2[2]);
 			float pitch = atan2(v2[1], sqrt(v2[0]*v2[0]+v2[2]*v2[2]));
 			float yaw = atan2(v2[0], v2[2]);
 //			float pitch = asin(v2[1]);
+			printf("v1 is %f %f %f, v->pos is %f %f %f\n", v1[0], v1[1], v1[2], v->pos[0], v->pos[1], v->pos[2]);
+			printf("v2 is %f %f %f, pitch is %f\n", v2[0], v2[1], v2[2], pitch);
 
-			if(!counter) maxpitch = minpitch = pitch;
-//			else if(pitch > maxpitch) maxpitch = pitch;
+			maxpitch = minpitch = pitch;
+//			if(pitch > maxpitch) maxpitch = pitch;
 //			else if(pitch < minpitch) minpitch = pitch;
 
-			if(!counter)maxyaw = minyaw = yaw;
+//			maxyaw = minyaw = yaw;
 			counter++;
 		}
 	}
@@ -178,7 +184,7 @@ int worldrenderer_recalcFakeVP(viewport_t *v){ //todo change this to also do shr
 */
 //	v->angle[0] = (maxpitch+minpitch) * 0.5;
 
-	v->angle[0] = maxpitch;
+	v->angle[0] = minpitch;
 
 	//calculate yaw angles
 //	float maxyaw = -atan2(maxs[0], -maxs[2]) * 180.0/M_PI;
@@ -195,7 +201,7 @@ int worldrenderer_recalcFakeVP(viewport_t *v){ //todo change this to also do shr
 
 
 //	v->angle[1] = (maxyaw+minyaw) * 0.5;
-	v->angle[1] = maxyaw;
+//	v->angle[1] = maxyaw;
 
 
 //	v->fov = fabs(maxpitch-minpitch);

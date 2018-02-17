@@ -144,11 +144,11 @@ int gamecode_init(void){
 	//temp till i get seperated gamecode
 	entity_t e = {0};
 	e.name = strdup("teapot");
-	e.pos[2] = -2.0;
+	e.pos[2] = -8.0;
 	e.angle[2] = -90.0;
 	e.anglevel[1] = 20.0;
 	e.needsmatupdate = 1;
-	e.scale = 2.0;
+	e.scale = 0.1;
 //	e.type = 1;
 	e.modelid = model_register("models/teapot.iqm");
 	entity_t *teapot = entity_addRPOINT(e);
