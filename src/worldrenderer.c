@@ -105,6 +105,7 @@ int worldrenderer_shutdown(void){
 }
 
 
+
 int worldrenderer_renderModel(viewport_t *v, int mid, matrix4x4_t *mat){
 //	Matrix4x4_Print(mat);
 	model_t *m = model_returnById(mid);
@@ -128,66 +129,85 @@ int worldrenderer_renderModel(viewport_t *v, int mid, matrix4x4_t *mat){
 
 
 int worldrenderer_recalcFakeVP(viewport_t *v){ //todo change this to also do shrinking based on windshield bboxp
-	vec3_t mins = {10000.0, 10000.0, 10000.0};
-	vec3_t maxs = {-10000.0, -10000.0, -10000.0};
 	int i;
 	int counter = 0;
+	float maxpitch = 0.0;
+	float minpitch = 0.0;
+	float maxyaw = 0.0;
+	float minyaw = 0.0;
 	for(i=0; i <= entity_arraylasttaken; i++){
 		entity_t *e = &entity_list[i];
 		if(!e->myid)continue;
-		counter++;
 		int z;
 		for(z = 0; z < 6; z++){
 			vec_t *v1 = &e->bboxp[z*3];
 			vec3_t v2;
-			vec3_t v3;
-			vec3subvec(v2, v1, v->pos);
-			vec3norm2(v3, v2);
-			if(v3[0] < mins[0]) mins[0] = v3[0];
-			else if(v3[0] > maxs[0]) maxs[0] = v3[0];
-			if(v3[1] < mins[1]) mins[1] = v3[1];
-			else if(v3[1] > maxs[1]) maxs[1] = v3[1];
-			if(v3[2] < mins[2]) mins[2] = v3[2];
-			else if(v3[2] > maxs[2]) maxs[2] = v3[2];
-		}
+			vec3subvec(v2, v->pos, v1);
+//			vec3norm2(v2, v2);
 
+//			printf("v2 is %f %f %f\n", v2[0], v2[1], v2[2]);
+			float pitch = atan2(v2[1], sqrt(v2[0]*v2[0]+v2[2]*v2[2]));
+			float yaw = atan2(v2[0], v2[2]);
+//			float pitch = asin(v2[1]);
+
+			if(!counter) maxpitch = minpitch = pitch;
+//			else if(pitch > maxpitch) maxpitch = pitch;
+//			else if(pitch < minpitch) minpitch = pitch;
+
+			if(!counter)maxyaw = minyaw = yaw;
+			counter++;
+		}
 	}
 	if(!counter) return FALSE;
+	maxpitch *= 180.0/M_PI;
+	minpitch *= 180.0/M_PI;
+	maxyaw *= 180.0/M_PI;
+	minyaw *= 180.0/M_PI;
 
 	//im probably going to recalc fov, aspect, near, far, angle
-	//normalize all the vectors
-	vec3_t topright;
-	vec3_t bottomleft;
-	vec3norm2(topright, maxs);
-	vec3norm2(bottomleft, mins);
-	//get center
-	vec3_t mid;
-	vec3addvec(mid, topright, bottomleft);
-	vec3mult(mid, mid, 0.5);
-	vec3_t newlook;
-	vec3norm2(newlook, mid);
 
-	//normalized direction we want to look in is newlook
+	//calculate pitch angles
 
 
+/*
+	if(maxpitch < 0.0) maxpitch+= 360.0;
+	else if(maxpitch >= 360.0) maxpitch -= 360.0;
+	if(minpitch < 0.0) minpitch+= 360.0;
+	else if(minpitch >= 360.0) minpitch -= 360.0;
+*/
+//	v->angle[0] = (maxpitch+minpitch) * 0.5;
 
-//	printf("%f %f %f\n", newlook[0], newlook[1], newlook[2]);
-	vec3_t viewangle = {0};
+	v->angle[0] = maxpitch;
 
-	//darkplaces mathlib.h anglesfromvectors as a ref
-	viewangle[0] = -atan2(newlook[1], sqrt(newlook[0]*newlook[0]+newlook[2]*newlook[2]));
-	viewangle[1] = atan2(newlook[0], newlook[2]);
-	viewangle[2] = 0;
+	//calculate yaw angles
+//	float maxyaw = -atan2(maxs[0], -maxs[2]) * 180.0/M_PI;
+//	float minyaw = -atan2(mins[0], -mins[2]) * 180.0/M_PI;
+
+/*
+	if(maxyaw < 0.0) maxpitch+= 180.0;
+	else if(maxyaw >= 360.0) maxyaw -= 180.0;
+	if(minyaw < 0.0) minyaw+= 180.0;
+	else if(minyaw >= 360.0) minyaw -= 180.0;
+*/
+	printf("maxpitch minpitch %f %f ", maxpitch, minpitch);
+	printf("maxyaw minyaw %f %f\n", maxyaw, minyaw);
 
 
-//	vec3mult(v->angle, viewangle, 180.0/M_PI);
-//	vec3copy(v->angle, viewangle);
-//	printf("%f %f %f\n", v->angle[0], v->angle[1], v->angle[2]);
-//	v->changed |=1;
-	//get vertical angle
-	float vertangle =  (180.0/M_PI)* (atan2(topright[1], sqrt(topright[0] * topright[0] + topright[2] * topright[2]))-atan2(bottomleft[1], sqrt(bottomleft[0] * bottomleft[0] + bottomleft[2] * bottomleft[2])));
-//	printf("vertangle is %f\n", vertangle);
-	//pos stays the same
+//	v->angle[1] = (maxyaw+minyaw) * 0.5;
+	v->angle[1] = maxyaw;
+
+
+//	v->fov = fabs(maxpitch-minpitch);
+
+//	float hfov = fabs(maxyaw-minyaw);
+//	v->aspect = hfov/v->fov;
+
+	v->changed |= 1;
+	v->changed |= 2;
+	v->aspect = 1.0;
+
+//	printf("maxpitch is %f\n", maxpitch);
+
 	return TRUE;
 }
 

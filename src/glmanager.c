@@ -27,6 +27,7 @@
 #include "planebox.h"
 #include "tracegrid.h" // for tracegrid duh
 #include "worldrenderer.h"
+#include "bboxrenderer.h"
 #include "fsquad.h"
 
 
@@ -127,6 +128,7 @@ int gl_init(void){
 
 //second context stuff
 	planebox_init(); //still requiring some fuckery?
+	bboxrenderer_init();
 	tmp.type = 1;
 	tmp.name = strdup("planeboxes/tmp.planebox");
 	planebox_load(&tmp);
@@ -298,10 +300,14 @@ int gl_renderDebug(double time){
 	cnt++;
 
 	planebox_renderDebug(&tmp, &debugvp);
-	planebox_renderDebugLines(&tmp, &debugvp);
-	planebox_renderDebugLines(&tmpscreen, &debugvp);
-	planebox_renderViewportDebugLines(&tmpvst, &debugvp);
-	planebox_renderViewportDebugLines(&headclient_kinectvp, &debugvp);
+	bboxrenderer_renderBBox(&debugvp, &tmp.model);
+	//planebox_renderDebugLines(&tmp, &debugvp);
+	bboxrenderer_renderBBox(&debugvp, &tmpscreen.model);
+//	planebox_renderDebugLines(&tmpscreen, &debugvp);
+	bboxrenderer_renderBBox(&debugvp, &tmpvst.viewprojinv);
+//	planebox_renderViewportDebugLines(&tmpvst, &debugvp);
+	bboxrenderer_renderBBox(&debugvp, &headclient_kinectvp.viewprojinv);
+//	planebox_renderViewportDebugLines(&headclient_kinectvp, &debugvp);
 
 	gl_renderWorldDebug(time);
 

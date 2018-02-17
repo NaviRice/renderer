@@ -90,34 +90,16 @@ int headclient_update(void){
 			captured++;
 		}
 	}
-	if(!captured) return 0;
-	fakehead_pos[0] = 1.0;
+//	if(!captured) return 0;
+	fakehead_pos[0] = 0.0;
 	fakehead_pos[1] = 0.0;
 	fakehead_pos[2] = (sin(fuck * 0.002)* 5 + 5);
-	//get Z back into clip space
-
-//	vec4_t jumbo_jet = {0.0, 0.0, -fakehead_pos[2], 1.0};
-
-//	Matrix4x4_Transform4(&headclient_kinectvp.projection, jumbo_jet, fakehead_pos);
-
-//	fakehead_pos[2] = headclient_kinectvp.projection.m[2][2] * jumbo_jet[2] + headclient_kinectvp.viewproj.m[3][2];
-//	fakehead_pos[3] = headclient_kinectvp.projection.m[2][3] * jumbo_jet[2] + headclient_kinectvp.viewproj.m[3][3];
-//	fakehead_pos[2] /= fakehead_pos[3];
-
-//	fakehead_pos[3] = fakehead_pos[2];
-//	fakehead_pos[2] = headclient_kinectvp.projection.m[2][2];
-	printf("new head pos is %f %f %f\n", fakehead_pos[0], fakehead_pos[1], fakehead_pos[2]);
-
-//	fakehead_pos[3] =
-//		headclient_kinectvp.viewproj.m[3][2]/
-//		(fakehead_pos[2] - (headclient_kinectvp.viewproj.m[2][2] / headclient_kinectvp.viewproj.m[2][3]));
-
-//	fakehead_pos[0] *= fakehead_pos[3];
-//	fakehead_pos[1] *= fakehead_pos[3];
-//	fakehead_pos[2] *= fakehead_pos[3];
 
 
-//ok finalized coolio
+	fakehead_pos[2] = 4.0;
+//	fakehead_pos[0] = sin(fuck * 0.002);
+	fakehead_pos[1] = cos(fuck * 0.00025);
+//	printf("new head pos is %f %f %f\n", fakehead_pos[0], fakehead_pos[1], fakehead_pos[2]);
 
 
 //fuckboy method
@@ -152,16 +134,15 @@ int headclient_update(void){
 
 //this was working at one point
 //now it doesnt
-#ifdef NO
+/*
 	fakehead_pos[3] = fakehead_pos[2];
 	fakehead_pos[0] *=fakehead_pos[2];
 	fakehead_pos[1] *=fakehead_pos[2];
 	fakehead_pos[2] *= headclient_kinectvp.projection.m[2][2];
 	Matrix4x4_Transform4(&headclient_kinectvp.viewprojinv, fakehead_pos, headclient_headpos);
-#endif
-	//ok, lets move it back and compare
+*/
 
 
-	printf("real head pos is %f %f %f\n", headclient_headpos[0], headclient_headpos[1], headclient_headpos[2]);
+//	printf("real head pos is %f %f %f\n", headclient_headpos[0], headclient_headpos[1], headclient_headpos[2]);
 	return TRUE;
 }

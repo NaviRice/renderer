@@ -28,6 +28,7 @@ set(SOURCES
 	src/worldrenderer.c
 	src/headclient.c
 	src/gamecodemanager.c
+	src/bboxrenderer.c
 	)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/shaders

@@ -19,8 +19,8 @@
 #include "mathlib.h" //vec3norm2
 
 
-vbo_t planebox_vao = {0};
-int planebox_lineshader_id = 0;
+//vbo_t planebox_vao = {0};
+//int planebox_lineshader_id = 0;
 int planebox_debugmesh_id = 0;
 
 int planebox_shutdown(void){ //todo
@@ -29,6 +29,8 @@ int planebox_shutdown(void){ //todo
 
 //generate a bbox vao
 int planebox_init(void){
+//deperecated for standardized bboxrenderer
+/*
 	planebox_vao.type = 1;	//trick vbo manager into its a legit vao
 	planebox_vao.datawidth[0] = 3; //pos
 	planebox_vao.datawidth[3] = 3; //color
@@ -76,9 +78,9 @@ int planebox_init(void){
 	planebox_lineshader_id = shader_register("shaders/line.program");
 	shader_t *s = shader_returnById(planebox_lineshader_id);
 	shader_load(s);
-
+*/
 	planebox_debugmesh_id = shader_register("shaders/debugmesh.program");
-	s = shader_returnById(planebox_debugmesh_id);
+	shader_t *s = shader_returnById(planebox_debugmesh_id);
 	shader_load(s);
 
 	return TRUE;
@@ -437,7 +439,8 @@ int planebox_renderDebug(planebox_t *p, viewport_t *v){
 }
 
 
-
+//replaced with bboxrenderer_renderBBox()
+/*
 int planebox_renderDebugLines(planebox_t *p, viewport_t *v){
 	if(!p || !p->type){
 		printf("PLANEBOX/renderDebugLines: ERROR invalid planebox!\n");
@@ -498,3 +501,4 @@ int planebox_renderViewportDebugLines(viewport_t * debug, viewport_t *v){
 	CHECKGLERROR
 	return TRUE;
 }
+*/
