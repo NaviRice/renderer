@@ -236,6 +236,7 @@ int gl_renderWorld(double time){
 	glDrawBuffers(1, renderbuffs);//todo move
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	worldrenderer_renderEntities(&tmpvst);
+	worldrenderer_renderEntitiesBBoxes(&tmpvst);
 
 	return TRUE;
 }
@@ -243,6 +244,7 @@ extern int worldrenderer_modelshader_id;
 int gl_renderWorldDebug(double time){
 	//todo
 	worldrenderer_renderEntities(&debugvp);
+	worldrenderer_renderEntitiesBBoxes(&debugvp);
 	return TRUE;
 }
 
@@ -300,13 +302,13 @@ int gl_renderDebug(double time){
 	cnt++;
 
 	planebox_renderDebug(&tmp, &debugvp);
-	bboxrenderer_renderBBox(&debugvp, &tmp.model);
+	bboxrenderer_renderBBoxMat(&debugvp, &tmp.model);
 	//planebox_renderDebugLines(&tmp, &debugvp);
-	bboxrenderer_renderBBox(&debugvp, &tmpscreen.model);
+	bboxrenderer_renderBBoxMat(&debugvp, &tmpscreen.model);
 //	planebox_renderDebugLines(&tmpscreen, &debugvp);
-	bboxrenderer_renderBBox(&debugvp, &tmpvst.viewprojinv);
+	bboxrenderer_renderBBoxMat(&debugvp, &tmpvst.viewprojinv);
 //	planebox_renderViewportDebugLines(&tmpvst, &debugvp);
-	bboxrenderer_renderBBox(&debugvp, &headclient_kinectvp.viewprojinv);
+	bboxrenderer_renderBBoxMat(&debugvp, &headclient_kinectvp.viewprojinv);
 //	planebox_renderViewportDebugLines(&headclient_kinectvp, &debugvp);
 
 	gl_renderWorldDebug(time);

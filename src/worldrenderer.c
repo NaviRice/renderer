@@ -20,6 +20,7 @@
 #include "viewportmanager.h"
 
 #include "worldrenderer.h"
+#include "bboxrenderer.h"
 
 #include "fsquad.h"
 
@@ -189,8 +190,8 @@ int worldrenderer_recalcFakeVP(viewport_t *v){ //todo change this to also do shr
 	if(minyaw < 0.0) minyaw+= 180.0;
 	else if(minyaw >= 360.0) minyaw -= 180.0;
 */
-	printf("maxpitch minpitch %f %f ", maxpitch, minpitch);
-	printf("maxyaw minyaw %f %f\n", maxyaw, minyaw);
+//	printf("maxpitch minpitch %f %f ", maxpitch, minpitch);
+//	printf("maxyaw minyaw %f %f\n", maxyaw, minyaw);
 
 
 //	v->angle[1] = (maxyaw+minyaw) * 0.5;
@@ -224,21 +225,28 @@ int worldrenderer_renderEntities(viewport_t *v){
 	}
 	return counter;
 }
-//todo
-/*
-int worldrenderer_renderEntitiesBboxes(viewport_t *v){
+
+
+int worldrenderer_renderEntitiesBBoxes(viewport_t *v){
 	int i;
 	int counter = 0;
 	for(i=0 ; i <= entity_arraylasttaken; i++){
 		entity_t *e = &entity_list[i];
-		if(!e->myid || !e->modelid)continue;
-//		worldrenderer_renderModel(v, e->modelid, &e->final);
-		worldrenderer_renderModel(v, e->modelid, &e->mat);
+		if(!e->myid)continue;
+		//todo adjust ents so they have a final
+//		bboxrenderer_renderBBoxMat(v, &e->mat);
+//vec_t fuckyou[24] = {
+//e->bbox[1], e->bbox[3], e->bbox[5],	e->bbox[0], e->bbox[3], e->bbox[5],	e->bbox[0], e->bbox[2], e->bbox[5],	e->bbox[1], e->bbox[2], e->bbox[5],
+//e->bbox[1], e->bbox[3], e->bbox[4],	e->bbox[0], e->bbox[3], e->bbox[4],	e->bbox[0], e->bbox[2], e->bbox[4],	e->bbox[1], e->bbox[2], e->bbox[4]};
+
+		bboxrenderer_renderBBox(v, e->bbox);
+		bboxrenderer_renderBBoxPCustom(v, e->bboxp);
+//		bboxrenderer_renderBBoxPCustom(v, fuckyou);
+//		bboxrenderer_renderBBoxMat(v, &e->mat);
 		counter++;
 	}
 	return counter;
 }
-*/
 
 
 extern int tracegrid_debugfirstbounceshader_id;

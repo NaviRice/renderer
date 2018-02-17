@@ -18,6 +18,7 @@ int worldrenderer_bindEASTEREGG(void);
 
 
 int worldrenderer_renderEntities(viewport_t *v);
+int worldrenderer_renderEntitiesBBoxes(viewport_t *v);
 int worldrenderer_renderDebugFramebufferMini(viewport_t * caster, viewport_t *v);
 
 int worldrenderer_renderModel(viewport_t *v, int mid, matrix4x4_t *m);

@@ -13,6 +13,7 @@ typedef struct entity_s {
 
 	float scale;
 	float scalevel; //NEW AND IMPROVED
+	float finalscale; //after attachment
 
 	int attachmentid;
 	//used to generate
@@ -20,6 +21,8 @@ typedef struct entity_s {
 	//which is further used to generate
 	//TODO actually set this up!
 	matrix4x4_t final;
+
+	//todo actually set up a scale-less mat
 	int needsmatupdate;
 	int needsbboxupdate; //might be able to get rid of... seems to always appear false
 

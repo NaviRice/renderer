@@ -191,8 +191,8 @@ int recalcEntBBox(entity_t * e){
 	//now clamp to sphere size
 	//assumes finalpos is set
 	vec3_t maxs, mins;
-	vec3add(maxs, e->finalpos, m->bsphere);
-	vec3sub(mins, e->finalpos, m->bsphere);
+	vec3add(maxs, e->finalpos, m->bsphere* e->finalscale);
+	vec3sub(mins, e->finalpos, m->bsphere*e->finalscale);
 
 
 	//note, no elses here, because it can easily be both
@@ -202,6 +202,13 @@ int recalcEntBBox(entity_t * e){
 	if(e->bbox[3] < mins[1]) e->bbox[3] = mins[1];
 	if(e->bbox[4] > maxs[2]) e->bbox[4] = maxs[2];
 	if(e->bbox[5] < mins[2]) e->bbox[5] = mins[2];
+
+//	e->bbox[0] = maxs[0];
+//	e->bbox[1] = mins[0];
+//	e->bbox[2] = maxs[1];
+//	e->bbox[3] = mins[1];
+//	e->bbox[4] = maxs[2];
+//	e->bbox[5] = mins[2];
 
 
 	e->needsbboxupdate = FALSE;
@@ -237,6 +244,7 @@ int calcEntAttachMat(entity_t * e){ //return value is weather e->mat got changed
 				matrix4x4_t tempmat;
 	//			Matrix4x4_CreateFromQuakeEntity(&tempmat, e->pos[0], e->pos[1], e->pos[2], e->angle[0], e->angle[1], e->angle[2], e->scale);
 //				Matrix4x4_CreateFromQuakeEntity(&tempmat, e->pos[0], e->pos[1], e->pos[2], e->angle[0], e->angle[1], e->angle[2], e->scale/attacher->scale);
+
 				Matrix4x4_CreateFromQuakeEntity(&tempmat, e->pos[0]/attacher->scale, e->pos[1]/attacher->scale, e->pos[2]/attacher->scale, e->angle[0], e->angle[1], e->angle[2], e->scale/attacher->scale);
 				Matrix4x4_Concatsimdu(&e->mat, &attacher->mat, &tempmat);
 
@@ -371,10 +379,13 @@ void gamecode_tick(void){ //todo maybe change to float in seconds
 			if(e->attachmentid){
 				//todo update for finalmatrix
 				Matrix4x4_OriginFromMatrix(&e->mat, e->finalpos);
+				//todo optimize this by putting it in the shits
+				e->finalscale = Matrix4x4_ScaleFromMatrix(&e->mat);
 			} else {
 				e->finalpos[0] = e->pos[0];
 				e->finalpos[1] = e->pos[1];
 				e->finalpos[2] = e->pos[2];
+				e->finalscale = e->scale;
 			}
 			recalcEntBBox(e);
 		}
