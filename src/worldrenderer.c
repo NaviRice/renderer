@@ -146,7 +146,7 @@ int worldrenderer_recalcFakeVP(viewport_t *v){ //todo change this to also do shr
 		//if entities can be rendered as anything other than models, i have to change this
 		if(!e->myid || !e->modelid)continue;
 		int z;
-		for(z = 0; z < 6; z++){
+		for(z = 0; z < 8; z++){
 			vec_t *v1 = &e->bboxp[z*3];
 //			vec_t *v1 = &e->finalpos;
 			vec3_t v2;

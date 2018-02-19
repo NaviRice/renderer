@@ -278,12 +278,19 @@ int gl_renderDebug(double time){
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0,0, width, height);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
 	debugvp.angle[1] = time*10.0;
 	debugvp.angle[0] = 30.0;
 	debugvp.pos[0] = sin((debugvp.angle[1]/180.0) * -M_PI) * 10.0;
 	debugvp.pos[2] = cos((debugvp.angle[1]/180.0) * -M_PI) * 10.0;
 	debugvp.pos[1] = 3.0;
 	debugvp.changed |= 1;
+
+
+	debugvp.angle[0] = 90.0;
+	debugvp.angle[1] = 0.0;
+	debugvp.pos[0] = debugvp.pos[2] = 0;
+	debugvp.pos[1] = 10.0;
 	viewport_recalc(&debugvp);
 
 
