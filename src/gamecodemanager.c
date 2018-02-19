@@ -144,7 +144,7 @@ int gamecode_init(void){
 	//temp till i get seperated gamecode
 	entity_t crank ={0};
 	crank.name = strdup("crank");
-	crank.anglevel[0] = 100.0;
+	crank.anglevel[0] = 10.0;
 	crank.needsmatupdate =1;
 	crank.scale = 1.0;
 	crank.pos[2] = -5.0;

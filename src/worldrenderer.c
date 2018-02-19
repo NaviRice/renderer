@@ -136,13 +136,14 @@ int worldrenderer_recalcFakeVP(viewport_t *v){ //todo change this to also do shr
 //	v->pos[2] = 4.0;
 	int i;
 	int counter = 0;
-	float maxpitch = 0.0;
-	float minpitch = 0.0;
-	float maxyaw = 0.0;
-	float minyaw = 0.0;
+	float maxpitch = -10000.0;
+	float minpitch = 10000.0;
+	float maxyaw = -10000.0;
+	float minyaw = 10000.0;
 	for(i=0; i <= entity_arraylasttaken; i++){
 		entity_t *e = &entity_list[i];
-		if(!e->myid)continue;
+		//if entities can be rendered as anything other than models, i have to change this
+		if(!e->myid || !e->modelid)continue;
 		int z;
 		for(z = 0; z < 6; z++){
 			vec_t *v1 = &e->bboxp[z*3];
@@ -151,6 +152,8 @@ int worldrenderer_recalcFakeVP(viewport_t *v){ //todo change this to also do shr
 			vec3subvec(v2, v->pos, v1);
 //			vec3norm2(v2, v2);
 
+
+		//todo i might be able to pull some of this outside the loop
 			float pitch = atan2(v2[1], sqrt(v2[0]*v2[0]+v2[2]*v2[2]));
 			float yaw = atan2(-v2[0], v2[2]);
 //			float pitch = asin(v2[1]);
@@ -195,27 +198,35 @@ int worldrenderer_recalcFakeVP(viewport_t *v){ //todo change this to also do shr
 //	float maxyaw = -atan2(maxs[0], -maxs[2]) * 180.0/M_PI;
 //	float minyaw = -atan2(mins[0], -mins[2]) * 180.0/M_PI;
 
-/*
-	if(maxyaw < 0.0) maxpitch+= 180.0;
-	else if(maxyaw >= 360.0) maxyaw -= 180.0;
-	if(minyaw < 0.0) minyaw+= 180.0;
-	else if(minyaw >= 360.0) minyaw -= 180.0;
-*/
+
+
 //	printf("maxpitch minpitch %f %f ", maxpitch, minpitch);
 //	printf("maxyaw minyaw %f %f\n", maxyaw, minyaw);
+
 
 
 	v->angle[1] = (maxyaw+minyaw) * 0.5;
 //	v->angle[1] = maxyaw;
 
 
-	v->fov = fabs(maxpitch-minpitch);
 
-	float hfov = fabs(maxyaw-minyaw);
+	float t1 = maxpitch - minpitch;
+	float t2 = fabs(maxpitch - (minpitch + 360.0));
+
+//	v->fov = fabs(maxpitch-minpitch);
+	v->fov = t1 < t2 ? t1 : t2;
+	if(v->fov > 130.0) v->fov = 130.0;
+
+
+	float y1 = maxyaw - minyaw;
+	float y2 = fabs(maxyaw - (minyaw + 360.0));
+
+//	float hfov = fabs(maxyaw-minyaw);
+	float hfov = y1 < y2 ? y1 : y2;
+	if(hfov > 130.0) hfov = 130.0;
 	v->aspect = hfov/v->fov;
 
-	v->changed |= 1;
-	v->changed |= 2;
+	v->changed |= 3; // 1 and 2
 //	v->aspect = 1.0;
 
 //	printf("maxpitch is %f\n", maxpitch);
