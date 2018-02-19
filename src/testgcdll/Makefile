@@ -1,7 +1,7 @@
 CC = gcc
 LDFLAGS = -shared
 CFLAGS = -fPIC -Wall -Ofast -fstrict-aliasing -march=native
-OBJECTS = gc.o bunbun.o
+OBJECTS = gc.o bunbun.o teapot.o
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<

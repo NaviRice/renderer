@@ -28,12 +28,12 @@
 #include <float.h> //for DBL_MAX
 
 int gamecode_ok;
-int gamecode_tGameTime = 0;
+double gamecode_tGameTime = 0.0;
 
 
 gcallheader_t *gc = 0;
 static void * game_lib;
-ecallheader_t ec;
+ecallheader_t ec = {0};
 
 void sys_unloadGameAPI(void){ // todo move to sys
 	if(game_lib)dlclose(game_lib);
@@ -147,7 +147,7 @@ int gamecode_init(void){
 	loadWorld("world");
 	loadWorld("world2");
 */
-	gc->initgame();
+	if(gc && gc->initgame) gc->initgame();
 
 /*
 	//temp till i get seperated gamecode
@@ -360,11 +360,21 @@ void entityCollideBBox(entity_t *e){
 }
 */
 void gamecode_tick(void){ //todo maybe change to float in seconds
-	gamecode_tGameTime+=GCTIMESTEP;
+	gamecode_tGameTime+=GCTIMESTEPSECONDS;
+//	printf("Game time %f\n", gamecode_tGameTime);
 
 	ec.now = gamecode_tGameTime; //todo actually figure this one out m8
 	int i;
 
+
+	//pre phys think
+	for(i = 0; i <= entity_arraylasttaken; i++){// make sure they dont update again
+		entity_t *e = entity_list+i;
+		if(e->think && e->nextthink <= gamecode_tGameTime){
+			e->nextthink = DBL_MAX;
+			e->think(e);
+		}
+	}
 
 
 
@@ -424,10 +434,10 @@ void gamecode_tick(void){ //todo maybe change to float in seconds
 		entity_t *e = entity_list+i;
 		e->needsmatupdate = FALSE;
 		e->needsbboxupdate = FALSE;
-		if(e->think && e->nextthink <= gamecode_tGameTime){
-			e->nextthink = DBL_MAX;
-			e->think(e);
-		}
+//		if(e->think && e->nextthink <= gamecode_tGameTime){
+//			e->nextthink = DBL_MAX;
+//			e->think(e);
+//		}
 	}
 
 

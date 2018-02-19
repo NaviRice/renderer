@@ -107,7 +107,7 @@ int worldrenderer_shutdown(void){
 
 
 
-int worldrenderer_renderModel(viewport_t *v, int mid, matrix4x4_t *mat){
+int worldrenderer_renderModel(viewport_t *v, int mid, matrix4x4_t *mat, vec4_t color){
 //	Matrix4x4_Print(mat);
 	model_t *m = model_returnById(mid);
 	if(!m){
@@ -122,6 +122,7 @@ int worldrenderer_renderModel(viewport_t *v, int mid, matrix4x4_t *mat){
 	Matrix4x4_Concat(&tmath, &v->viewproj, mat);
 	Matrix4x4_ToArrayFloatGL(&tmath, tmat);
 	glUniformMatrix4fv(s->uniloc[0], 1, GL_FALSE, tmat);
+	glUniform4fv(s->uniloc[1], 1, color);
 	glDrawElements(GL_TRIANGLES, m->vbo.numfaces * 3, GL_UNSIGNED_INT, 0);
 	return m->vbo.numfaces;
 }
@@ -141,7 +142,7 @@ int worldrenderer_recalcFakeVP(viewport_t *v){ //todo change this to also do shr
 	float maxyaw = -10000.0;
 	float minyaw = 10000.0;
 	for(i=0; i <= entity_arraylasttaken; i++){
-		entity_t *e = &entity_list[i];
+		entity_t *e = entity_list + i;
 		//if entities can be rendered as anything other than models, i have to change this
 		if(!e->myid || !e->modelid)continue;
 		int z;
@@ -240,9 +241,9 @@ int worldrenderer_renderEntities(viewport_t *v){
 	for(i=0 ; i <= entity_arraylasttaken; i++){
 		entity_t *e = &entity_list[i];
 		if(!e->myid || !e->modelid)continue;
-//		worldrenderer_renderModel(v, e->modelid, &e->final);
+//		worldrenderer_renderModel(v, e->modelid, &e->final, e->color);
 //todo adjust ents so they have a final
-		worldrenderer_renderModel(v, e->modelid, &e->mat);
+		worldrenderer_renderModel(v, e->modelid, &e->mat, e->color);
 		counter++;
 	}
 	return counter;

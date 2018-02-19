@@ -42,6 +42,9 @@ typedef struct entity_s {
 	int modelid; //todo multiple models per ent? thoughts about that
 
 
+	vec4_t color;
+
+
 } entity_t;
 
 typedef struct entitylist_s {

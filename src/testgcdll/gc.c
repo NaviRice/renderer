@@ -2,6 +2,7 @@
 #include "../dllincludeme.h"
 #include "gc.h"
 #include "bunbun.h"
+#include "teapot.h"
 //#include <dlfcn.h> //todo move to sys
 
 
@@ -26,7 +27,9 @@ int initgame(void){
 		tp.anglevel[1] = 20.0;
 		tp.needsmatupdate = 1;
 		tp.scale = 2.0;
+		tp.color[0] = 0.5; tp.color[1] = 0.1; tp.color[2] = 0.2; tp.color[3] = 1.0;
 		tp.modelid = ec->model_register("models/teapot.iqm");
+		tp.think = teapot_randColorThink;
 		entity_t *teapot = ec->entity_addRPOINT(tp);
 
 	entity_t e ={0};
@@ -37,6 +40,7 @@ int initgame(void){
 		e.anglevel[1] = -90.0;
 		e.needsmatupdate = 1;
 		e.scale = 0.02;
+		e.color[0] = 0.5; e.color[1] = 0.1; e.color[2] = 0.2; e.color[3] = 1.0;
 		e.modelid = ec->model_register("models/bunny.iqm");
 		e.think = bunbun_randRotThink;
 		e.nextthink = ec->now;

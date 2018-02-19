@@ -88,6 +88,7 @@ int main(int argc, char *argv[]){
 			gamecode_tick();
 			accum -= (double)GCTIMESTEP/1000.0;
 		}
+//		headclient_update();
 
 
 		//todo recalc viewport stuff here
