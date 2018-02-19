@@ -35,7 +35,7 @@ typedef struct entity_s {
 
 	void(*remove)(struct entity_s *e);	//called when an entityt is removed (think deconstructor) //todo do removeflag
 	void(*think)(struct entity_s *e);	//called when nextthink <= currenttime
-	void(*touch)(struct entity_s *e);	//called on a touch? dont have collision yet
+	void(*touch)(struct entity_s *e);	//called on a touch? dont have collision yet //todo
 	double nextthink;
 
 

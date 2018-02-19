@@ -2,9 +2,9 @@
 #include "headclient.h"
 
 #define PORT 4007
+//#define HOST "75.136.80.95"
 //#define HOST "navirice"
-#define HOST "75.136.80.95"
-#define HOST "navirice"
+#define HOST "localhost"
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <string.h>
@@ -93,15 +93,15 @@ int headclient_update(void){
 			captured++;
 		}
 	}
-//	if(!captured) return 0;
-	fakehead_pos[0] = 0.0;
-	fakehead_pos[1] = 0.0;
-	fakehead_pos[2] = (sin(fuck * 0.002)* 5 + 5);
+	if(!captured) return 0;
+//	fakehead_pos[0] = 0.0;
+//	fakehead_pos[1] = 0.0;
+//	fakehead_pos[2] = (sin(fuck * 0.002)* 5 + 5);
 
 
-	fakehead_pos[2] = 4.0;
-	fakehead_pos[0] = sin(fuck * 0.00031415926);
-	fakehead_pos[1] = cos(fuck * 0.00025);
+//	fakehead_pos[2] = 4.0;
+//	fakehead_pos[0] = sin(fuck * 0.00031415926);
+//	fakehead_pos[1] = cos(fuck * 0.00025);
 //	printf("new head pos is %f %f %f\n", fakehead_pos[0], fakehead_pos[1], fakehead_pos[2]);
 
 

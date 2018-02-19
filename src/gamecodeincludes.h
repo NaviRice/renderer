@@ -62,6 +62,7 @@
 		int (*model_register)(const char * name);
 
 		//todo
+		double now;
 	} ecallheader_t;
 
 	typedef struct gcallheader_s {

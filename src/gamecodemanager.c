@@ -25,6 +25,8 @@
 
 #include <dlfcn.h> //todo move to sys
 
+#include <float.h> //for DBL_MAX
+
 int gamecode_ok;
 int gamecode_tGameTime = 0;
 
@@ -130,6 +132,7 @@ int gamecode_init(void){
 #endif
 
 */
+	ec.now = gamecode_tGameTime; //todo actually figure this one out m8
 	if(!entity_init()){
 		gamecode_ok = FALSE;
 		return FALSE;
@@ -143,11 +146,10 @@ int gamecode_init(void){
 /*
 	loadWorld("world");
 	loadWorld("world2");
-
-	gc->initgame();
 */
+	gc->initgame();
 
-
+/*
 	//temp till i get seperated gamecode
 	entity_t crank ={0};
 	crank.name = strdup("crank");
@@ -181,7 +183,7 @@ int gamecode_init(void){
 //	e.type = 1;
 	e.modelid = model_register("models/bunny.iqm");
 	entity_t *bunny = entity_addRPOINT(e);
-
+*/
 	entity_pruneList();
 	gamecode_ok = TRUE;
 	return TRUE; // todo error check
@@ -359,6 +361,8 @@ void entityCollideBBox(entity_t *e){
 */
 void gamecode_tick(void){ //todo maybe change to float in seconds
 	gamecode_tGameTime+=GCTIMESTEP;
+
+	ec.now = gamecode_tGameTime; //todo actually figure this one out m8
 	int i;
 
 
@@ -421,6 +425,7 @@ void gamecode_tick(void){ //todo maybe change to float in seconds
 		e->needsmatupdate = FALSE;
 		e->needsbboxupdate = FALSE;
 		if(e->think && e->nextthink <= gamecode_tGameTime){
+			e->nextthink = DBL_MAX;
 			e->think(e);
 		}
 	}
