@@ -23,7 +23,7 @@ IDLIST_HEADER(model, model_t, modellist_t);
 
 int model_init(void);
 
-int model_register(char * name);
+int model_register(const char * name);
 
 int model_load(model_t *m);
 

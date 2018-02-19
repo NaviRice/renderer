@@ -25,7 +25,7 @@ int model_init(void){
 	return TRUE;
 }
 //returns ID of model (either added or already there)
-int model_register(char * name){
+int model_register(const char * name){
 	//check if model exists
 	int ret = model_findByNameRINT(name);
 	if(ret) return ret;

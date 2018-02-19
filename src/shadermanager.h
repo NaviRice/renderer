@@ -46,7 +46,7 @@ IDLIST_HEADER(shader, shader_t, shaderlist_t);
 
 int shader_init(void);
 
-int shader_register(char * name);
+int shader_register(const char * name);
 
 int shader_load(shader_t *s);
 int shader_unload(shader_t *s);

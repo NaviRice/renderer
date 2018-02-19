@@ -26,7 +26,7 @@ int shader_init(void){
 	return TRUE;
 }
 //returns ID of shader program (either added or already there)
-int shader_register(char * name){
+int shader_register(const char * name){
 	//check if shader exists
 	int ret = shader_findByNameRINT(name);
 	if(ret) return ret;

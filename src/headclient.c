@@ -17,6 +17,7 @@
 #include "matrixlib.h"
 #include "viewportmanager.h"
 
+#include <math.h>
 #include "mathlib.h"
 
 

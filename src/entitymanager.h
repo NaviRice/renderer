@@ -33,6 +33,12 @@ typedef struct entity_s {
 	vec3_t finalpos; //todo maybe use this?
 
 
+	void(*remove)(struct entity_s *e);	//called when an entityt is removed (think deconstructor) //todo do removeflag
+	void(*think)(struct entity_s *e);	//called when nextthink <= currenttime
+	void(*touch)(struct entity_s *e);	//called on a touch? dont have collision yet
+	double nextthink;
+
+
 	int modelid; //todo multiple models per ent? thoughts about that
 
 

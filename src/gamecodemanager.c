@@ -21,14 +21,14 @@
 #include "cvarmanager.h"
 #include "filesys.h"
 #include "stringlib.h"
-//#include "gamecodeincludes.h"
+#include "gamecodeincludes.h"
 
 #include <dlfcn.h> //todo move to sys
 
 int gamecode_ok;
 int gamecode_tGameTime = 0;
 
-/*
+
 gcallheader_t *gc = 0;
 static void * game_lib;
 ecallheader_t ec;
@@ -39,17 +39,17 @@ void sys_unloadGameAPI(void){ // todo move to sys
 }
 
 gcallheader_t * sys_getGameAPI(ecallheader_t *ec){ //todo move to sys
-	if(game_lib){ console_printf("Error: game DLL still open, cant reload\n"); return FALSE;}
+	if(game_lib){ printf("GAMECODE/sys_getGameAPI: EERROR game DLL still open, cant reload\n"); return FALSE;}
 
 
 	//todo search for it, cvar it, etc
 	game_lib = dlopen("./gamecode.so", RTLD_NOW);
 
-	if(!game_lib){ console_printf("Error opening gamecode.so, file not found\n"); return FALSE;}
+	if(!game_lib){ printf("GAMECODE/sys_getGameAPI: ERROR opening gamecode.so, file not found\n"); return FALSE;}
 	void *(*dllSetupCallbacks) (void*);
 	dllSetupCallbacks = (void *) dlsym (game_lib, "setupGameCodeCallbacks");
 	if(!dllSetupCallbacks){
-		console_printf("Error opening gamecode.so\n");
+		printf("GAMECODE/sys_getGameAPI: Error opening gamecode.so\n");
 		sys_unloadGameAPI();
 		return FALSE;
 	}
@@ -58,62 +58,68 @@ gcallheader_t * sys_getGameAPI(ecallheader_t *ec){ //todo move to sys
 
 
 
-int setupGameCodeCallbacks(void){
-	ec.console_printf = console_printf;
-	ec.console_nprintf = console_nprintf;
+int sys_setupGCCallbacks(void){
+//	ec.console_printf = console_printf;
+//	ec.console_nprintf = console_nprintf;
 
 	ec.cvar_register = cvar_register;
 	ec.cvar_unregister = cvar_unregister;
-	ec.cvar_nameset = cvar_nameset;
+	ec.cvar_print = cvar_print;
+	ec.cvar_unload = cvar_unload;
+	ec.cvar_findByNameRINT = cvar_findByNameRINT;
+	ec.cvar_findByNameRPOINT = cvar_findByNameRPOINT;
 	ec.cvar_pset = cvar_pset;
 	ec.cvar_idset = cvar_idset;
 	ec.cvar_returnById = cvar_returnById;
-	ec.cvar_findByNameRPOINT = cvar_findByNameRPOINT;
-	ec.cvar_findByNameRINT = cvar_findByNameRINT;
+	ec.cvar_forceNewlineEnd = cvar_forceNewlineEnd;
 
-	ec.entity_findByNameRPOINT = entity_findByNameRPOINT;
+
 	ec.entity_findByNameRINT = entity_findByNameRINT;
-	ec.entity_findAllByNameRPOINT = entity_findAllByNameRPOINT;
+	ec.entity_findByNameRPOINT = entity_findByNameRPOINT;
+
 	ec.entity_findAllByNameRINT = entity_findAllByNameRINT;
+	ec.entity_findAllByNameRPOINT = entity_findAllByNameRPOINT;
+
 	ec.entity_returnById = entity_returnById;
-	ec.entity_addRPOINT = entity_addRPOINT;
+
 	ec.entity_addRINT = entity_addRINT;
-	ec.entity_delete = entity_delete;
+	ec.entity_addRPOINT = entity_addRPOINT;
+
+	ec.entity_remove = entity_remove;
 
 	ec.file_loadString = file_loadString;
-	ec.file_loadStringNoLength = file_loadStringNoLength;
+//	ec.file_loadStringNoLength = file_loadStringNoLength;
 
-	ec.light_addRINT = light_addRINT;
-	ec.light_addRPOINT = light_addRPOINT;
+//	ec.light_addRINT = light_addRINT;
+//	ec.light_addRPOINT = light_addRPOINT;
 
-	ec.shader_createAndAddRINT = shader_createAndAddRINT;
+//	ec.shader_createAndAddRINT = shader_createAndAddRINT;
 
 	ec.string_toVec = string_toVec;
 
-	ec.texture_createAndAddGroupRINT = texture_createAndAddGroupRINT;
+//	ec.texture_createAndAddGroupRINT = texture_createAndAddGroupRINT;
 
-	ec.model_createAndAddRINT = model_createAndAddRINT;
+	ec.model_register = model_register;
 
 
 	gc = sys_getGameAPI(&ec);
 	if(!gc){
-		console_printf("Error: could not load game code\n");
+		printf("GAMECODE/sys_setupGCCallbacks: ERROR could not load game code\n");
 		return FALSE;
 	}
 	//todo implement a new api checking formula, maybe ranges of compatible
 	if(gc->apiver != GAMECODEINCLUDEVERSION){
-		console_printf("Error: Gamecode version is %i, engine version is %i, not compatible\n", gc->apiver, GAMECODEINCLUDEVERSION);
+		printf("GAMECODE/sys_setupGCCallbacks: ERROR Gamecode version is %i, engine version is %i, not compatible\n", gc->apiver, GAMECODEINCLUDEVERSION);
 		return FALSE;
 	}
 	if(!gc->initgame){
-		console_printf("Error: Gamecode does not have an initgame function\n");
+		printf("GAMECODE/sys_setupGCCallbacks: ERROR Gamecode does not have an initgame function\n");
 		return FALSE;
 	}
 	//todo
 	return TRUE;
 }
 
-*/
 extern int calcEntAttachMat(entity_t *e);
 extern int recalcEntBBox(entity_t *e);
 
@@ -128,12 +134,13 @@ int gamecode_init(void){
 		gamecode_ok = FALSE;
 		return FALSE;
 	}
-/*
-	if(!setupGameCodeCallbacks()){
-		gamecodeOK = FALSE;
-		return FALSE; //todo something
-	}
 
+	if(!sys_setupGCCallbacks()){
+		printf("GAMECODE/gamecode_init: MAJOR WARNING unable to setup DLL stuffs for %s, defaulting to shitty init\n", "TODO set this string");
+//		gamecode_ok = FALSE;
+//		return FALSE; //todo something
+	}
+/*
 	loadWorld("world");
 	loadWorld("world2");
 
@@ -354,6 +361,10 @@ void gamecode_tick(void){ //todo maybe change to float in seconds
 	gamecode_tGameTime+=GCTIMESTEP;
 	int i;
 
+
+
+
+
 	//ent phys
 	for(i = 0; i <= entity_arraylasttaken; i++){
 		entity_t * e = &entity_list[i];
@@ -380,6 +391,8 @@ void gamecode_tick(void){ //todo maybe change to float in seconds
 #ifdef ODE_COMPILE
 	}
 #endif
+
+	//update the bboxes (still part of phys i guess)
 	for(i = 0; i <= entity_arraylasttaken; i++){
 		entity_t *e = &entity_list[i];
 		if(!e->myid) continue;
@@ -404,14 +417,15 @@ void gamecode_tick(void){ //todo maybe change to float in seconds
 	//todo maybe convert to an entity "carry" system instead of a light attach system
 //	lightLoop();
 	for(i = 0; i <= entity_arraylasttaken; i++){// make sure they dont update again
-		entity_list[i].needsmatupdate = FALSE;
-		entity_list[i].needsbboxupdate = FALSE;
+		entity_t *e = entity_list+i;
+		e->needsmatupdate = FALSE;
+		e->needsbboxupdate = FALSE;
+		if(e->think && e->nextthink <= gamecode_tGameTime){
+			e->think(e);
+		}
 	}
 
 
-//		if(e->think && e->nextthink <= gamecode_tGameTime){
-//			e->think();
-//		}
 
 
 	//ent gamecode
