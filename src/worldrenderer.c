@@ -293,8 +293,15 @@ int worldrenderer_renderDebugFramebufferMini(viewport_t * caster, viewport_t *v)
 	float box = caster->aspect;
 	float view = v->aspect;
 	float scale = box > view ? 0.33/box : 0.33/view;
-	Matrix4x4_CreateTranslate(&tmath, scale * (box + 1.0), scale * view-1.0 , 0.0);
-	Matrix4x4_ConcatScale3(&tmath, scale * box, scale * view, 1.0);
+
+	//dumb hack
+
+
+	//basically just flip across the X axis, but flip the image first so its not mirrored
+	Matrix4x4_CreateScale3(&tmath, -1.0, 1.0, 1.0);
+	Matrix4x4_ConcatTranslate(&tmath, scale * box-1.0, scale * view-1.0 , 0.0);
+	Matrix4x4_ConcatScale3(&tmath, -1.0 *scale * box, scale * view, 1.0);
+
 	Matrix4x4_ToArrayFloatGL(&tmath, tmat);
 	glUniformMatrix4fv(s->uniloc[0], 1, GL_FALSE, tmat);
 	fsquad_render();
