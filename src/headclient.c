@@ -74,10 +74,21 @@ int headclient_init(void){
 }
 packetdata_t headpos = {0};
 
-int fuck = 0;
 vec3_t headclient_headpos = {0.0, 0.0, 4.0};
-int headclient_update(void){
-	fuck++;
+
+
+typedef struct headclient_history_s {
+	double time;
+	vec3_t pos;
+	//todo more?
+} headclient_history_t;
+
+//todo make these nice in a struct n shit
+headclient_history_t headclient_poshistory[2] = {0};
+headclient_history_t headclient_delta = {0};
+vec3_t headclient_deltavel = {0};
+int headclient_update(double time){
+	if(consock < 1) return 0;
 	size_t toread = 0;
 	int captured = 0;
 	vec3_t fakehead_pos = {0.0, 0.0, 0.0};
@@ -93,23 +104,23 @@ int headclient_update(void){
 			captured++;
 		}
 	}
-	if(!captured) return 0;
-//	fakehead_pos[0] = 0.0;
-//	fakehead_pos[1] = 0.0;
-//	fakehead_pos[2] = (sin(fuck * 0.002)* 5 + 5);
+	if(!captured){
+		//predict
+		//get delta in seconds
+		double tdelt = time - headclient_poshistory[0].time;
+		//if we get too fucky, just give up
+		if(tdelt >= 0.25)return 0;
+		//take delta current time from prev multiply it by the vel
+		vec3_t toff  = {0};
+		vec3mult(toff, headclient_deltavel, tdelt);
+		//add it onto the previous
+		vec3addvec(headclient_headpos, headclient_poshistory[0].pos, toff);
+		return 0;
+	}
+	//assumed else
 
 
-//	fakehead_pos[2] = 4.0;
-//	fakehead_pos[0] = sin(fuck * 0.00031415926);
-//	fakehead_pos[1] = cos(fuck * 0.00025);
-//	printf("new head pos is %f %f %f\n", fakehead_pos[0], fakehead_pos[1], fakehead_pos[2]);
-
-
-//fuckboy method
-//use x and y to create 2 vectors, one at nearclip, one at farclip
-//use that to get a ray
-//fuck you i thought i had a good method but i assume not
-
+//	if(!captured) return 0;
 //note, this is distance based, not clip based
 
 	vec4_t i1 = {fakehead_pos[0], fakehead_pos[1], 0.0, 1.0};
@@ -132,20 +143,26 @@ int headclient_update(void){
 
 	vec3mult(v2, v2, fakehead_pos[2]);
 	vec3addvec(headclient_headpos, v1, v2);
+	//update the history
 
+	//TODO
+	//if i get more than one head update packet, i use that both to update the history
+	//so really this should be in the loop
 
+	headclient_poshistory[1] = headclient_poshistory[0];
+	headclient_poshistory[0].pos[0] = headclient_headpos[0];
+	headclient_poshistory[0].pos[1] = headclient_headpos[1];
+	headclient_poshistory[0].pos[2] = headclient_headpos[2];
+	headclient_poshistory[0].time = time;
 
-//this was working at one point
-//now it doesnt
-/*
-	fakehead_pos[3] = fakehead_pos[2];
-	fakehead_pos[0] *=fakehead_pos[2];
-	fakehead_pos[1] *=fakehead_pos[2];
-	fakehead_pos[2] *= headclient_kinectvp.projection.m[2][2];
-	Matrix4x4_Transform4(&headclient_kinectvp.viewprojinv, fakehead_pos, headclient_headpos);
-*/
+	headclient_delta.time = headclient_poshistory[0].time - headclient_poshistory[1].time;
+	vec3subvec(headclient_delta.pos, headclient_poshistory[0].pos, headclient_poshistory[1].pos);
+	//now get a velocity (per second)
+	vec3div(headclient_deltavel, headclient_delta.pos, headclient_delta.time);
 
+	printf("Got a head position update... delta time %f, delta pos %f %f %f, vel %f %f %f\n", headclient_delta.time,
+		headclient_delta.pos[0],headclient_delta.pos[1],headclient_delta.pos[2],
+		headclient_deltavel[0],headclient_deltavel[1],headclient_deltavel[2]);
 
-//	printf("real head pos is %f %f %f\n", headclient_headpos[0], headclient_headpos[1], headclient_headpos[2]);
 	return TRUE;
 }

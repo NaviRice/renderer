@@ -83,7 +83,7 @@ int main(int argc, char *argv[]){
 
 		glfw_checkEvent();
 		//todo figure out if thise should be reordered
-		headclient_update();
+		headclient_update(t);
 		while(accum * 1000.0 > GCTIMESTEP){
 			gamecode_tick();
 			accum -= (double)GCTIMESTEP/1000.0;
