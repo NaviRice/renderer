@@ -38,7 +38,17 @@
 		int (* entity_addRINT)(entity_t e);
 		entity_t * (* entity_addRPOINT)(entity_t e);
 
+		//DONT use this, instead mark for delete
 		int (*entity_remove)(const int id);
+		int (*entity_unload)(entity_t *e);
+		//instead, use this
+		void (*entity_markForDeletion)(entity_t *e);
+
+		//entity memory
+		void * (* entity_memAlloc)(entity_t *e, size_t size);
+		void * (*entity_memRealloc)(void * ptr, size_t size);
+		void (*entity_memFree)(void * ptr);
+
 
 		//file
 		int (*file_loadString)(const char * filename, char ** output);

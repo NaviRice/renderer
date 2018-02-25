@@ -87,7 +87,17 @@ int sys_setupGCCallbacks(void){
 	ec.entity_addRINT = entity_addRINT;
 	ec.entity_addRPOINT = entity_addRPOINT;
 
+	//dont use these unless you are sure!
 	ec.entity_remove = entity_remove;
+	ec.entity_unload = entity_unload;
+	//instead, use this
+	ec.entity_markForDeletion = entity_markForDeletion;
+
+	//entity memory section
+	ec.entity_memAlloc = entity_memAlloc;
+	ec.entity_memRealloc = entity_memRealloc;
+	ec.entity_memFree = entity_memFree;
+
 
 	ec.file_loadString = file_loadString;
 //	ec.file_loadStringNoLength = file_loadStringNoLength;
@@ -438,6 +448,12 @@ void gamecode_tick(void){ //todo maybe change to float in seconds
 //			e->nextthink = DBL_MAX;
 //			e->think(e);
 //		}
+		if(e->gonnadie){
+			//todo like figure this out better
+			if(e->remove) e->remove(e);
+			entity_unload(e);
+			entity_remove(e->myid);
+		}
 	}
 
 
