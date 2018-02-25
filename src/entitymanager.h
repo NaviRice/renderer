@@ -49,6 +49,9 @@ typedef struct entity_s {
 
 	int gonnadie;//todo figure out types
 
+
+	void * custom; //custom entity pointer, should either point to something static, or use entity_malloc on the entity initialization
+
 	entitymemitem_t mem; //dont manually use this shit, use the entity_mem* functions
 
 	vec4_t color;
