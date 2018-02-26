@@ -14,6 +14,7 @@
 #include "entitymanager.h" //init
 #include "contextmanager.h"
 #include "headclient.h"
+#include "navmanager.h"
 
 #include "gamecodemanager.h"
 
@@ -52,6 +53,7 @@ int main(int argc, char *argv[]){
 	if(!gamecode_init()){printf("Unable to init gamecode\n"); shutitdown(); return 4;}
 	//todo move to gamecode but whatever
 	headclient_init();
+	nav_init();
 
 
 

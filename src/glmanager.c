@@ -189,8 +189,8 @@ int gl_renderFrame(double time){ //temp
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0,0, width, height);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	tracegrid_renderOutput(&tmpvst, &debugvp, &tmpscreen);
 	tracegrid_renderGrid(&tmpvst, &debugvp, &tmpscreen);
+	tracegrid_renderOutput(&tmpvst, &debugvp, &tmpscreen);
 //	tracegrid_renderDebugFirstbounce(&tmpvst, &debugvp);
 //	tracegrid_renderDebugGridMini(&tmpvst, &debugvp);
 /*	int mid = model_register("models/coil.iqm");

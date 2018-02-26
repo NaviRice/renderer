@@ -122,6 +122,7 @@ int sys_setupGCCallbacks(void){
 	//todo implement a new api checking formula, maybe ranges of compatible
 	if(gc->apiver != GAMECODEINCLUDEVERSION){
 		printf("GAMECODE/sys_setupGCCallbacks: ERROR Gamecode version is %i, engine version is %i, not compatible\n", gc->apiver, GAMECODEINCLUDEVERSION);
+		sys_unloadGameAPI();
 		return FALSE;
 	}
 	if(!gc->initgame){
