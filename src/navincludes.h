@@ -1,13 +1,20 @@
 #ifndef NAVINCLUDESHEADER
 #define NAVINCLUDESHEADER
 
-#define NAVCODEINCLUDEVERSION 1
+#define NAVCODEINCLUDEVERSION 2
 
+
+	typedef struct navwaypoint_s {
+		float x;
+		float y;
+		char * desc;
+		char * icon;
+	} navwaypoint_t ;
 
 	typedef struct navecallheader_s {
 		//cvar?
 		//todo more
-		int yolo;
+		int (*nav_setCurrentWaypoint)(navwaypoint_t *n);
 	} navecallheader_t;
 
 	typedef struct navgcallheader_s {
