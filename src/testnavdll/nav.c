@@ -1,5 +1,5 @@
 //local includes
-#include "../navdllincludeme.h"
+#include "../navincludes.h"
 #include "nav.h"
 
 #include <stdio.h>
@@ -8,10 +8,16 @@
 #include <pthread.h>
 
 
-navgcallheader_t ng = {0};
-navecallheader_t *ne;
 pthread_t worker;
 //todo come up a with a deinit
+
+pthread_mutex_t gen_lock;
+
+
+
+//todo figure out callbacks
+
+int (*setCurrentWaypointCallback)(navwaypoint_t *p) =0;
 
 
 
@@ -26,26 +32,28 @@ void *navloop(void * ehh){
 		next.desc = "yolo swag i am a description";
 		next.icon = "leftarrow";
 
-		ne->nav_setCurrentWaypoint(&next);
+		//thread safety... a different thread may set these callbacks up.
+		pthread_mutex_lock(&gen_lock);
+			//if the callback is set... call it!
+			if(setCurrentWaypointCallback)setCurrentWaypointCallback(&next);
+		pthread_mutex_unlock(&gen_lock);
 	}
 	return NULL;
 }
 
 
-int initnav(void){
-	//spawn worker process
-	//remember this "init" function i am currently in has to return eventually
+int nav_setNextWaypointCallback( int (*n)(navwaypoint_t *p)){
+	//thread safety... a different thread may use this!
+	pthread_mutex_lock(&gen_lock);
+		setCurrentWaypointCallback = n;
+	pthread_mutex_unlock(&gen_lock);
+	return TRUE; // no errors
+}
+
+int nav_init(void){
+	//remember this "init" function i am currently in has to return soon
+	//so i spawn worker thread to handle all the network stuff
 	pthread_create(&worker, NULL, &navloop, NULL);
 
 	return TRUE; //should return TRUE on successful init
 }
-
-
-navgcallheader_t* setupNavCodeCallbacks(navecallheader_t *myne){
-	ne = myne;
-	if(!ne) return FALSE;
-	ng.apiver = NAVCODEINCLUDEVERSION;
-	ng.initnav = initnav;
-	return &ng;
-}
-
