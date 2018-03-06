@@ -30,6 +30,7 @@ set(SOURCES
 	src/gamecodemanager.c
 	src/bboxrenderer.c
 	src/navmanager.c
+	src/stb_truetype_precompile.c
 	)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/shaders
