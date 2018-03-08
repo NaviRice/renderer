@@ -31,6 +31,7 @@ set(SOURCES
 	src/bboxrenderer.c
 	src/navmanager.c
 	src/stb_truetype_precompile.c
+	src/ubomanager.c
 	)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/shaders

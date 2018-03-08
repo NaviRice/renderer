@@ -11,6 +11,7 @@
 
 #include "contextmanager.h"
 #include "vbomanager.h"		//for init
+#include "ubomanager.h"		//for init
 #include "modelmanager.h"	//for init, register, load
 
 #include "shadermanager.h"	//for init, register, load
@@ -118,6 +119,7 @@ int gl_init(void){
 //temp
 
 	vbo_init();
+	ubo_init();
 	model_init();
 	shader_init();
 	viewport_init();
