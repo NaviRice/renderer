@@ -33,6 +33,7 @@ set(SOURCES
 	src/stb_truetype_precompile.c
 	src/ubomanager.c
 	src/text.c
+	src/renderqueue.c
 	)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/shaders
