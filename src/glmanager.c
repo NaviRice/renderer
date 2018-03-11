@@ -13,6 +13,7 @@
 #include "vbomanager.h"		//for init
 #include "ubomanager.h"		//for init
 #include "modelmanager.h"	//for init, register, load
+#include "text.h"		//for init
 
 #include "shadermanager.h"	//for init, register, load
 
@@ -124,23 +125,19 @@ int gl_init(void){
 	shader_init();
 	viewport_init();
 	worldrenderer_init();
-//	planebox_init();
-
-
-
-//second context stuff
-	planebox_init(); //still requiring some fuckery?
+	planebox_init();
 	bboxrenderer_init();
+	fsquad_init();
+	tracegrid_init();
+	text_init();
+
+
 	tmp.type = 1;
 	tmp.name = strdup("planeboxes/tmp.planebox");
 	planebox_load(&tmp);
 	tmpscreen.type = 1;
 	tmpscreen.name = strdup("planeboxes/screen.planebox");
 	planebox_load(&tmpscreen);
-	fsquad_init();
-//	context_switch(1);
-	tracegrid_init();
-//	context_switch(0);
 
 	debugvp.type = 1;
 	debugvp.fov = 90.0;
