@@ -144,7 +144,14 @@ void renderqueue_setup(const renderqueue_t *q){
 	//flushing vert and ubo stuff done in a separet function since this function has to be "thread safe"
 }
 
-void renderqueue_flushbuffers(const renderqueue_t *q){
+void renderqueue_flushbuffers(renderqueue_t *q){
+	//flush ubo(s) ?
+	ubo_flushData(&q->ubo);
+	#if UBOPINGPONG > 1
+		q->uboid = q->ubo.id[q->ubo.pingplace];
+	#else
+		q->uboid = q->ubo.id;
+	#endif
 	//todo
 }
 

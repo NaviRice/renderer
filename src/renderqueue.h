@@ -49,11 +49,15 @@ typedef struct renderqueue_s {
 
 
 
-
+//needs to be main thread
 void renderqueue_draw(renderqueue_t *queue); //its not const since it "resets" place and dataplace
+
+//can be called from any thread
 void renderqueue_setup(const renderqueue_t *queue);
 //maybe i should just move this into draw?
-void renderqueue_flushbuffers(const renderqueue_t *queue);
+
+//needs to be main thread
+void renderqueue_flushbuffers(renderqueue_t *queue);
 //todo prune and half funcs
 
 unsigned int renderqueue_cleanup(renderqueue_t *queue);

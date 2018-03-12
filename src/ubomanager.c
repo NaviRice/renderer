@@ -53,6 +53,7 @@ int ubo_unload(ubo_t *u){
 	#else
 		glDeleteBuffers(1, &u->id);
 	#endif
+	if(u->data)free(u->data);
 	return TRUE;
 }
 
@@ -66,7 +67,7 @@ int ubo_pushData(ubo_t *u, const unsigned int size, const void * data){
 		u->data = realloc(u->data, newsize);
 		u->size = newsize;
 	}
-	memcpy(u->data  + place, data, size);
+	memcpy(u->data + place, data, size);
 	u->place = newsize;
 	return place;
 }

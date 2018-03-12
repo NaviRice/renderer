@@ -29,4 +29,10 @@ int ubo_init(void);
 int ubo_bind(ubo_t *u);
 int ubo_unload(ubo_t *u);
 
+int ubo_flushData(ubo_t *u);
+
+//todo more thes eover to size_t?
+int ubo_pushData(ubo_t *u, const unsigned int size, const void * data);
+int ubo_pushDataNoAlign(ubo_t *u, const unsigned int size, const void * data);
+
 #endif
