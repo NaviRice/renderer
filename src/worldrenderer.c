@@ -7,6 +7,8 @@
 
 #include "contextmanager.h"
 #include "vbomanager.h"
+#include "ubomanager.h"
+#include "renderqueue.h"
 #include "modelmanager.h"
 
 
@@ -23,6 +25,7 @@
 #include "bboxrenderer.h"
 
 #include "fsquad.h"
+
 
 
 
@@ -103,6 +106,11 @@ int worldrenderer_shutdown(void){
 	//TODO
 	//todo framebuffer stuff
 	return TRUE;
+}
+
+int worldrenderer_addModelToQueue(renderqueue_t *q, viewport_t *v, int mid, matrix4x4_t *mat, vec4_t color){
+	//TODO
+	return FALSE;
 }
 
 
@@ -233,6 +241,20 @@ int worldrenderer_recalcFakeVP(viewport_t *v){ //todo change this to also do shr
 //	printf("maxpitch is %f\n", maxpitch);
 
 	return TRUE;
+}
+
+
+int worldrenderer_addEntitiesToQueue(renderqueue_t *q, viewport_t *v){
+	//todo
+	int i;
+	int counter = 0;
+	for(i = 0; i <= entity_arraylasttaken; i++){
+		entity_t *e = entity_list+i;
+		if(!e->myid || !e->modelid) continue;
+		worldrenderer_addModelToQueue(q, v, e->modelid, &e->mat, e->color);
+		counter++;
+	}
+	return counter;
 }
 
 int worldrenderer_renderEntities(viewport_t *v){

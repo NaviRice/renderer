@@ -64,7 +64,7 @@ unsigned int renderqueue_cleanup(renderqueue_t *queue);
 
 void renderqueue_sort(renderqueue_t *queue);
 
-
+//any thread safe, as long as its one thread max per queue. (2 seperate threads can add stuff to 2 seperate queues)
 void renderqueue_addtoqueue(renderqueue_t *q, renderlistitem_t item);
 
 

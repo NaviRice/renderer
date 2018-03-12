@@ -12,6 +12,7 @@
 #include "contextmanager.h"
 #include "vbomanager.h"		//for init
 #include "ubomanager.h"		//for init
+#include "renderqueue.h"
 #include "modelmanager.h"	//for init, register, load
 #include "text.h"		//for init
 
@@ -37,6 +38,7 @@
 
 
 #include "headclient.h"
+
 
 
 
@@ -229,6 +231,9 @@ int gl_renderFrame(double time){ //temp
 	return 1;
 }
 
+renderqueue_t debugopaque = {0};
+renderqueue_t worldopaque = {0};
+
 int gl_renderWorld(double time){
 	worldrenderer_bindEASTEREGG();
 	GLenum renderbuffs[] = {GL_COLOR_ATTACHMENT0};
@@ -236,14 +241,25 @@ int gl_renderWorld(double time){
 	glClearColor(0.0, 0.0, 0.1, 0.0);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glClearColor(0.0, 0.0, 0.0, 0.0);
+
+	//todo move this to a different function?
+	//todo move this to a different thread
+	worldrenderer_addEntitiesToQueue(&worldopaque, &debugvp);
+
 	worldrenderer_renderEntities(&tmpvst);
 	worldrenderer_renderEntitiesBBoxes(&tmpvst);
 
 	return TRUE;
 }
 extern int worldrenderer_modelshader_id;
+
 int gl_renderWorldDebug(double time){
 	//todo
+
+	//todo move this to a different function?
+	//todo move this to a different thread
+	worldrenderer_addEntitiesToQueue(&debugopaque, &debugvp);
+
 	worldrenderer_renderEntities(&debugvp);
 	worldrenderer_renderEntitiesBBoxes(&debugvp);
 	return TRUE;
