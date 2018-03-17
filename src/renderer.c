@@ -93,6 +93,25 @@ int main(int argc, char *argv[]){
 //		headclient_update();
 
 
+#ifdef USENEWRENDERER
+		context_switch(0);
+
+		gl_setupFirstbounceForRender(t);
+		gl_setupWorldForRender(t);
+		gl_setupDebugForRender(t);
+
+
+		gl_renderFirstbounce(t);
+		gl_renderScreen(t);
+		glfw_swapBuffers();
+
+		context_switch(1);
+		gl_renderDebug(t);
+		glfw_swapBuffers();
+#else
+
+
+
 		//todo recalc viewport stuff here
 		context_switch(0);
 		gl_renderWorld(t);
@@ -104,6 +123,7 @@ int main(int argc, char *argv[]){
 		gl_renderDebug(t);
 		glfw_swapBuffers();
 
+#endif
 
 	}
 	shutitdown();

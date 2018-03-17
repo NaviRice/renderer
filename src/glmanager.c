@@ -266,7 +266,7 @@ int gl_renderWorldDebug(double time){
 }
 
 
-
+#ifndef USENEWRENDERER
 int gl_renderFirstbounce(double time){
 	tracegrid_bindBounce();
 	GLenum renderbuffs[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
@@ -275,11 +275,12 @@ int gl_renderFirstbounce(double time){
 	planebox_renderFirstbounce(&tmp, &tmpvst);
 	return TRUE;
 }
-
+#endif
 
 
 extern viewport_t headclient_kinectvp;
 extern vec3_t headclient_headpos;
+#ifndef USENEWRENDERER
 int gl_renderDebug(double time){
 	mycontext_t *c = mycontexts+context_current;
 	int width = c->width;
@@ -352,7 +353,7 @@ int gl_renderDebug(double time){
 	return TRUE;
 }
 
-
+#endif
 
 //not used anymore
 /*
@@ -369,3 +370,31 @@ int gl_resizeDebugViewports(int width, int height){
 	return TRUE;
 }
 */
+
+
+
+
+#ifdef USENEWRENDERER
+int gl_setupFirstbounceForRender(double time){
+	return TRUE;
+}
+int gl_setupWorldForRender(double time){
+	return TRUE;
+}
+int gl_setupDebugForRender(double time){
+	return TRUE;
+}
+
+
+
+
+int gl_renderFirstbounce(double time){
+	return TRUE;
+}
+int gl_renderScreen(double time){
+	return TRUE;
+}
+int gl_renderDebug(double time){
+	return TRUE;
+}
+#endif

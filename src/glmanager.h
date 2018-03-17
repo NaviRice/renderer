@@ -18,6 +18,19 @@ void gl_printError(int errornumber, const char *filename, int line);
 int gl_resizeViewports(int width, int height);
 int gl_resizeDebugViewports(int width, int height);
 
+
+
+
+#ifdef USENEWRENDERER
+int gl_setupFirstbounceForRender(double time);
+int gl_setupWorldForRender(double time);
+int gl_setupDebugForRender(double time);
+
+int gl_renderFirstbounce(double time);
+int gl_renderScreen(double time);
+int gl_renderDebug(double time);
+#endif
+
 #define CHECKGLERROR {if (FALSE){if (FALSE) printf("CHECKGLERROR at %s:%d\n", __FILE__, __LINE__);int checkglerror_errornumber = glGetError();if (checkglerror_errornumber) gl_printError(checkglerror_errornumber, __FILE__, __LINE__);}}
 
 
