@@ -1,6 +1,9 @@
 //#include "quakedef.h"
 #include "globaldefs.h"
+
+#ifdef SIMD
 #include <xmmintrin.h>
+#endif
 #include <math.h>
 #include "mathlib.h"
 #include "matrixlib.h"
@@ -141,6 +144,7 @@ void Matrix4x4_Concat (matrix4x4_t *out, const matrix4x4_t *in1, const matrix4x4
 }
 
 
+#ifdef SIMD
 //uses https://stackoverflow.com/questions/18499971/efficient-4x4-matrix-multiplication-c-vs-assembly as a ref
 void Matrix4x4_Concatsimd (matrix4x4_t *out, const matrix4x4_t *in1, const matrix4x4_t *in2)
 {
@@ -199,6 +203,7 @@ void Matrix4x4_Concatsimd (matrix4x4_t *out, const matrix4x4_t *in1, const matri
 #endif
 }
 
+
 //uses https://stackoverflow.com/questions/18499971/efficient-4x4-matrix-multiplication-c-vs-assembly as a ref
 void Matrix4x4_Concatsimdu (matrix4x4_t *out, const matrix4x4_t *in1, const matrix4x4_t *in2)
 {
@@ -256,6 +261,8 @@ void Matrix4x4_Concatsimdu (matrix4x4_t *out, const matrix4x4_t *in1, const matr
 	out->m[3][3] = in1->m[3][0] * in2->m[0][3] + in1->m[3][1] * in2->m[1][3] + in1->m[3][2] * in2->m[2][3] + in1->m[3][3] * in2->m[3][3];
 #endif
 }
+
+#endif
 
 void Matrix4x4_Transpose (matrix4x4_t *out, const matrix4x4_t *in1)
 {
@@ -1932,6 +1939,8 @@ void Matrix4x4_Transform (const matrix4x4_t *in, const float v[3], float out[3])
 	out[2] = v[0] * in->m[2][0] + v[1] * in->m[2][1] + v[2] * in->m[2][2] + in->m[2][3];
 #endif
 }
+
+#ifdef SIMD
 void Matrix4x4_Transformsimd (const matrix4x4_t *in, const float v[3], float out[3])
 {
 #ifdef MATRIX4x4_OPENGLORIENTATION
@@ -1979,6 +1988,8 @@ void Matrix4x4_Transformsimdu (const matrix4x4_t *in, const float v[3], float ou
 #endif
 }
 
+#endif
+
 void Matrix4x4_Transform4 (const matrix4x4_t *in, const float v[4], float out[4])
 {
 #ifdef MATRIX4x4_OPENGLORIENTATION
@@ -1993,6 +2004,8 @@ void Matrix4x4_Transform4 (const matrix4x4_t *in, const float v[4], float out[4]
 	out[3] = v[0] * in->m[3][0] + v[1] * in->m[3][1] + v[2] * in->m[3][2] + v[3] * in->m[3][3];
 #endif
 }
+
+#ifdef SIMD
 void Matrix4x4_Transform4simd (const matrix4x4_t *in, const float v[4], float out[4])
 {
 #ifdef MATRIX4x4_OPENGLORIENTATION
@@ -2035,6 +2048,7 @@ void Matrix4x4_Transform4simdu (const matrix4x4_t *in, const float v[4], float o
 	out[3] = v[0] * in->m[3][0] + v[1] * in->m[3][1] + v[2] * in->m[3][2] + v[3] * in->m[3][3];
 #endif
 }
+#endif
 
 void Matrix4x4_Transform3x3 (const matrix4x4_t *in, const float v[3], float out[3])
 {

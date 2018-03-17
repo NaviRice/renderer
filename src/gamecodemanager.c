@@ -202,15 +202,22 @@ int gamecode_init(void){
 int recalcEntBBox(entity_t * e){
 	model_t * m = model_returnById(e->modelid);
 	if(!m) return FALSE;
+		#ifdef SIMD
 		Matrix4x4_Transformsimdu(&e->mat, &m->bboxp[0], &e->bboxp[0]);
-
+		#else
+		Matrix4x4_Transform(&e->mat, &m->bboxp[0], &e->bboxp[0]);
+		#endif
 		e->bbox[0] = e->bbox[1] =  e->bboxp[0];
 		e->bbox[2] = e->bbox[3] =  e->bboxp[1];
 		e->bbox[4] = e->bbox[5] =  e->bboxp[2];
 	int i;
 	for(i = 1; i < 8; i++){
 		int oneplace = i*3;
+		#ifdef SIMD
 		Matrix4x4_Transformsimdu(&e->mat, &m->bboxp[oneplace], &e->bboxp[oneplace]);
+		#else
+		Matrix4x4_Transform(&e->mat, &m->bboxp[oneplace], &e->bboxp[oneplace]);
+		#endif
 
 		if(e->bboxp[oneplace] > e->bbox[0]) e->bbox[0] = e->bboxp[oneplace];
 		else if(e->bboxp[oneplace] < e->bbox[1]) e->bbox[1] = e->bboxp[oneplace];
@@ -263,7 +270,11 @@ int calcEntAttachMat(entity_t * e){ //return value is weather e->mat got changed
 //			Matrix4x4_CreateFromQuakeEntity(&tempmat, e->pos[0], e->pos[1], e->pos[2], e->angle[0], e->angle[1], e->angle[2], e->scale/attacher->scale);
 			Matrix4x4_CreateFromQuakeEntity(&tempmat, e->pos[0]/attacher->scale, e->pos[1]/attacher->scale, e->pos[2]/attacher->scale, e->angle[0], e->angle[1], e->angle[2], e->scale/attacher->scale);
 
+			#ifdef SIMD
 			Matrix4x4_Concatsimdu(&e->mat, &attacher->mat, &tempmat);
+			#else
+			Matrix4x4_Concat(&e->mat, &attacher->mat, &tempmat);
+			#endif
 			e->needsmatupdate = 2;
 			return TRUE;
 		}
@@ -277,8 +288,11 @@ int calcEntAttachMat(entity_t * e){ //return value is weather e->mat got changed
 //				Matrix4x4_CreateFromQuakeEntity(&tempmat, e->pos[0], e->pos[1], e->pos[2], e->angle[0], e->angle[1], e->angle[2], e->scale/attacher->scale);
 
 				Matrix4x4_CreateFromQuakeEntity(&tempmat, e->pos[0]/attacher->scale, e->pos[1]/attacher->scale, e->pos[2]/attacher->scale, e->angle[0], e->angle[1], e->angle[2], e->scale/attacher->scale);
+				#ifdef SIMD
 				Matrix4x4_Concatsimdu(&e->mat, &attacher->mat, &tempmat);
-
+				#else
+				Matrix4x4_Concat(&e->mat, &attacher->mat, &tempmat);
+				#endif
 				return TRUE;
 			} else {
 				Matrix4x4_CreateFromQuakeEntity(&e->mat, e->pos[0], e->pos[1], e->pos[2], e->angle[0], e->angle[1], e->angle[2], e->scale);
