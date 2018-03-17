@@ -34,6 +34,7 @@ set(SOURCES
 	src/ubomanager.c
 	src/text.c
 	src/renderqueue.c
+	src/naviclient.c
 	)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/shaders

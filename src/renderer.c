@@ -14,6 +14,7 @@
 #include "entitymanager.h" //init
 #include "contextmanager.h"
 #include "headclient.h"
+#include "naviclient.h"
 #include "navmanager.h"
 
 #include "gamecodemanager.h"
@@ -52,6 +53,7 @@ int main(int argc, char *argv[]){
 	if(!gl_init()){printf("Unable to init gl\n"); shutitdown(); return 3;}
 	if(!gamecode_init()){printf("Unable to init gamecode\n"); shutitdown(); return 4;}
 	//todo move to gamecode but whatever
+	naviclient_init();
 	headclient_init();
 	nav_init();
 
@@ -86,6 +88,7 @@ int main(int argc, char *argv[]){
 		glfw_checkEvent();
 		//todo figure out if thise should be reordered
 		headclient_update(t);
+		naviclient_update(t);
 		while(accum * 1000.0 > GCTIMESTEP){
 			gamecode_tick();
 			accum -= (double)GCTIMESTEP/1000.0;
