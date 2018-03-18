@@ -35,6 +35,7 @@ set(SOURCES
 	src/text.c
 	src/renderqueue.c
 	src/naviclient.c
+	src/proto/requestHeader.pb-c.c
 	)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/shaders
@@ -60,5 +61,5 @@ set(CMAKE_C_FLAGS "-Wall -Ofast -fstrict-aliasing -march=native -g")
 set(CMAKE_CXX_FLAGS "-Wall -Ofast -fstrict-aliasing -march=native -g")
 
 add_executable(renderer src/renderer.c ${SOURCES})
-target_link_libraries(renderer -lepoxy -lm -ldl ${LIBS})
+target_link_libraries(renderer -lepoxy -lm -ldl -lprotobuf-c ${LIBS})
 

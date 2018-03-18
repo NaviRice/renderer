@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package navirice.proto;
+
+message RequestHeader {
+    enum Type {
+        CURRENT_STEP = 0;
+        CURRENT_LOCATION = 1;
+    }
+    Type type = 1;
+    uint32 length = 2;
+}

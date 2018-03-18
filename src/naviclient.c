@@ -23,24 +23,29 @@
 
 
 
+
+#include "proto/requestHeader.pb-c.h"
+
+
+
 typedef struct connectionitem_s {
 	struct sockaddr_in client_address;
 	int client_sockfd;
 	size_t waitingread;
 	int waitingreadtype;
+
+	void * tdata;
+	size_t tdatasize;
+	size_t tdataplace;
 } connectionitem_t;
 
 connectionitem_t * conlist;
 size_t numcom = 0; // just gonna fudge it
 
 
-size_t msgheadersize = 0;
-
 
 int server_sockfd;
 int naviclient_init(void){
-
-	msgheadersize = 0; //todo
 
 	int server_len;
 	struct sockaddr_in server_address;
@@ -108,6 +113,7 @@ int naviclient_update(double time){
 		//add it to the list
 		numcom++;
 		conlist = realloc(conlist, numcom * sizeof(connectionitem_t));
+		memset(&conlist[numcom-1], 0, sizeof(connectionitem_t));
 		conlist[numcom-1].client_sockfd = client_sockfd;
 		conlist[numcom-1].client_address = client_address;
 	}
@@ -142,25 +148,44 @@ int naviclient_update(double time){
 
 
 
-			conlist[i].waitingread = 0; //ehhh
+				conlist[i].waitingread = 0; //ehhh
 			} else { //read in a header
-				if(toread < msgheadersize) break; //make sure we got enough data to read
-				//grab it
-				if(tmpbuffersize < msgheadersize){
-					tmpbuffersize = msgheadersize;
-					if(tmpbufferdata) free(tmpbufferdata);
-					tmpbufferdata = malloc(tmpbuffersize);
+				//read in a FUCKING BYTE AT A TIME BECAUSE PROTOBUF IS FUCKING RETARDED
+				//protobuf doesnt gaurentee the size of a packet... that means OUR FUCKING HEADERS COULD BE 0, 2, OR 5 BYTES
+				//seriously, why the fuck did we ever use this?
+				//god fucking dammit why cant we just send bytes and be done.
+
+
+
+//				FFFF	U  U	 CC	K   k
+//				F	U  U	C	K  k
+//				FF	U  U	C	K k
+//				F	 uu	 CC	K   k
+
+				//read in one byte
+				//first check if i gotta resize the buf tho
+				if(conlist[i].tdataplace >= conlist[i].tdatasize){
+					conlist[i].tdatasize = conlist[i].tdataplace+1;
+					conlist[i].tdata = realloc(conlist[i].tdata, conlist[i].tdatasize);
 				}
-				int readc = recv(conlist[i].client_sockfd, tmpbufferdata, msgheadersize, 0);
+				//read that faggot in
+				int readc = recv(conlist[i].client_sockfd, conlist[i].tdata + conlist[i].tdataplace, 1, 0);
 				//some sorta error?
-				if(readc != msgheadersize){
+				if(readc != 1){
 					printf("NAVICLIENT/update error read issue 2\n");
 					continue;
 				}
-				//parse it
-
-				//probably set a type and size for waitingread
-
+				conlist[i].tdataplace++;
+				//attempt to parse it
+				Navirice__Proto__RequestHeader * readhead = navirice__proto__request_header__unpack(NULL, conlist[i].tdataplace, conlist[i].tdata);
+				if(!readhead){ //didnt read enough
+					continue;
+				}
+				//read enough
+				conlist[i].waitingread = readhead->length;
+				conlist[i].waitingreadtype = readhead->type;
+				conlist[i].tdataplace = 0;
+				navirice__proto__request_header__free_unpacked(readhead, NULL);
 
 			}
 		}
