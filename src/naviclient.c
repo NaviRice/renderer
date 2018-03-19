@@ -25,6 +25,8 @@
 
 
 #include "proto/requestHeader.pb-c.h"
+#include "proto/step.pb-c.h"
+#include "proto/response.pb-c.h"
 
 
 
@@ -98,9 +100,24 @@ int naviclient_init(void){
 
 
 
-
-void * tmpbufferdata = 0;
-size_t tmpbuffersize = 0;
+int parseItThePacket(void * data, size_t datasize, int type){
+	Navirice__Proto__Step *st;
+	switch(type){
+		case 0: //step
+			st = navirice__proto__step__unpack(NULL, datasize, data);
+			if(!st){
+				printf("Fuck protobuff... Seriously!\n");
+				return 1;
+			}
+			printf("Got a fucking step %f %f %s %s\n", st->latitude, st->longitude, st->description, st->icon);
+			navirice__proto__step__free_unpacked(st, NULL);
+		break;
+		case 1: //current loc
+		return 2; // not yet done
+		break;
+	}
+	return 0;
+}
 
 int naviclient_update(double time){
 	//check if we have a connection to accept
@@ -109,7 +126,7 @@ int naviclient_update(double time){
 	int client_sockfd = accept(server_sockfd, (struct sockaddr *)&client_address, &client_len);
 	//if we get a new biter
 	if(client_sockfd > 0){
-		printf("GOt a bite!\n");
+		printf("Got a bite!\n");
 		//add it to the list
 		numcom++;
 		conlist = realloc(conlist, numcom * sizeof(connectionitem_t));
@@ -118,11 +135,13 @@ int naviclient_update(double time){
 		conlist[numcom-1].client_address = client_address;
 	}
 
+	//TODO figure out how to handle a client disconnecting
+
 
 	//loop through all attached clients, and check if they have data to send
 
 	int i;
-	for(i = 0; i < numcom; numcom++){
+	for(i = 0; i < numcom; i++){
 		//check if we have any data to send to this wee little goy
 		size_t toread = 0;
 		//he has something to say!
@@ -131,19 +150,32 @@ int naviclient_update(double time){
 			if(conlist[i].waitingread){
 				//check if we have enough to read in
 				if(toread < conlist[i].waitingread) break;
-				//grab it
-				if(tmpbuffersize < conlist[i].waitingread){
-					tmpbuffersize = conlist[i].waitingread;
-					if(tmpbufferdata) free(tmpbufferdata);
-					tmpbufferdata = malloc(tmpbuffersize);
+				//first check if i gotta resize the buf tho
+				if(conlist[i].waitingread > conlist[i].tdatasize){
+					conlist[i].tdatasize = conlist[i].waitingread;
+					if(conlist[i].tdata) free(conlist[i].tdata);
+					conlist[i].tdata = malloc(conlist[i].tdatasize);
 				}
-				int readc = recv(conlist[i].client_sockfd, tmpbufferdata, conlist[i].waitingread, 0);
+
+				int readc = recv(conlist[i].client_sockfd, conlist[i].tdata, conlist[i].waitingread, 0);
 				//some sorta error?
 				if(readc != conlist[i].waitingread){
 					printf("NAVICLIENT/update error read issue 1\n");
 					continue;
 				}
-					//parse it
+				//parse it
+
+				Navirice__Proto__Response resp = NAVIRICE__PROTO__RESPONSE__INIT;
+				resp.status = parseItThePacket(conlist[i].tdata, conlist[i].waitingread, conlist[i].waitingreadtype);
+				size_t sizzle = navirice__proto__response__get_packed_size(&resp);
+				if(sizzle > conlist[i].tdatasize){
+					conlist[i].tdatasize = sizzle;
+					if(conlist[i].tdata) free(conlist[i].tdata);
+					conlist[i].tdata = malloc(conlist[i].tdatasize);
+				}
+				navirice__proto__response__pack(&resp, conlist[i].tdata);
+				send(conlist[i].client_sockfd, conlist[i].tdata, sizzle, 0);
+
 
 
 
@@ -157,10 +189,10 @@ int naviclient_update(double time){
 
 
 
-//				FFFF	U  U	 CC	K   k
-//				F	U  U	C	K  k
-//				FF	U  U	C	K k
-//				F	 uu	 CC	K   k
+//				FFFF	U  U	 CC	K   K
+//				F	U  U	C	K  K
+//				FF	U  U	C	K K
+//				F	 uu	 CC	K   K
 
 				//read in one byte
 				//first check if i gotta resize the buf tho

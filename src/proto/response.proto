@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package navirice.proto;
+
+message Response {
+    enum Status {
+        SUCCESS = 0;
+        BAD_REQUEST = 1;
+        NOT_IMPLEMENTED = 2;
+    }
+
+    Status status = 1;
+}
