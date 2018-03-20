@@ -134,6 +134,32 @@ int worldrenderer_renderModel(viewport_t *v, int mid, matrix4x4_t *mat, vec4_t c
 	glDrawElements(GL_TRIANGLES, m->vbo.numfaces * 3, GL_UNSIGNED_INT, 0);
 	return m->vbo.numfaces;
 }
+int worldrenderer_renderModelTransparent(viewport_t *v, int mid, matrix4x4_t *mat, vec4_t color){
+//	Matrix4x4_Print(mat);
+	model_t *m = model_returnById(mid);
+	if(!m){
+		printf("WORLDRENDERER/renderModelTransparent: ERROR invalid model id! %i\n", mid);
+		return 0;
+	}
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//	glDepthMask(GL_FALSE);
+	model_bind(m);
+	shader_t *s = shader_returnById(worldrenderer_modelshader_id);
+	glUseProgram(s->programid);
+	matrix4x4_t tmath;
+	float tmat[16];
+	Matrix4x4_Concat(&tmath, &v->viewproj, mat);
+	Matrix4x4_ToArrayFloatGL(&tmath, tmat);
+	glUniformMatrix4fv(s->uniloc[0], 1, GL_FALSE, tmat);
+	glUniform4fv(s->uniloc[1], 1, color);
+	glDrawElements(GL_TRIANGLES, m->vbo.numfaces * 3, GL_UNSIGNED_INT, 0);
+
+//	glDepthMask(GL_TRUE);
+	glDisable(GL_BLEND);
+	return m->vbo.numfaces;
+}
 
 
 

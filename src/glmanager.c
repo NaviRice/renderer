@@ -29,6 +29,7 @@
 
 #include "planebox.h"
 #include "tracegrid.h" // for tracegrid duh
+#include "firstbouncerenderer.h"
 #include "worldrenderer.h"
 #include "bboxrenderer.h"
 #include "fsquad.h"
@@ -59,6 +60,7 @@ int gl_shutdown(void){
 	viewport_shutdown();
 	tracegrid_shutdown();
 	planebox_shutdown();
+	//todo add the renderer shutdowns here
 	return TRUE; //successful shutdown
 }
 
@@ -101,11 +103,12 @@ void gl_printError(int errornumber, const char *filename, int linenumber){
 	}
 }
 
-planebox_t tmp = {0};
+//planebox_t tmp = {0};
 planebox_t tmpscreen = {0};
 viewport_t tmpvst = {0};
 viewport_t debugvp = {0};
-
+int windshieldid = {0};
+matrix4x4_t windshieldmat;
 
 
 //true is everything initialized correctly
@@ -126,6 +129,7 @@ int gl_init(void){
 	model_init();
 	shader_init();
 	viewport_init();
+	firstbouncerenderer_init();
 	worldrenderer_init();
 	planebox_init();
 	bboxrenderer_init();
@@ -134,9 +138,11 @@ int gl_init(void){
 	text_init();
 
 
-	tmp.type = 1;
-	tmp.name = strdup("planeboxes/tmp.planebox");
-	planebox_load(&tmp);
+
+//	tmp.type = 1;
+//	tmp.name = strdup("planeboxes/tmp.planebox");
+//	planebox_load(&tmp);
+
 	tmpscreen.type = 1;
 	tmpscreen.name = strdup("planeboxes/screen.planebox");
 	planebox_load(&tmpscreen);
@@ -157,6 +163,11 @@ int gl_init(void){
 	tmpvst.changed = 3;
 	tmpvst.pos[2] = 5.0;
 	viewport_recalc(&tmpvst);
+
+	windshieldid = model_register("models/testwindshield.iqm");
+	model_load(model_returnById(windshieldid));
+	Matrix4x4_CreateFromQuakeEntity(&windshieldmat, 0, 0, 0.0, 0, 0, 0, 1.0);
+
 
 	//mid = model_register("models/teapot.iqm");
 //	printf("registered model id %i\n", mid);
@@ -190,8 +201,11 @@ int gl_renderFrame(double time){ //temp
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0,0, width, height);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
 	tracegrid_renderGrid(&tmpvst, &debugvp, &tmpscreen);
 	tracegrid_renderOutput(&tmpvst, &debugvp, &tmpscreen);
+
+
 //	tracegrid_renderDebugFirstbounce(&tmpvst, &debugvp);
 //	tracegrid_renderDebugGridMini(&tmpvst, &debugvp);
 /*	int mid = model_register("models/coil.iqm");
@@ -272,7 +286,8 @@ int gl_renderFirstbounce(double time){
 	GLenum renderbuffs[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
 	glDrawBuffers(2, renderbuffs);//todo move
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	planebox_renderFirstbounce(&tmp, &tmpvst);
+	firstbounce_renderModel(&tmpvst, windshieldid, &windshieldmat);
+//	planebox_renderFirstbounce(&tmp, &tmpvst);
 	return TRUE;
 }
 #endif
@@ -303,10 +318,10 @@ int gl_renderDebug(double time){
 	debugvp.changed |= 1;
 
 
-	debugvp.angle[0] = 90.0;
-	debugvp.angle[1] = 0.0;
-	debugvp.pos[0] = debugvp.pos[2] = 0;
-	debugvp.pos[1] = 10.0;
+//	debugvp.angle[0] = 90.0;
+//	debugvp.angle[1] = 0.0;
+//	debugvp.pos[0] = debugvp.pos[2] = 0;
+//	debugvp.pos[1] = 10.0;
 	viewport_recalc(&debugvp);
 
 
@@ -316,6 +331,7 @@ int gl_renderDebug(double time){
 //	tmpvst.pos[0] = sin(time * 3.111111111);
 //	tmpvst.pos[1] = sin(time * 2.111111111);
 //	tmpvst.pos[2] = 5.0 + sin(time * 1.11111111);
+
 	tmpvst.pos[0] = headclient_headpos[0];
 	tmpvst.pos[1] = headclient_headpos[1];
 	tmpvst.pos[2] = headclient_headpos[2];
@@ -326,8 +342,10 @@ int gl_renderDebug(double time){
 
 	cnt++;
 
-	planebox_renderDebug(&tmp, &debugvp);
-	bboxrenderer_renderBBoxMat(&debugvp, &tmp.model);
+//	planebox_renderDebug(&tmp, &debugvp);
+
+//	bboxrenderer_renderBBoxMat(&debugvp, &tmp.model);
+
 	//planebox_renderDebugLines(&tmp, &debugvp);
 	bboxrenderer_renderBBoxMat(&debugvp, &tmpscreen.model);
 //	planebox_renderDebugLines(&tmpscreen, &debugvp);
@@ -336,7 +354,11 @@ int gl_renderDebug(double time){
 	bboxrenderer_renderBBoxMat(&debugvp, &headclient_kinectvp.viewprojinv);
 //	planebox_renderViewportDebugLines(&headclient_kinectvp, &debugvp);
 
+	vec4_t windshieldcolor = {0.4, 0.5, 0.6, 0.3};
 	gl_renderWorldDebug(time);
+
+
+	worldrenderer_renderModelTransparent(&debugvp, windshieldid, &windshieldmat, windshieldcolor);
 
 	tracegrid_renderDebugOutput(&tmpvst, &debugvp, &tmpscreen);
 	tracegrid_renderDebugGrid(&tmpvst, &debugvp, &tmpscreen);
@@ -376,6 +398,7 @@ int gl_resizeDebugViewports(int width, int height){
 
 #ifdef USENEWRENDERER
 int gl_setupFirstbounceForRender(double time){
+	//really just have to render the windshield
 	return TRUE;
 }
 int gl_setupWorldForRender(double time){

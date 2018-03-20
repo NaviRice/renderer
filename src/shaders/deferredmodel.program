@@ -1,0 +1,4 @@
+vertexsource: ./shaders/deferredmodel.names
+fragmentsource: ./shaders/deferredmodel.names
+VertexSource: ./shaders/deferredmodel.vert
+FragmentSource: ./shaders/deferredmodel.frag

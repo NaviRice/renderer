@@ -35,6 +35,7 @@ set(SOURCES
 	src/text.c
 	src/renderqueue.c
 	src/naviclient.c
+	src/firstbouncerenderer.c
 	src/proto/requestHeader.pb-c.c
 	src/proto/step.pb-c.c
 	src/proto/response.pb-c.c

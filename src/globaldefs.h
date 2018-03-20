@@ -13,6 +13,8 @@
 #define DEFERREDFLAG 1
 #define FORWARDFLAG  2
 
+//#define USENEWRENDERER
+
 //global includes
 #include <stdio.h>
 #include <stdlib.h>

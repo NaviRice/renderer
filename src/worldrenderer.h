@@ -24,6 +24,7 @@ int worldrenderer_renderEntitiesBBoxes(viewport_t *v);
 int worldrenderer_renderDebugFramebufferMini(viewport_t * caster, viewport_t *v);
 
 int worldrenderer_renderModel(viewport_t *v, int mid, matrix4x4_t *m, vec4_t color);
+int worldrenderer_renderModelTransparent(viewport_t *v, int mid, matrix4x4_t *m, vec4_t color);
 
 
 int worldrenderer_recalcFakeVP(viewport_t *v);
