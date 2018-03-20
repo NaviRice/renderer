@@ -22,6 +22,8 @@
 
 
 
+vec3_t headclient_headpos = {0.0, 0.0, 0.0};
+
 typedef struct packetdata_s {
 	float x;
 	float y;
@@ -44,6 +46,8 @@ int headclient_generateKinectMats(void){
 	headclient_kinectvp.far = 10.0;
 	headclient_kinectvp.changed = 3;
 	viewport_recalc(&headclient_kinectvp);
+
+
 	return FALSE;
 }
 
@@ -74,7 +78,6 @@ int headclient_init(void){
 }
 packetdata_t headpos = {0};
 
-vec3_t headclient_headpos = {0.0, 0.0, 4.0};
 
 
 typedef struct headclient_history_s {

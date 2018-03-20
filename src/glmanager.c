@@ -318,10 +318,10 @@ int gl_renderDebug(double time){
 	debugvp.changed |= 1;
 
 
-//	debugvp.angle[0] = 90.0;
-//	debugvp.angle[1] = 0.0;
-//	debugvp.pos[0] = debugvp.pos[2] = 0;
-//	debugvp.pos[1] = 10.0;
+	debugvp.angle[0] = 90.0;
+	debugvp.angle[1] = 0.0;
+	debugvp.pos[0] = debugvp.pos[2] = 0;
+	debugvp.pos[1] = 10.0;
 	viewport_recalc(&debugvp);
 
 
