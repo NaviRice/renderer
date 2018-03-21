@@ -4,7 +4,6 @@
 
 #define PORT 1337
 
-#define HOST "harry laptop"
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -27,6 +26,7 @@
 #include "proto/requestHeader.pb-c.h"
 #include "proto/step.pb-c.h"
 #include "proto/response.pb-c.h"
+#include "proto/location.pb-c.h"
 
 
 
@@ -102,6 +102,7 @@ int naviclient_init(void){
 
 int parseItThePacket(void * data, size_t datasize, int type){
 	Navirice__Proto__Step *st;
+	Navirice__Proto__Location *loc;
 	switch(type){
 		case 0: //step
 			st = navirice__proto__step__unpack(NULL, datasize, data);
@@ -113,7 +114,13 @@ int parseItThePacket(void * data, size_t datasize, int type){
 			navirice__proto__step__free_unpacked(st, NULL);
 		break;
 		case 1: //current loc
-		return 2; // not yet done
+			loc = navirice__proto__location__unpack(NULL, datasize, data);
+			if(!loc){
+				printf("Fuck protobuff... Seriously!\n");
+				return 1;
+			}
+			printf("Got a fucking location %f %f\n", loc->latitude, loc->longitude);
+			navirice__proto__location__free_unpacked(loc, NULL);
 		break;
 	}
 	return 0;

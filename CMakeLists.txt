@@ -39,6 +39,7 @@ set(SOURCES
 	src/proto/requestHeader.pb-c.c
 	src/proto/step.pb-c.c
 	src/proto/response.pb-c.c
+	src/proto/location.pb-c.c
 	)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/shaders
