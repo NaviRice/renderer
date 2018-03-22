@@ -17,7 +17,7 @@
 struct renderlistitem_s;
 struct renderqueue_s;
 
-typedef void (*renderqueueCallback_t)(const struct renderqueue_s *q, struct renderlistitem_s *ilist, unsigned int count);
+typedef void (*renderqueueCallback_t)(struct renderqueue_s *q, struct renderlistitem_s *ilist, unsigned int count);
 typedef struct renderlistitem_s {
 	void *data;
 	size_t datasize;
@@ -53,7 +53,7 @@ typedef struct renderqueue_s {
 void renderqueue_draw(renderqueue_t *queue); //its not const since it "resets" place and dataplace
 
 //can be called from any thread
-void renderqueue_setup(const renderqueue_t *queue);
+void renderqueue_setup(renderqueue_t *queue);
 //maybe i should just move this into draw?
 
 //needs to be main thread

@@ -111,7 +111,7 @@ void renderqueue_draw(renderqueue_t *q){
 }
 
 
-void renderqueue_setup(const renderqueue_t *q){
+void renderqueue_setup(renderqueue_t *q){
 	unsigned int i = 0;
 	unsigned int place = q->place;
 	renderlistitem_t * list = q->list;

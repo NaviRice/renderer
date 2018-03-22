@@ -42,6 +42,31 @@ int firstbouncerenderer_shutdown(void){
 	return FALSE;
 }
 
+typedef struct deferredModelUBOStruct_s {
+	GLfloat mvp[16];
+	GLfloat m[16];
+	GLfloat v[16];
+} deferredModelUBOStruct_t;
+void firstbounce_setupModelCallback(renderqueue_t *q, renderlistitem_t * ilist, unsigned int count){
+//	if(count >1){
+	//assume no instancing for now
+//		unsigned int i = 0;
+//		while(i < count){
+//			deferredModelCallbackData_t *d = ilist[i].data;
+//			unsigned int counter = 0;
+//			//push muh data
+//			
+//		}
+//	}
+	//assume no UBO yet
+	deferredModelCallbackData_t *d = ilist->data;
+	deferredModelUBOStruct_t ubodata;
+	memcpy(ubodata.mvp, d->mvp, 16 * sizeof(GLfloat));
+	memcpy(ubodata.m,   d->m,   16 * sizeof(GLfloat));
+	memcpy(ubodata.v,   d->v,   16 * sizeof(GLfloat));
+	int t = ubo_pushData(&q->ubo, sizeof(ubodata), &ubodata);
+	d->uboDataOffset = t;
+}
 
 
 int firstbounce_renderModel(viewport_t *v, int mid, matrix4x4_t *mat){
