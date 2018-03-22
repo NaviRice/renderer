@@ -8,14 +8,16 @@ int firstbouncerenderer_shutdown(void);
 int firstbounce_renderModel(viewport_t *v, int mid, matrix4x4_t *mat);
 
 
+typedef struct deferredModelUBOStruct_s {
+	GLfloat vp[16];
+	GLfloat m[16];
+	GLfloat v[16];
+} deferredModelUBOStruct_t;
 typedef struct deferredModelCallbackData_s {
 	unsigned int modelid;
-	unsigned int shaderid; //do i need this?
 	int uboDataOffset;
 
-	float mvp[16];
-	float m[16];
-	float v[16];
+	deferredModelUBOStruct_t u;
 } deferredModelCallbackData_t;
 
 

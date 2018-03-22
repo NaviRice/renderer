@@ -42,11 +42,26 @@ int firstbouncerenderer_shutdown(void){
 	return FALSE;
 }
 
-typedef struct deferredModelUBOStruct_s {
-	GLfloat mvp[16];
-	GLfloat m[16];
-	GLfloat v[16];
-} deferredModelUBOStruct_t;
+void firstbounce_drawModelCallback(renderqueue_t *q, renderlistitem_t *ilist, unsigned int count){
+	glEnable(GL_DEPTH_TEST);
+	deferredModelCallbackData_t *d = ilist->data;
+	model_t *m = model_returnById(d->modelid);
+	model_bind(m);
+	unsigned int mysize = count * sizeof(deferredModelUBOStruct_t);
+	//make sure to bind UBO correctly
+	glBindBufferRange(GL_UNIFORM_BUFFER, 0, q->ubo.id, d->uboDataOffset, mysize);
+//	glBindBufferBase(GL_UNIFORM_BUFFER, i, id);
+	shader_t *s = shader_returnById(firstbounce_deferredmodelshader_id);
+	glUseProgram(s->programid);
+
+
+//hacky shit
+	glUniformMatrix4fv(s->uniloc[0], 1, GL_FALSE, d->u.vp);
+	glUniformMatrix4fv(s->uniloc[1], 1, GL_FALSE, d->u.m);
+	glUniformMatrix4fv(s->uniloc[2], 1, GL_FALSE, d->u.v);
+
+	glDrawElementsInstanced(GL_TRIANGLES, m->vbo.numfaces * 3, GL_UNSIGNED_INT, 0, count);
+}
 void firstbounce_setupModelCallback(renderqueue_t *q, renderlistitem_t * ilist, unsigned int count){
 //	if(count >1){
 	//assume no instancing for now
@@ -55,21 +70,60 @@ void firstbounce_setupModelCallback(renderqueue_t *q, renderlistitem_t * ilist, 
 //			deferredModelCallbackData_t *d = ilist[i].data;
 //			unsigned int counter = 0;
 //			//push muh data
-//			
+//
 //		}
 //	}
 	//assume no UBO yet
+	//todo add functions in UBO data push to help facilitate this
 	deferredModelCallbackData_t *d = ilist->data;
-	deferredModelUBOStruct_t ubodata;
-	memcpy(ubodata.mvp, d->mvp, 16 * sizeof(GLfloat));
-	memcpy(ubodata.m,   d->m,   16 * sizeof(GLfloat));
-	memcpy(ubodata.v,   d->v,   16 * sizeof(GLfloat));
-	int t = ubo_pushData(&q->ubo, sizeof(ubodata), &ubodata);
+	int t = ubo_pushData(&q->ubo, sizeof(deferredModelUBOStruct_t), &d->u);
 	d->uboDataOffset = t;
 }
+void firstbounce_addModelToRenderQueue(renderqueue_t *q, viewport_t *v, int mid, matrix4x4_t *mat){
+	renderlistitem_t r;
+	deferredModelCallbackData_t d;
+	d.modelid = mid;
 
 
+	Matrix4x4_ToArrayFloatGL(&v->viewproj, d.u.vp);
+	Matrix4x4_ToArrayFloatGL(mat, d.u.m);
+	Matrix4x4_ToArrayFloatGL(&v->view, d.u.v);
+
+//todo do sort
+	r.sort[0] = 0;
+	r.sort[1] = 0;
+	r.sort[2] = 0;
+	r.sort[3] = 0;
+	r.sort[4] = 0;
+	r.sort[5] = 0;
+	r.sort[6] = 0;
+	r.sort[7] = 0;
+	r.sort[8] = 0;
+	r.sort[9] = 0;
+
+
+	r.datasize = sizeof(d);
+	r.data = &d;
+	r.flags = 2|4;
+	r.setup = firstbounce_setupModelCallback;
+	r.draw = firstbounce_drawModelCallback;
+
+	//add it u fuck
+	renderqueue_addtoqueue(q, r);
+}
+
+renderqueue_t hackyshit = {0};
 int firstbounce_renderModel(viewport_t *v, int mid, matrix4x4_t *mat){
+	//hacky test shit
+#if 1
+	firstbounce_addModelToRenderQueue(&hackyshit, v, mid, mat);
+	renderqueue_sort(&hackyshit);
+	renderqueue_setup(&hackyshit);
+	renderqueue_flushbuffers(&hackyshit);
+	renderqueue_draw(&hackyshit);
+
+
+#else
 	glEnable(GL_DEPTH_TEST);
 	//bind model
 
@@ -99,4 +153,5 @@ int firstbounce_renderModel(viewport_t *v, int mid, matrix4x4_t *mat){
 
 
 	return m->vbo.numfaces;
+#endif
 }
