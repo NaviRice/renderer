@@ -12,14 +12,14 @@ char * file_getEntireLine(file_t *f){
 	size_t lsize = 0;
 	int lplace =0;
 	char c;
-	for(c = fgetc(f->f); c != EOF && c != '\n'; c=fgetc(f->f)){
+	for(c = fgetc(f->f); c != 255 && c != EOF && c != '\n'; c=fgetc(f->f)){
 		if(lplace >= lsize) lsize = (lplace + 32) & ~(32-1); //TODO FIX
 		//		if(lplace >= lsize) lsize = lplace + 32;
 		line = realloc(line, lsize);
 		line[lplace++] = c;
 	}
 	//check to make sure we arent reading nothing
-	if(c == EOF && !lplace) return 0;
+	if((c == 255 || c == EOF) && !lplace) return 0;
 
 	//tighten up the alloc, add a nully
 	if(lsize != lplace+1){
