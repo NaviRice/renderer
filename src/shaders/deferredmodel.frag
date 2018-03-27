@@ -23,7 +23,8 @@ void main(){
 //	fragData1.rgb = normalize(texture(normalmap, tc).rgb);
 //	fragData1.rgb = normalize(vec3(model * vec4(texture(normalmap, tc).rgb, 1.0)));
 	//fuck it ill dfdx it
-	vec3 p1 = normalize(dFdx(pos));
-	vec3 p2 = normalize(dFdy(pos));
-	fragData1.rgb = normalize(cross(p1, p2));
+//	vec3 p1 = normalize(dFdx(pos));
+//	vec3 p2 = normalize(dFdy(pos));
+//	fragData1.rgb = normalize(cross(p1, p2));
+	fragData1.rgb = normalize(norm);
 }

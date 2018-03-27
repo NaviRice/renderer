@@ -169,6 +169,9 @@ int gl_init(void){
 	Matrix4x4_CreateFromQuakeEntity(&windshieldmat, 0, 0, 0.0, 0, 0, 0, 1.0);
 
 
+	tracegrid_resize(100,100);
+
+
 	//mid = model_register("models/teapot.iqm");
 //	printf("registered model id %i\n", mid);
 //	model_load(model_returnById(mid));
@@ -318,10 +321,10 @@ int gl_renderDebug(double time){
 	debugvp.changed |= 1;
 
 
-	debugvp.angle[0] = 90.0;
-	debugvp.angle[1] = 0.0;
-	debugvp.pos[0] = debugvp.pos[2] = 0;
-	debugvp.pos[1] = 10.0;
+//	debugvp.angle[0] = 90.0;
+//	debugvp.angle[1] = 0.0;
+//	debugvp.pos[0] = debugvp.pos[2] = 0;
+//	debugvp.pos[1] = 10.0;
 	viewport_recalc(&debugvp);
 
 
@@ -357,11 +360,11 @@ int gl_renderDebug(double time){
 	vec4_t windshieldcolor = {0.4, 0.5, 0.6, 0.3};
 	gl_renderWorldDebug(time);
 
+	tracegrid_renderDebugOutput(&tmpvst, &debugvp, &tmpscreen);
+	tracegrid_renderDebugGrid(&tmpvst, &debugvp, &tmpscreen);
 
 	worldrenderer_renderModelTransparent(&debugvp, windshieldid, &windshieldmat, windshieldcolor);
 
-	tracegrid_renderDebugOutput(&tmpvst, &debugvp, &tmpscreen);
-	tracegrid_renderDebugGrid(&tmpvst, &debugvp, &tmpscreen);
 	tracegrid_renderDebugFirstbounce(&tmpvst, &debugvp);
 	tracegrid_renderDebugGridMini(&tmpvst, &debugvp);
 
@@ -369,9 +372,9 @@ int gl_renderDebug(double time){
 
 
 
-	float phi = sin(time / 5.0) * 10;
-	phi*=phi;
-	tracegrid_resize((int)phi+2, (int)phi+2);
+//	float phi = sin(time / 5.0) * 10;
+//	phi*=phi;
+//	tracegrid_resize((int)phi+2, (int)phi+2);
 	return TRUE;
 }
 

@@ -23,6 +23,74 @@
 
 
 
+//ok math time!
+
+#include "mathlib.h"
+#include "matrixlib.h"
+/*
+def llarToWorld(lat, lon, alt, rad):
+    # see: http://www.mathworks.de/help/toolbox/aeroblks/llatoecefposition.html
+    f  = 0                              # flattening
+    ls = atan((1 - f)**2 * tan(lat))    # lambda
+
+    x = rad * cos(ls) * cos(lon) + alt * cos(lat) * cos(lon)
+    y = rad * cos(ls) * sin(lon) + alt * cos(lat) * sin(lon)
+    z = rad * sin(ls) + alt * sin(lat)
+
+    return c4d.Vector(x, y, z)
+*/
+
+
+
+//used https://stackoverflow.com/questions/10473852/convert-latitude-and-longitude-to-point-in-3d-space as a ref
+//general idea
+
+//calculate 3d doubles from lat/long (and i mean doubles) of everything
+//store waypoints, etc, as those 3d doubles
+
+//set origin to current position
+//(subtract shit from it)
+
+//rotate everything such that north? is +z, up is +y
+//further rotate such that
+//later rotate everything such that car forward is +z?
+
+
+
+//currently only one waypoint
+
+//todo put these in structs
+double waypointlong;
+double waypointlat;
+double waypointx;
+double waypointy;
+double waypointz;
+//and then final stuff here
+vec3_t waypointfinal;
+
+double currentposlong;
+double currentposlat;
+double currentposx;
+double currentposy;
+double currentposz;
+
+
+int waypointneedsupdate = 1;
+
+void recalcWayPointLocs(void){
+	waypointneedsupdate = 0;
+}
+
+
+void updateCurrentPos(double lattitude, double longitutde){
+	//calculate XYZ
+	waypointneedsupdate = 1;
+}
+
+
+
+
+
 #include "proto/requestHeader.pb-c.h"
 #include "proto/step.pb-c.h"
 #include "proto/response.pb-c.h"

@@ -2,5 +2,6 @@
 #define model uniform1
 #define view uniform2
 #define posattrib attrib0
+#define normattrib attrib1
 #define tcattrib attrib2
 #define colattrib attrib3
