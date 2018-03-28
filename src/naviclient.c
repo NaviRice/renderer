@@ -25,6 +25,7 @@
 
 //ok math time!
 
+#include <math.h>
 #include "mathlib.h"
 #include "matrixlib.h"
 /*
@@ -39,6 +40,38 @@ def llarToWorld(lat, lon, alt, rad):
 
     return c4d.Vector(x, y, z)
 */
+
+//for starters lets assume alt is 0
+void calcWORLDpos(double lon, double lat, double alt, double * x, double * y, double * z){
+	double deg2rad = 180.0/M_PI;
+	double rad = 6378137.0;
+	double f = 1.0/298.257223563;
+	double coslon = cosl(lon*deg2rad);
+	double sinlon = sinl(lon*deg2rad);
+	double coslat = cosl(lat*deg2rad);
+	double sinlat = sinl(lat*deg2rad);
+
+	double ff = (1.0-f); ff*=ff;
+	double c = 1.0/sqrtl(coslat*coslat + ff*sinlat*sinlat);
+	double s = c * ff;
+	*x = (rad * c + alt)* coslat * coslon;
+	*y = (rad * c + alt)* coslat * sinlon;
+	*z = (rad * s + alt)* sinlat;
+}
+
+void calcWORLDpossimple(double lon, double lat, double alt, double *x, double *y, double *z){
+	double deg2rad = 180.0/M_PI;
+	double rad = 6378137.0;
+	double coslon = cosl(lon*deg2rad);
+	double sinlon = sinl(lon*deg2rad);
+	double coslat = cosl(lat*deg2rad);
+	double sinlat = sinl(lat*deg2rad);
+
+
+	*x = coslat * coslon * (rad + alt);
+	*y = coslat * sinlon * (rad + alt);
+	*z = sinlat * (rad + alt);
+}
 
 
 
@@ -60,31 +93,65 @@ def llarToWorld(lat, lon, alt, rad):
 //currently only one waypoint
 
 //todo put these in structs
-double waypointlong;
+double waypointlon;
 double waypointlat;
 double waypointx;
 double waypointy;
 double waypointz;
 //and then final stuff here
+vec3_t waypointfinalnorot;
 vec3_t waypointfinal;
 
-double currentposlong;
+double currentposlon;
 double currentposlat;
 double currentposx;
 double currentposy;
 double currentposz;
 
+matrix4x4_t worldrotty;
+
 
 int waypointneedsupdate = 1;
+int currentposneedsupdate = 1;
 
-void recalcWayPointLocs(void){
-	waypointneedsupdate = 0;
+
+void updateWayPoint(double lat, double lon){
+	waypointlat = lat;
+	waypointlon = lon;
+	waypointneedsupdate = 1;
+}
+
+void recalcNavLocs(void){
+	if(currentposneedsupdate){
+		calcWORLDpos(currentposlat, currentposlon, 0.0, &currentposx, &currentposy, &currentposz);
+		//todo recalc rotation matrix
+		//todo double check this shit
+//		Matrix4x4_CreateRotate(&worldrotty, currentposlat, 1.0, 0.0, 0.0);
+//		Matrix4x4_ConcatRotate(&worldrotty, currentposlon, 0.0, 1.0, 0.0);
+		Matrix4x4_CreateRotate(&worldrotty, currentposlon, -1.0, 0.0, 0.0);
+		Matrix4x4_ConcatRotate(&worldrotty, currentposlat, 0.0, -1.0, 0.0);
+
+		//should end up with +z as north, +y as "up", and +x as east
+	}
+	if(waypointneedsupdate){
+		calcWORLDpos(currentposlat, currentposlon, 0.0, &waypointx, &waypointy, &waypointz);
+	}
+	if(currentposneedsupdate || waypointneedsupdate){
+		//find delta
+		waypointfinalnorot[0] = waypointx - currentposx;
+		waypointfinalnorot[1] = waypointy - currentposy;
+		waypointfinalnorot[2] = waypointz - currentposz;
+		//now rotate
+		Matrix4x4_Transform(&worldrotty, waypointfinalnorot, waypointfinal);
+	}
+	waypointneedsupdate = currentposneedsupdate = 0;
 }
 
 
-void updateCurrentPos(double lattitude, double longitutde){
-	//calculate XYZ
-	waypointneedsupdate = 1;
+void updateCurrentPos(double lat, double lon){
+	currentposlat = lat;
+	currentposlon = lon;
+	currentposneedsupdate = 1;
 }
 
 
@@ -183,6 +250,7 @@ int parseItThePacket(void * data, size_t datasize, int type){
 				return 1;
 			}
 			printf("Got a fucking step %f %f %s %s\n", st->latitude, st->longitude, st->description, st->icon);
+			updateWayPoint(st->latitude, st->longitude);
 			navirice__proto__step__free_unpacked(st, NULL);
 		break;
 		case 1: //current loc
@@ -192,6 +260,7 @@ int parseItThePacket(void * data, size_t datasize, int type){
 				return 1;
 			}
 			printf("Got a fucking location %f %f\n", loc->latitude, loc->longitude);
+			updateCurrentPos(loc->latitude, loc->longitude);
 			navirice__proto__location__free_unpacked(loc, NULL);
 		break;
 		case 2: //accel
