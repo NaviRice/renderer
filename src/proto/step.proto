@@ -1,10 +1,10 @@
-syntax = "proto3";
+syntax = "proto2";
 
 package navirice.proto;
 
 message Step {
-    double latitude = 1;
-    double longitude = 2;
-    string description = 3;
-    string icon = 4;
+   required double latitude = 1;
+   required double longitude = 2;
+   required string description = 3;
+   required string icon = 4;
 }

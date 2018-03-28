@@ -52,17 +52,21 @@ void   navirice__proto__request_header__free_unpacked
   assert(message->base.descriptor == &navirice__proto__request_header__descriptor);
   protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
 }
-static const ProtobufCEnumValue navirice__proto__request_header__type__enum_values_by_number[2] =
+static const ProtobufCEnumValue navirice__proto__request_header__type__enum_values_by_number[4] =
 {
   { "CURRENT_STEP", "NAVIRICE__PROTO__REQUEST_HEADER__TYPE__CURRENT_STEP", 0 },
   { "CURRENT_LOCATION", "NAVIRICE__PROTO__REQUEST_HEADER__TYPE__CURRENT_LOCATION", 1 },
+  { "CURRENT_ACCELERATION_FORCE", "NAVIRICE__PROTO__REQUEST_HEADER__TYPE__CURRENT_ACCELERATION_FORCE", 2 },
+  { "CURRENT_ROTATION_RATE", "NAVIRICE__PROTO__REQUEST_HEADER__TYPE__CURRENT_ROTATION_RATE", 3 },
 };
 static const ProtobufCIntRange navirice__proto__request_header__type__value_ranges[] = {
-{0, 0},{0, 2}
+{0, 0},{0, 4}
 };
-static const ProtobufCEnumValueIndex navirice__proto__request_header__type__enum_values_by_name[2] =
+static const ProtobufCEnumValueIndex navirice__proto__request_header__type__enum_values_by_name[4] =
 {
+  { "CURRENT_ACCELERATION_FORCE", 2 },
   { "CURRENT_LOCATION", 1 },
+  { "CURRENT_ROTATION_RATE", 3 },
   { "CURRENT_STEP", 0 },
 };
 const ProtobufCEnumDescriptor navirice__proto__request_header__type__descriptor =
@@ -72,9 +76,9 @@ const ProtobufCEnumDescriptor navirice__proto__request_header__type__descriptor 
   "Type",
   "Navirice__Proto__RequestHeader__Type",
   "navirice.proto",
-  2,
+  4,
   navirice__proto__request_header__type__enum_values_by_number,
-  2,
+  4,
   navirice__proto__request_header__type__enum_values_by_name,
   1,
   navirice__proto__request_header__type__value_ranges,
@@ -85,7 +89,7 @@ static const ProtobufCFieldDescriptor navirice__proto__request_header__field_des
   {
     "type",
     1,
-    PROTOBUF_C_LABEL_NONE,
+    PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_ENUM,
     0,   /* quantifier_offset */
     offsetof(Navirice__Proto__RequestHeader, type),
@@ -97,7 +101,7 @@ static const ProtobufCFieldDescriptor navirice__proto__request_header__field_des
   {
     "length",
     2,
-    PROTOBUF_C_LABEL_NONE,
+    PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_UINT32,
     0,   /* quantifier_offset */
     offsetof(Navirice__Proto__RequestHeader, length),

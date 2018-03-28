@@ -57,7 +57,7 @@ static const ProtobufCFieldDescriptor navirice__proto__step__field_descriptors[4
   {
     "latitude",
     1,
-    PROTOBUF_C_LABEL_NONE,
+    PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_DOUBLE,
     0,   /* quantifier_offset */
     offsetof(Navirice__Proto__Step, latitude),
@@ -69,7 +69,7 @@ static const ProtobufCFieldDescriptor navirice__proto__step__field_descriptors[4
   {
     "longitude",
     2,
-    PROTOBUF_C_LABEL_NONE,
+    PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_DOUBLE,
     0,   /* quantifier_offset */
     offsetof(Navirice__Proto__Step, longitude),
@@ -81,24 +81,24 @@ static const ProtobufCFieldDescriptor navirice__proto__step__field_descriptors[4
   {
     "description",
     3,
-    PROTOBUF_C_LABEL_NONE,
+    PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_STRING,
     0,   /* quantifier_offset */
     offsetof(Navirice__Proto__Step, description),
     NULL,
-    &protobuf_c_empty_string,
+    NULL,
     0,             /* flags */
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },
   {
     "icon",
     4,
-    PROTOBUF_C_LABEL_NONE,
+    PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_STRING,
     0,   /* quantifier_offset */
     offsetof(Navirice__Proto__Step, icon),
     NULL,
-    &protobuf_c_empty_string,
+    NULL,
     0,             /* flags */
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },

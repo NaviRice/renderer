@@ -87,7 +87,7 @@ static const ProtobufCFieldDescriptor navirice__proto__response__field_descripto
   {
     "status",
     1,
-    PROTOBUF_C_LABEL_NONE,
+    PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_ENUM,
     0,   /* quantifier_offset */
     offsetof(Navirice__Proto__Response, status),

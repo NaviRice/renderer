@@ -40,6 +40,8 @@ set(SOURCES
 	src/proto/step.pb-c.c
 	src/proto/response.pb-c.c
 	src/proto/location.pb-c.c
+	src/proto/rotationRate.pb-c.c
+	src/proto/accelerationForce.pb-c.c
 	)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/shaders

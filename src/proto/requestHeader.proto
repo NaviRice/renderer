@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "proto2";
 
 package navirice.proto;
 
@@ -6,7 +6,9 @@ message RequestHeader {
     enum Type {
         CURRENT_STEP = 0;
         CURRENT_LOCATION = 1;
+        CURRENT_ACCELERATION_FORCE = 2;
+        CURRENT_ROTATION_RATE = 3;
     }
-    Type type = 1;
-    uint32 length = 2;
+   required Type type = 1;
+   required uint32 length = 2;
 }

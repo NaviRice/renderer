@@ -57,7 +57,7 @@ static const ProtobufCFieldDescriptor navirice__proto__location__field_descripto
   {
     "latitude",
     1,
-    PROTOBUF_C_LABEL_NONE,
+    PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_DOUBLE,
     0,   /* quantifier_offset */
     offsetof(Navirice__Proto__Location, latitude),
@@ -69,7 +69,7 @@ static const ProtobufCFieldDescriptor navirice__proto__location__field_descripto
   {
     "longitude",
     2,
-    PROTOBUF_C_LABEL_NONE,
+    PROTOBUF_C_LABEL_REQUIRED,
     PROTOBUF_C_TYPE_DOUBLE,
     0,   /* quantifier_offset */
     offsetof(Navirice__Proto__Location, longitude),

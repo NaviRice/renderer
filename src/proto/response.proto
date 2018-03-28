@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "proto2";
 
 package navirice.proto;
 
@@ -9,5 +9,5 @@ message Response {
         NOT_IMPLEMENTED = 2;
     }
 
-    Status status = 1;
+    required Status status = 1;
 }
