@@ -4,7 +4,8 @@
 #define PORT 4007
 //#define HOST "75.136.80.95"
 //#define HOST "navirice"
-#define HOST "localhost"
+//#define HOST "localhost"
+#define HOST "192.168.43.183"
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <string.h>
@@ -34,8 +35,8 @@ typedef struct packetdata_s {
 viewport_t headclient_kinectvp = {0};
 int headclient_generateKinectMats(void){
 	headclient_kinectvp.type = 1;
-	headclient_kinectvp.pos[0] = 2.0;
-	headclient_kinectvp.pos[1] = -0.5;
+	headclient_kinectvp.pos[0] = 0.00;
+	headclient_kinectvp.pos[1] = 0.5;
 	headclient_kinectvp.pos[2] = 1.5;
 	headclient_kinectvp.angle[1] = 180;
 	headclient_kinectvp.angle[1] = 200;
