@@ -8,6 +8,7 @@ message RequestHeader {
         CURRENT_LOCATION = 1;
         CURRENT_ACCELERATION_FORCE = 2;
         CURRENT_ROTATION_RATE = 3;
+        ON_BUTTON_CLICK = 4;
     }
    required Type type = 1;
    required uint32 length = 2;
