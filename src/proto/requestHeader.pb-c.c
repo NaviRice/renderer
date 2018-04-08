@@ -52,22 +52,24 @@ void   navirice__proto__request_header__free_unpacked
   assert(message->base.descriptor == &navirice__proto__request_header__descriptor);
   protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
 }
-static const ProtobufCEnumValue navirice__proto__request_header__type__enum_values_by_number[4] =
+static const ProtobufCEnumValue navirice__proto__request_header__type__enum_values_by_number[5] =
 {
   { "CURRENT_STEP", "NAVIRICE__PROTO__REQUEST_HEADER__TYPE__CURRENT_STEP", 0 },
   { "CURRENT_LOCATION", "NAVIRICE__PROTO__REQUEST_HEADER__TYPE__CURRENT_LOCATION", 1 },
   { "CURRENT_ACCELERATION_FORCE", "NAVIRICE__PROTO__REQUEST_HEADER__TYPE__CURRENT_ACCELERATION_FORCE", 2 },
   { "CURRENT_ROTATION_RATE", "NAVIRICE__PROTO__REQUEST_HEADER__TYPE__CURRENT_ROTATION_RATE", 3 },
+  { "ON_BUTTON_CLICK", "NAVIRICE__PROTO__REQUEST_HEADER__TYPE__ON_BUTTON_CLICK", 4 },
 };
 static const ProtobufCIntRange navirice__proto__request_header__type__value_ranges[] = {
-{0, 0},{0, 4}
+{0, 0},{0, 5}
 };
-static const ProtobufCEnumValueIndex navirice__proto__request_header__type__enum_values_by_name[4] =
+static const ProtobufCEnumValueIndex navirice__proto__request_header__type__enum_values_by_name[5] =
 {
   { "CURRENT_ACCELERATION_FORCE", 2 },
   { "CURRENT_LOCATION", 1 },
   { "CURRENT_ROTATION_RATE", 3 },
   { "CURRENT_STEP", 0 },
+  { "ON_BUTTON_CLICK", 4 },
 };
 const ProtobufCEnumDescriptor navirice__proto__request_header__type__descriptor =
 {
@@ -76,9 +78,9 @@ const ProtobufCEnumDescriptor navirice__proto__request_header__type__descriptor 
   "Type",
   "Navirice__Proto__RequestHeader__Type",
   "navirice.proto",
-  4,
+  5,
   navirice__proto__request_header__type__enum_values_by_number,
-  4,
+  5,
   navirice__proto__request_header__type__enum_values_by_name,
   1,
   navirice__proto__request_header__type__value_ranges,
