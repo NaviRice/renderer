@@ -255,7 +255,8 @@ int gl_renderWorld(double time){
 	worldrenderer_bindEASTEREGG();
 	GLenum renderbuffs[] = {GL_COLOR_ATTACHMENT0};
 	glDrawBuffers(1, renderbuffs);//todo move
-	glClearColor(0.0, 0.0, 0.1, 0.0);
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+//	glClearColor(0.0, 0.0, 0.1, 0.0);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 
@@ -264,7 +265,7 @@ int gl_renderWorld(double time){
 	worldrenderer_addEntitiesToQueue(&worldopaque, &debugvp);
 
 	worldrenderer_renderEntities(&tmpvst);
-	worldrenderer_renderEntitiesBBoxes(&tmpvst);
+//	worldrenderer_renderEntitiesBBoxes(&tmpvst);
 
 	return TRUE;
 }
@@ -278,7 +279,7 @@ int gl_renderWorldDebug(double time){
 	worldrenderer_addEntitiesToQueue(&debugopaque, &debugvp);
 
 	worldrenderer_renderEntities(&debugvp);
-	worldrenderer_renderEntitiesBBoxes(&debugvp);
+//	worldrenderer_renderEntitiesBBoxes(&debugvp);
 	return TRUE;
 }
 
@@ -311,7 +312,10 @@ int gl_renderDebug(double time){
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0,0, width, height);
+//	glClearColor(0.1, 0.1, 0.1, 0.0);
+	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	glClearColor(0.0, 0.0, 0.0, 0.0);
 
 	debugvp.angle[1] = time*10.0;
 	debugvp.angle[0] = 30.0;
@@ -360,13 +364,13 @@ int gl_renderDebug(double time){
 	vec4_t windshieldcolor = {0.4, 0.5, 0.6, 0.3};
 	gl_renderWorldDebug(time);
 
-	tracegrid_renderDebugOutput(&tmpvst, &debugvp, &tmpscreen);
+//	tracegrid_renderDebugOutput(&tmpvst, &debugvp, &tmpscreen);
 	tracegrid_renderDebugGrid(&tmpvst, &debugvp, &tmpscreen);
 
 	worldrenderer_renderModelTransparent(&debugvp, windshieldid, &windshieldmat, windshieldcolor);
 
-	tracegrid_renderDebugFirstbounce(&tmpvst, &debugvp);
-	tracegrid_renderDebugGridMini(&tmpvst, &debugvp);
+//	tracegrid_renderDebugFirstbounce(&tmpvst, &debugvp);
+//	tracegrid_renderDebugGridMini(&tmpvst, &debugvp);
 
 	worldrenderer_renderDebugFramebufferMini(&tmpvst, &debugvp);
 

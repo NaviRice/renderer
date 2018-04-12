@@ -4,8 +4,8 @@
 #define PORT 4007
 //#define HOST "75.136.80.95"
 //#define HOST "navirice"
-//#define HOST "localhost"
-#define HOST "192.168.43.183"
+#define HOST "localhost"
+//#define HOST "192.168.43.183"
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <string.h>

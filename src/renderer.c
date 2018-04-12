@@ -89,6 +89,11 @@ int main(int argc, char *argv[]){
 		//todo figure out if thise should be reordered
 		headclient_update(t);
 		naviclient_update(t);
+//		if(t > 1.0){
+//			t = 1.0;
+//			accum = 0.0;
+//		}
+//		t = 7.0;
 		while(accum * 1000.0 > GCTIMESTEP){
 			gamecode_tick();
 			accum -= (double)GCTIMESTEP/1000.0;
