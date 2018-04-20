@@ -28,6 +28,9 @@
 #include <math.h>
 #include "mathlib.h"
 #include "matrixlib.h"
+
+#include "entitymanager.h"
+
 /*
 def llarToWorld(lat, lon, alt, rad):
     # see: http://www.mathworks.de/help/toolbox/aeroblks/llatoecefposition.html
@@ -115,10 +118,49 @@ int waypointneedsupdate = 1;
 int currentposneedsupdate = 1;
 
 
+void updateNavEnt(char * n){
+	//and here is some hacks to adjust the thingy
+
+	entity_t * thething = entity_findByNameRPOINT("arrow");
+	if(!thething){
+		printf("FUCK entity gonzo!\n");
+		return;
+	}
+
+//	char chuckers[128]; chuckers[0] = 0;
+//	int mid = 0;
+//	if(strlen(n) < 100){
+//		sprintf(chuckers, "models/%s.iqm", n);
+//		mid = model_register(chuckers);
+//	}
+//	thething->modelid = mid;
+//	printf("St model to %i %s\n", mid, chuckers);
+	if(strstr(n, "right")){
+		thething->angle[1] = -90.0;
+		printf("dododo right\n");
+	} else if (strstr(n, "left")){
+		thething->angle[1] = 90.0;
+		printf("dododo left\n");
+	} else {
+		thething->angle[1] = 0.0;
+		printf("dododo unknown\n");
+	}
+
+	if(strstr(n, "slight")){
+		thething->angle[1] *= 0.5;
+		printf("dododo slight\n");
+	}
+	printf("dododo\n");
+	thething->needsmatupdate = 1;
+}
+
+
 void updateWayPoint(double lat, double lon){
 	waypointlat = lat;
 	waypointlon = lon;
 	waypointneedsupdate = 1;
+
+
 }
 
 void recalcNavLocs(void){
@@ -251,6 +293,7 @@ int parseItThePacket(void * data, size_t datasize, int type){
 			}
 			printf("Got a fucking step %f %f %s %s\n", st->latitude, st->longitude, st->description, st->icon);
 			updateWayPoint(st->latitude, st->longitude);
+			updateNavEnt(st->icon);
 			navirice__proto__step__free_unpacked(st, NULL);
 		break;
 		case 1: //current loc

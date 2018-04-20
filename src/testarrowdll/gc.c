@@ -24,8 +24,8 @@ int initgame(void){
 		arrow.needsmatupdate =1;
 		arrow.scale = 0.1;
 		arrow.pos[2] = -5.0;
-		arrow.angle[1] = -90.0;
-		arrow.think = arrow_rot90Think;
+//		arrow.angle[1] = -90.0;
+//		arrow.think = arrow_rot90Think;
 //		arrow.nextthink = ec->now + 5.0;
 		ec->entity_addRINT(arrow);
 
